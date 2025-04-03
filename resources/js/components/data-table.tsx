@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Link } from '@inertiajs/react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -22,16 +23,21 @@ import {
 import { useState } from 'react';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableViewOptions } from './data-table-view-options';
+import { Button } from './ui/button';
 import { Input } from './ui/input';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]; // header columns of table
   data: TData[]; // data of table
+  searchKey: string;
+  create: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  searchKey,
+  create
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -61,17 +67,28 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       {/* Filters */}
-      <div className="flex items-center px-2 py-4">
+      <div className="flex items-center justify-between px-2 py-4 gap-2">
         <Input
-          placeholder="Filters names ..."
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+          placeholder={`Search for ${searchKey} of ${create}...`}
+          value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table.getColumn('name')?.setFilterValue(event.target.value)
+            table.getColumn(searchKey)?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-        {/* View options visibility */}
-        <DataTableViewOptions table={table} />
+        <div className="flex items-center gap-2">
+          {/* Create Button */}
+          <Link href={route(`${create}s.create`)}>
+            <Button variant="outline">
+              <span className="flex items-center gap-2">
+                Create {create}
+                <span className="sr-only">Create {create}</span>
+              </span>
+            </Button>
+          </Link>
+          {/* View options visibility */}
+          <DataTableViewOptions table={table} />
+        </div>
       </div>
       {/* Table */}
       <div className="rounded-md border">

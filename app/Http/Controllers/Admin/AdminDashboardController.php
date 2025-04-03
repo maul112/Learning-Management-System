@@ -18,11 +18,14 @@ class AdminDashboardController extends Controller
     {
         $instructors_count = User::where('role', 'instructor')->count();
         $students_count = User::where('role', 'student')->count();
+        $user_active_cound = User::where('status', 'active')
+            ->where('role', '!=', 'admin')->count();
         $module_count = Module::count();
 
         return Inertia::render('dashboard', [
             'instructorsCount' => $instructors_count,
             'studentsCount' => $students_count,
+            'userActiveCount' => $user_active_cound,
             'moduleCount' => $module_count
         ]);
     }

@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, UsersRound } from 'lucide-react';
+import { Book, BookOpen, Folder, LayoutGrid, UsersRound } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -25,6 +25,11 @@ const mainNavItems: NavItem[] = [
     title: 'Users',
     href: '/users',
     icon: UsersRound,
+  },
+  {
+    title: 'Courses',
+    href: '/courses',
+    icon: Book,
   },
 ];
 
