@@ -1,6 +1,7 @@
 import { DataTable } from '@/components/data-table';
 import { DataTableColumnHeader } from '@/components/data-table-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -24,10 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useInitials } from '@/hooks/use-initials';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
+import { AvatarImage } from '@radix-ui/react-avatar';
 import { ColumnDef } from '@tanstack/react-table';
 import { CircleCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -75,15 +78,22 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'avatar',
     header: 'Avatar',
-    cell: ({ row }) => (
-      <div className="h-10 w-10 rounded-full">
-        <img
-          className="rounded-full object-cover"
-          src={`/storage/${row.getValue('avatar')}`}
-          alt={row.getValue('name')}
-        />
-      </div>
-    ),
+    cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const getInitials = useInitials();
+
+      return (
+        <Avatar className="h-8 w-8 overflow-hidden rounded-full">
+          <AvatarImage
+            src={row.getValue('avatar')}
+            alt={row.getValue('name')}
+          />
+          <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+            {getInitials(row.getValue('name'))}
+          </AvatarFallback>
+        </Avatar>
+      );
+    },
   },
   {
     accessorKey: 'name',

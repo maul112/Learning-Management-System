@@ -30,7 +30,10 @@ class AdminUserController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('users/create', [
+            'success' => session('success'),
+            'error' => session('error'),
+        ]);
     }
 
     /**
@@ -38,7 +41,17 @@ class AdminUserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        if ($validated['password'] != $request['password_confirmation']) {
+            return redirect()->back()->with('error', 'Passwords do not match.');
+        }
+
+        $validated['password'] = bcrypt($validated['password']);
+
+        User::create($validated);
+
+        return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
     /**
