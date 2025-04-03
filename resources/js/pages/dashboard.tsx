@@ -1,3 +1,4 @@
+import { Calendar } from '@/components/ui/calendar';
 import CountUp from '@/components/ui/count-up';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
@@ -10,6 +11,7 @@ import {
   UserRoundCheck,
   UsersRound,
 } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -37,6 +39,8 @@ export default function Dashboard({
   userActiveCount,
   moduleCount,
 }: DashboardProps) {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+
   const dashboadItems: DashboardItems[] = [
     {
       icon: <GraduationCap className="text-blue-600" />,
@@ -92,8 +96,18 @@ export default function Dashboard({
             </div>
           ))}
         </div>
-        <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-          <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+        <div className="border-sidebar-border/70 dark:border-sidebar-border relative grid min-h-[100vh] flex-1 grid-cols-[5fr_1fr] gap-2 overflow-hidden rounded-xl border md:min-h-min">
+          <div className="relative">
+            <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+          </div>
+          <div className="relative">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              className="rounded-md border shadow"
+            />
+          </div>
         </div>
       </div>
     </AppLayout>
