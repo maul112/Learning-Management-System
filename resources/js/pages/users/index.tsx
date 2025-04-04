@@ -1,7 +1,7 @@
 import { DataTable } from '@/components/data-table';
 import { DataTableColumnHeader } from '@/components/data-table-header';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -30,8 +30,8 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import { AvatarImage } from '@radix-ui/react-avatar';
 import { ColumnDef } from '@tanstack/react-table';
+import { AnimatePresence, motion } from 'framer-motion';
 import { CircleCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -167,11 +167,19 @@ export default function Users({
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       {alertTimeout && success && (
-        <Alert className="text-green-400">
-          <CircleCheck className="h-4 w-4 text-green-400" />
-          <AlertTitle>Success</AlertTitle>
-          <AlertDescription>{success}</AlertDescription>
-        </Alert>
+        <AnimatePresence>
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+          >
+            <Alert className="text-green-400">
+              <CircleCheck className="h-4 w-4 text-green-400" />
+              <AlertTitle>Success</AlertTitle>
+              <AlertDescription>{success}</AlertDescription>
+            </Alert>
+          </motion.div>
+        </AnimatePresence>
       )}
       <Head title="Users" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">

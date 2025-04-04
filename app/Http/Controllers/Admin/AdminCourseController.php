@@ -30,7 +30,7 @@ class AdminCourseController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('courses/create');
     }
 
     /**
