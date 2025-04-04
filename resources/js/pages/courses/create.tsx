@@ -1,20 +1,27 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
 import { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
+import { Check, ChevronsUpDown, LoaderCircle } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -27,20 +34,33 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function CourseCreate() {
-  const { data, setData, post, processing, errors, reset } = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-    role: '',
-    status: 'active',
+type Instructor = {
+  id: number;
+  avatar: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+};
+
+export default function CourseCreate({
+  instructors,
+}: {
+  instructors: {
+    data: Instructor[];
+  };
+}) {
+  const [open, setOpen] = useState<boolean>(false);
+  const [instructorName, setInstructorName] = useState<string>('');
+  const { data, setData, post, processing, errors } = useForm({
+    title: '',
+    description: '',
+    instructor_id: 0,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     post(route('courses.store'), {
-      onFinish: () => reset('password', 'password_confirmation', 'role'),
       onError: (e) => console.log(e),
     });
   };
@@ -53,74 +73,85 @@ export default function CourseCreate() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-3">
             <div className="grid gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="title">Title</Label>
                 <Input
                   type="text"
-                  id="name"
-                  name="name"
-                  placeholder="John Doe"
-                  value={data.name}
-                  onChange={(e) => setData('name', e.target.value)}
+                  id="title"
+                  name="title"
+                  placeholder="Javascript"
+                  value={data.title}
+                  onChange={(e) => setData('title', e.target.value)}
                 />
-                <InputError message={errors.name} />
+                <InputError message={errors.title} />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="risqi@gmail.com"
-                  value={data.email}
-                  onChange={(e) => setData('email', e.target.value)}
-                />
-                <InputError message={errors.email} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="********"
-                  value={data.password}
-                  onChange={(e) => setData('password', e.target.value)}
-                />
-                <InputError message={errors.password} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password_confirmation">Confirm Password</Label>
-                <Input
-                  type="password"
-                  id="password_confirmation"
-                  name="password_confirmation"
-                  placeholder="********"
-                  value={data.password_confirmation}
-                  onChange={(e) =>
-                    setData('password_confirmation', e.target.value)
-                  }
-                />
-                <InputError message={errors.password_confirmation} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="confirmPassword">Role</Label>
-                <Select
-                  value={data.role}
-                  onValueChange={(value) => setData('role', value)}
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  placeholder="Description"
+                  value={data.description}
+                  onChange={(e) => setData('description', e.target.value)}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Roles</SelectLabel>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="instructor">Instructor</SelectItem>
-                      <SelectItem value="student">student</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <InputError message={errors.role} />
+                  {data.description}
+                </Textarea>
+                <InputError message={errors.description} />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="instructor_id">Instructor Name</Label>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      role="combobox"
+                      arial-expanded={open}
+                    >
+                      {instructorName
+                        ? instructors.data.find(
+                            (instructor) => instructor.name == instructorName,
+                          )?.name
+                        : 'Select Instructor'}
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Command>
+                      <CommandInput placeholder="Search Instructor..." />
+                      <CommandList>
+                        <CommandEmpty>No Instructor found.</CommandEmpty>
+                        <CommandGroup>
+                          {instructors.data.map((instructor) => (
+                            <CommandItem
+                              key={instructor.id}
+                              value={instructor.name}
+                              onSelect={(currentValue) => {
+                                setData('instructor_id', instructor.id);
+                                setInstructorName(
+                                  currentValue === instructorName
+                                    ? ''
+                                    : currentValue,
+                                );
+                                setOpen(false);
+                              }}
+                            >
+                              {instructor.name}
+                              <Check
+                                className={cn(
+                                  'ml-auto',
+                                  data.instructor_id == instructor.id
+                                    ? 'opacity-100'
+                                    : 'opacity-0',
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <InputError message={errors.instructor_id} />
               </div>
             </div>
             <Button

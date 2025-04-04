@@ -7,6 +7,8 @@ use App\Models\Course;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 use Inertia\Inertia;
 
 class AdminCourseController extends Controller
@@ -30,7 +32,11 @@ class AdminCourseController extends Controller
      */
     public function create()
     {
-        return Inertia::render('courses/create');
+        $instructors = User::where('role', 'instructor')->get();
+
+        return Inertia::render('courses/create', [
+            'instructors' => UserResource::collection($instructors),
+        ]);
     }
 
     /**
@@ -38,7 +44,15 @@ class AdminCourseController extends Controller
      */
     public function store(StoreCourseRequest $request)
     {
-        //
+        try {
+            $validated = $request->validated();
+
+            Course::create($validated);
+
+            return redirect()->route('courses.index')->with('success', 'Course created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**
