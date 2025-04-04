@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Module;
 use App\Http\Requests\StoreModuleRequest;
 use App\Http\Requests\UpdateModuleRequest;
+use App\Http\Resources\ModuleResource;
+use Inertia\Inertia;
 
 class AdminModuleController extends Controller
 {
@@ -14,7 +16,12 @@ class AdminModuleController extends Controller
      */
     public function index()
     {
-        //
+        $modules = Module::with('course')->get();
+
+        return Inertia::render('modules/index', [
+            'modules' => ModuleResource::collection($modules),
+            'success' => session('success'),
+        ]);
     }
 
     /**
@@ -22,7 +29,7 @@ class AdminModuleController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('modules/create');
     }
 
     /**

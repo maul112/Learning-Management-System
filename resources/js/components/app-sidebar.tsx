@@ -31,6 +31,11 @@ const mainNavItems: NavItem[] = [
     href: '/courses',
     icon: Book,
   },
+  {
+    title: 'Modules',
+    href: '/modules',
+    icon: BookOpen,
+  },
 ];
 
 const footerNavItems: NavItem[] = [

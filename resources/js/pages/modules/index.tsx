@@ -1,5 +1,6 @@
 import { DataTable } from '@/components/data-table';
 import { DataTableColumnHeader } from '@/components/data-table-header';
+import InputError from '@/components/input-error';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -21,96 +22,94 @@ import { cn } from '@/lib/utils';
 import { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
+import { AnimatePresence, motion } from 'framer-motion';
 import { CircleCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const columns: ColumnDef<Course>[] = [
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Modules',
+    href: '/modules',
+  },
+];
+
+export type Module = {
+  id: number;
+  title: string;
+  content: string;
+  video_url: string;
+  course_id: number;
+  course: string;
+};
+
+const columns: ColumnDef<Module>[] = [
   {
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        checked={table.getIsAllPageRowsSelected()}
+        onChange={table.getToggleAllPageRowsSelectedHandler()}
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onChange={row.getToggleSelectedHandler()}
       />
     ),
-    enableSorting: false,
-    enableHiding: false,
   },
   {
     accessorKey: 'title',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Title" />
     ),
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('title')}</div>
-    ),
-  },
-  {
-    accessorKey: 'description',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Description" />
-    ),
-    cell: ({ row }) => (
-      <div className="capitalize">
-        {(row.getValue('description') as string).slice(0, 30)}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'instructor',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Instructor" />
-    ),
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('instructor')}</div>
-    ),
-  },
-  {
-    id: 'actions',
-    header: 'Actions',
     cell: ({ row }) => {
-      const course = row.original;
-
       return (
-        <div className="flex space-x-2">
-          <EditCourse course={course} />
-          <DeleteCourse course={course} />
+        <div className="capitalize">
+          {(row.getValue('title') as string).slice(0, 30)}
         </div>
       );
     },
   },
-];
-
-const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Courses',
-    href: '/courses',
+    accessorKey: 'content',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Content" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="capitalize">
+          {(row.getValue('content') as string).slice(0, 30)}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'course',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Course" />
+    ),
+    cell: ({ row }) => {
+      return <div className="capitalize">{row.getValue('course')}</div>;
+    },
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <EditModule module={row.original} />
+        <DeleteModule module={row.original} />
+      </div>
+    ),
   },
 ];
 
-type Course = {
-  id: number;
-  title: string;
-  description: string;
-  instructorId: string;
-  instructor: string;
-};
-
-export default function Courses({
-  courses,
+export default function Modules({
+  modules,
   success,
 }: {
-  courses: { data: Course[] };
+  modules: { data: Module[] };
   success?: string;
 }) {
   const [alertTimeout, setAlertTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -125,23 +124,33 @@ export default function Courses({
     }
   }, [success]);
 
+  console.log(modules);
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       {alertTimeout && success && (
-        <Alert className="text-green-400">
-          <CircleCheck className="h-4 w-4 text-green-400" />
-          <AlertTitle>Success</AlertTitle>
-          <AlertDescription>{success}</AlertDescription>
-        </Alert>
+        <AnimatePresence>
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+          >
+            <Alert className="text-green-400">
+              <CircleCheck className="h-4 w-4 text-green-400" />
+              <AlertTitle>Success</AlertTitle>
+              <AlertDescription>{success}</AlertDescription>
+            </Alert>
+          </motion.div>
+        </AnimatePresence>
       )}
-      <Head title="Courses" />
+      <Head title="Modules" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
           <DataTable
             columns={columns}
-            data={courses.data}
             searchKey="title"
-            create="course"
+            data={modules.data}
+            create="module"
           />
         </div>
       </div>
@@ -149,24 +158,22 @@ export default function Courses({
   );
 }
 
-function EditCourse({
-  course,
+function EditModule({
+  module,
   className,
 }: {
-  course: Course;
+  module: Module;
   className?: string;
 }) {
   const [open, setOpen] = useState<boolean>(false);
-
-  const { data, setData, patch } = useForm({
-    title: course.title,
-    description: course.description,
+  const { data, setData, errors, patch } = useForm({
+    title: module.title,
+    content: module.content,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    patch(route('courses.update', course.id), {
-      preserveScroll: true,
+    patch(route('modules.update', module.id), {
       onFinish: () => setOpen(false),
       onError: (e) => console.log(e),
     });
@@ -181,34 +188,35 @@ function EditCourse({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Course</DialogTitle>
+          <DialogTitle>Edit Module</DialogTitle>
           <DialogDescription>
-            Make changes to course data here. Click save when you're done.
+            Make changes to module data here. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
         <form
           onSubmit={handleSubmit}
           className={cn('grid items-start gap-4', className)}
         >
-          <div className="grid gap-2">
+          <div className="grid items-start gap-4">
             <Label htmlFor="title">Title</Label>
             <Input
-              type="text"
               id="title"
-              name="title"
               value={data.title}
               onChange={(e) => setData('title', e.target.value)}
             />
+            <InputError message={errors.title} />
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
+          <div className="grid items-start gap-4">
+            <Label htmlFor="content">Content</Label>
             <Textarea
-              id="description"
-              name="description"
-              placeholder="Description"
-              children={data.description}
-              onChange={(e) => setData('description', e.target.value)}
-            />
+              id="content"
+              name="content"
+              value={data.content}
+              onChange={(e) => setData('content', e.target.value)}
+            >
+              {data.content}
+            </Textarea>
+            <InputError message={errors.content} />
           </div>
           <Button type="submit">Save changes</Button>
         </form>
@@ -217,14 +225,13 @@ function EditCourse({
   );
 }
 
-function DeleteCourse({ course }: { course: Course }) {
+function DeleteModule({ module }: { module: Module }) {
   const [open, setOpen] = useState<boolean>(false);
-
   const { delete: destroy } = useForm();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    destroy(route('courses.destroy', course.id), {
+    destroy(route('modules.destroy', module.id), {
       onFinish: () => setOpen(false),
     });
   };
@@ -238,9 +245,9 @@ function DeleteCourse({ course }: { course: Course }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Course</DialogTitle>
+          <DialogTitle>Delete Module</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this course?
+            Are you sure you want to delete this module?
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
