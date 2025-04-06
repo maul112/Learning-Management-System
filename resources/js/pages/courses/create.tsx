@@ -18,7 +18,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
-import { BreadcrumbItem } from '@/types';
+import { BreadcrumbItem, User as Instructor } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { Check, ChevronsUpDown, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
@@ -33,15 +33,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/course/create',
   },
 ];
-
-type Instructor = {
-  id: number;
-  avatar: string;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-};
 
 export default function CourseCreate({
   instructors,
@@ -90,6 +81,7 @@ export default function CourseCreate({
                   id="description"
                   name="description"
                   placeholder="Description"
+                  style={{ height: '260px' }}
                   value={data.description}
                   onChange={(e) => setData('description', e.target.value)}
                 >

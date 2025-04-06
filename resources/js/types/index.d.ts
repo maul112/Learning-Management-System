@@ -36,8 +36,27 @@ export interface User {
   name: string;
   email: string;
   avatar?: string;
-  email_verified_at: string | null;
-  created_at: string;
-  updated_at: string;
+  role: string;
+  status: string;
+  email_verified_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
   [key: string]: unknown; // This allows for additional properties...
+}
+
+export interface Course {
+  id: number;
+  title: string;
+  description: string;
+  instructorId: string;
+  instructor: string;
+}
+
+export interface Module {
+  id: number;
+  title: string;
+  content: string;
+  video_url: string;
+  course_id: number;
+  course: string;
 }

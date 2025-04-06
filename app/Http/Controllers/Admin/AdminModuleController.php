@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Module;
 use App\Http\Requests\StoreModuleRequest;
 use App\Http\Requests\UpdateModuleRequest;
+use App\Http\Resources\CourseResource;
 use App\Http\Resources\ModuleResource;
+use App\Models\Course;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class AdminModuleController extends Controller
@@ -29,7 +33,11 @@ class AdminModuleController extends Controller
      */
     public function create()
     {
-        return Inertia::render('modules/create');
+        $courses = Course::all();
+
+        return Inertia::render('modules/create', [
+            'courses' => CourseResource::collection($courses),
+        ]);
     }
 
     /**
@@ -70,7 +78,27 @@ class AdminModuleController extends Controller
      */
     public function update(UpdateModuleRequest $request, Module $module)
     {
-        //
+        try {
+            $validated = $request->validated();
+
+            if ($request->file('video_url')) {
+                if ($module->video_url) {
+                    Storage::disk('public')->delete($module->video_url);
+                }
+                $path_url = $request->file('video_url')->store('modules-video', 'public');
+                $validated['video_url'] = $path_url;
+            } else {
+                unset($validated['video_url']);
+            }
+
+            $module->update($validated);
+
+            return redirect()->back()->with('success', 'Module updated successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to update module.');
+        }
     }
 
     /**
@@ -78,6 +106,17 @@ class AdminModuleController extends Controller
      */
     public function destroy(Module $module)
     {
-        //
+        try {
+            if ($module->video_url) {
+                Storage::disk('public')->delete($module->video_url);
+            }
+            $module->delete();
+
+            return redirect()->back()->with('success', 'Module deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to delete module.');
+        }
     }
 }

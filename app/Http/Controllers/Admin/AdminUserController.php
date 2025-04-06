@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class AdminUserController extends Controller
@@ -82,7 +83,9 @@ class AdminUserController extends Controller
 
             return redirect()->back()->with('success', 'User updated successfully.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to update user.');
         }
     }
 
@@ -91,8 +94,14 @@ class AdminUserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
+        try {
+            $user->delete();
 
-        return redirect()->back()->with('success', 'User deleted successfully.');
+            return redirect()->back()->with('success', 'User deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to delete user.');
+        }
     }
 }

@@ -37,7 +37,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   searchKey,
-  create
+  create,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -67,7 +67,7 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       {/* Filters */}
-      <div className="flex items-center justify-between px-2 py-4 gap-2">
+      <div className="flex items-center justify-between gap-2 px-2 py-4">
         <Input
           placeholder={`Search for ${searchKey} of ${create}...`}
           value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
@@ -87,7 +87,7 @@ export function DataTable<TData, TValue>({
             </Button>
           </Link>
           {/* View options visibility */}
-          <DataTableViewOptions table={table} />
+          <DataTableViewOptions<TData> table={table} />
         </div>
       </div>
       {/* Table */}
@@ -139,7 +139,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      <DataTablePagination<TData> table={table} />
     </div>
   );
 }
