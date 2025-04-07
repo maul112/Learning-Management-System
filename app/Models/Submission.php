@@ -18,13 +18,29 @@ class Submission extends Model
         'is_correct',
     ];
 
+    /**
+     * Get the student that submitted the quiz.
+     * @return BelongsTo<User, Submission>
+     */
     public function student(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this
+            ->belongsTo(
+                User::class,
+                'student_id'
+            );
     }
 
+    /**
+     * Get the quiz that was submitted.
+     * @return BelongsTo<Quiz, Submission>
+     */
     public function quiz(): BelongsTo
     {
-        return $this->belongsTo(Quiz::class);
+        return $this
+            ->belongsTo(
+                Quiz::class,
+                'quiz_id'
+            );
     }
 }

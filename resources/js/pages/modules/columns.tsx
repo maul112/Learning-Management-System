@@ -54,20 +54,7 @@ export const columns: ColumnDef<Module>[] = [
     cell: ({ row }) => {
       return (
         <div className="capitalize">
-          {(row.getValue('title') as string).slice(0, 30)}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'content',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Module, unknown> column={column} title="Content" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="capitalize">
-          {(row.getValue('content') as string).slice(0, 30)}
+          {row.getValue('title')}
         </div>
       );
     },

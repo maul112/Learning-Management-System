@@ -18,8 +18,17 @@ class Module extends Model
         'course_id'
     ];
 
+    /**
+     * Get the course that owns the module.
+     * @return BelongsTo<Course, Module>
+     */
     public function course(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this
+            ->belongsTo(
+                Course::class,
+                'course_id',
+                'id'
+            );
     }
 }

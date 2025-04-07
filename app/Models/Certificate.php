@@ -16,13 +16,31 @@ class Certificate extends Model
         'course_id',
     ];
 
+    /**
+     * Get the user that owns the certificate.
+     * @return BelongsTo<User, Certificate>
+     */
     public function student(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this
+            ->belongsTo(
+                User::class,
+                'student_id',
+                'id'
+            );
     }
 
+    /**
+     * Get the course that owns the certificate.
+     * @return BelongsTo<Course, Certificate>
+     */
     public function course(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this
+            ->belongsTo(
+                Course::class,
+                'course_id',
+                'id'
+            );
     }
 }

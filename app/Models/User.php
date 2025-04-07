@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -50,23 +51,63 @@ class User extends Authenticatable
         ];
     }
 
-    public function courses(): HasMany
+    /**
+     * Get the user's courses as an instructor.
+     * @return HasMany<Course, User>
+     */
+    public function instructorCourses(): HasMany
     {
-        return $this->hasMany(Course::class);
+        return $this
+            ->hasMany(
+                Course::class,
+                'instructor_id',
+                'id'
+            );
     }
 
-    public function enrollments(): HasMany
+    /**
+     * Get the user's courses as a student.
+     * @return BelongsToMany<Course, User, \Illuminate\Database\Eloquent\Relations\Pivot>
+     */
+    public function studentCourses(): BelongsToMany
     {
-        return $this->hasMany(CourseEnrollment::class);
+        return $this
+            ->belongsToMany(
+                Course::class,
+                'course_enrollments',
+                'student_id',
+                'course_id'
+            )
+            ->withPivot('progress', 'status')
+            ->withTimestamps();
     }
 
-    public function submissions(): HasMany
+    /**
+     * Get the user's quiz submissions as a student.
+     * @return HasMany<Submission, User>
+     */
+    public function studentQuizSubmissions(): HasMany
     {
-        return $this->hasMany(Submission::class);
+        return $this
+            ->hasMany(
+                Submission::class,
+                'student_id',
+                'id'
+            );
     }
 
-    public function certificates(): HasMany
+    /**
+     * Get the user's certificates as a student.
+     * @return BelongsToMany<Course, User, \Illuminate\Database\Eloquent\Relations\Pivot>
+     */
+    public function studentCourseCertificates(): BelongsToMany
     {
-        return $this->hasMany(Certificate::class);
+        return $this
+            ->belongsToMany(
+                Course::class,
+                'certificates',
+                'student_id',
+                'course_id'
+            );
     }
 }

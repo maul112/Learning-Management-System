@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class AdminCourseController extends Controller
@@ -49,8 +50,10 @@ class AdminCourseController extends Controller
 
             Course::create($validated);
 
-            return redirect()->route('courses.index')->with('success', 'Course created successfully.');
+            return redirect()->back()->with('success', 'Course created successfully.');
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -83,6 +86,8 @@ class AdminCourseController extends Controller
 
             return redirect()->back()->with('success', 'Course updated successfully.');
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -97,6 +102,8 @@ class AdminCourseController extends Controller
 
             return redirect()->back()->with('success', 'Course deleted successfully.');
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
             return redirect()->back()->with('error', $e->getMessage());
         }
     }

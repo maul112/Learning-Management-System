@@ -52,7 +52,7 @@ class AdminUserController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        return redirect()->back()->with('success', 'User created successfully.');
     }
 
     /**

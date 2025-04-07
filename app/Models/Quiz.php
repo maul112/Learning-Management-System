@@ -19,12 +19,20 @@ class Quiz extends Model
         'module_id',
     ];
 
+    /**
+     * Get the module that owns the quiz.
+     * @return BelongsTo<Module, Quiz>
+     */
     public function module(): BelongsTo
     {
         return $this->belongsTo(Module::class);
     }
 
-    public function submissions(): HasMany
+    /**
+     * Get the student quiz's submissions.
+     * @return HasMany<Submission, Quiz>
+     */
+    public function studentSubmissions(): HasMany
     {
         return $this->hasMany(Submission::class);
     }

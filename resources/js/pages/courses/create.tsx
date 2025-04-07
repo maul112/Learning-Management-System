@@ -22,6 +22,7 @@ import { BreadcrumbItem, User as Instructor } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { Check, ChevronsUpDown, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -36,14 +37,18 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function CourseCreate({
   instructors,
+  success,
+  error,
 }: {
   instructors: {
     data: Instructor[];
   };
+  success?: string;
+  error?: string;
 }) {
   const [open, setOpen] = useState<boolean>(false);
   const [instructorName, setInstructorName] = useState<string>('');
-  const { data, setData, post, processing, errors } = useForm({
+  const { data, setData, post, processing, errors, reset } = useForm({
     title: '',
     description: '',
     instructor_id: 0,
@@ -52,12 +57,15 @@ export default function CourseCreate({
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     post(route('courses.store'), {
+      onFinish: () => reset('title', 'description', 'instructor_id'),
       onError: (e) => console.log(e),
     });
   };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
+      {success && toast.success(success)}
+      {error && toast.error(error)}
       <Head title="Create User" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">

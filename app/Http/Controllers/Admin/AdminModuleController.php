@@ -54,7 +54,7 @@ class AdminModuleController extends Controller
 
         Module::create($validated);
 
-        return redirect()->route('modules.index')->with('success', 'Module created successfully.');
+        return redirect()->back()->with('success', 'Module created successfully.');
     }
 
     /**

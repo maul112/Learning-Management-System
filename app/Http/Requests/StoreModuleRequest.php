@@ -24,7 +24,7 @@ class StoreModuleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:30',
+            'title' => 'required|string',
             'content' => 'required|string',
             'video_url' => 'nullable|string',
             'course_id' => 'required|exists:courses,id',

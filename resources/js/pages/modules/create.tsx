@@ -1,4 +1,5 @@
 import InputError from '@/components/input-error';
+import MarkdownEditor from '@/components/markdown-editor';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -12,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverTrigger } from '@/components/ui/popover';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { BreadcrumbItem, Course } from '@/types';
@@ -20,6 +20,7 @@ import { Head, useForm } from '@inertiajs/react';
 import { PopoverContent } from '@radix-ui/react-popover';
 import { Check, ChevronsUpDown, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -34,15 +35,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function ModuleCreate({
   courses,
+  sucess,
+  error,
 }: {
   courses: {
     data: Course[];
   };
+  sucess?: string;
+  error?: string;
 }) {
   const [open, setOpen] = useState<boolean>(false);
-  const [radioValue, setRadioValue] = useState<string>('');
+  const [radioValue, setRadioValue] = useState<string>('link');
   const [courseName, setCourseName] = useState<string>('');
-  const { data, setData, post, processing, errors } = useForm({
+  const { data, setData, post, processing, errors, reset } = useForm({
     title: '',
     content: '',
     video_url: '',
@@ -52,12 +57,15 @@ export default function ModuleCreate({
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     post(route('modules.store'), {
+      onFinish: () => reset('title', 'content', 'video_url', 'course_id'),
       onError: (e) => console.log(e),
     });
   };
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
+      {sucess && toast.success(sucess)}
+      {error && toast.error(error)}
       <Head title="Create Module" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
@@ -76,16 +84,10 @@ export default function ModuleCreate({
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="content">Content</Label>
-                <Textarea
-                  id="content"
-                  name="content"
-                  placeholder="Enter module content"
-                  style={{ height: '260px' }}
+                <MarkdownEditor
                   value={data.content}
-                  onChange={(e) => setData('content', e.target.value)}
-                >
-                  {data.content}
-                </Textarea>
+                  onChange={(value) => setData('content', value || '')}
+                />
                 <InputError message={errors.content} />
               </div>
               <div className="grid gap-2">
@@ -109,6 +111,7 @@ export default function ModuleCreate({
                 <div className="grid gap-2">
                   <Label htmlFor="video_url">Video URL</Label>
                   <Input
+                    type="text"
                     id="video_url"
                     name="video_url"
                     placeholder="Enter video URL"
@@ -119,7 +122,7 @@ export default function ModuleCreate({
                 </div>
               ) : (
                 <div className="grid gap-2">
-                  <Label htmlFor="video_url">Video URL</Label>
+                  <Label htmlFor="video_url">Video</Label>
                   <Input
                     id="video_url"
                     name="video_url"
