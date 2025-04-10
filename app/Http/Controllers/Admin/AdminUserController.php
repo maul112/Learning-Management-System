@@ -42,17 +42,23 @@ class AdminUserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        if ($validated['password'] != $request['password_confirmation']) {
-            return redirect()->back()->with('error', 'Passwords do not match.');
+            if ($validated['password'] != $request['password_confirmation']) {
+                return redirect()->back()->with('error', 'Passwords do not match.');
+            }
+
+            $validated['password'] = bcrypt($validated['password']);
+
+            User::create($validated);
+
+            return redirect()->route('users.index')->with('success', 'User created successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to create user.');
         }
-
-        $validated['password'] = bcrypt($validated['password']);
-
-        User::create($validated);
-
-        return redirect()->back()->with('success', 'User created successfully.');
     }
 
     /**

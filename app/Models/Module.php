@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Module extends Model
 {
@@ -13,8 +14,6 @@ class Module extends Model
 
     protected $fillable = [
         'title',
-        'content',
-        'video_url',
         'course_id'
     ];
 
@@ -28,6 +27,16 @@ class Module extends Model
             ->belongsTo(
                 Course::class,
                 'course_id',
+                'id'
+            );
+    }
+
+    public function lessons(): HasMany
+    {
+        return $this
+            ->hasMany(
+                Lesson::class,
+                'module_id',
                 'id'
             );
     }

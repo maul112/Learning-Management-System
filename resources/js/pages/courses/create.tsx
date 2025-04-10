@@ -15,7 +15,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { BreadcrumbItem, User as Instructor } from '@/types';
@@ -50,14 +49,13 @@ export default function CourseCreate({
   const [instructorName, setInstructorName] = useState<string>('');
   const { data, setData, post, processing, errors, reset } = useForm({
     title: '',
-    description: '',
     instructor_id: 0,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     post(route('courses.store'), {
-      onFinish: () => reset('title', 'description', 'instructor_id'),
+      onFinish: () => reset('title', 'instructor_id'),
       onError: (e) => console.log(e),
     });
   };
@@ -82,20 +80,6 @@ export default function CourseCreate({
                   onChange={(e) => setData('title', e.target.value)}
                 />
                 <InputError message={errors.title} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  placeholder="Description"
-                  style={{ height: '260px' }}
-                  value={data.description}
-                  onChange={(e) => setData('description', e.target.value)}
-                >
-                  {data.description}
-                </Textarea>
-                <InputError message={errors.description} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="instructor_id">Instructor Name</Label>

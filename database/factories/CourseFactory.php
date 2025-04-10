@@ -19,7 +19,6 @@ class CourseFactory extends Factory
     {
         return [
             'title' => fake()->sentence(3),
-            'description' => fake()->paragraph(),
             'instructor_id' => User::factory()->instructor(),
         ];
     }

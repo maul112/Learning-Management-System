@@ -25,6 +25,7 @@ class AdminModuleController extends Controller
         return Inertia::render('modules/index', [
             'modules' => ModuleResource::collection($modules),
             'success' => session('success'),
+            'error' => session('error'),
         ]);
     }
 
@@ -45,16 +46,17 @@ class AdminModuleController extends Controller
      */
     public function store(StoreModuleRequest $request)
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        if ($request->file('video_url')) {
-            $path_url = $request->file('video_url')->store('modules-video', 'public');
-            $validated['video_url'] = $path_url;
+            Module::create($validated);
+
+            return redirect()->route('courses.index')->with('success', 'Module created successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to create module.');
         }
-
-        Module::create($validated);
-
-        return redirect()->back()->with('success', 'Module created successfully.');
     }
 
     /**
@@ -81,16 +83,6 @@ class AdminModuleController extends Controller
         try {
             $validated = $request->validated();
 
-            if ($request->file('video_url')) {
-                if ($module->video_url) {
-                    Storage::disk('public')->delete($module->video_url);
-                }
-                $path_url = $request->file('video_url')->store('modules-video', 'public');
-                $validated['video_url'] = $path_url;
-            } else {
-                unset($validated['video_url']);
-            }
-
             $module->update($validated);
 
             return redirect()->back()->with('success', 'Module updated successfully.');
@@ -107,9 +99,6 @@ class AdminModuleController extends Controller
     public function destroy(Module $module)
     {
         try {
-            if ($module->video_url) {
-                Storage::disk('public')->delete($module->video_url);
-            }
             $module->delete();
 
             return redirect()->back()->with('success', 'Module deleted successfully.');

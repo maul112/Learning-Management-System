@@ -23,7 +23,6 @@ class UpdateCourseRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:30',
-            'description' => 'required|string|max:255',
         ];
     }
 }

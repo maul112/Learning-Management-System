@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { Course } from '@/types';
 import { useForm } from '@inertiajs/react';
@@ -49,20 +48,6 @@ export const columns: ColumnDef<Course>[] = [
     ),
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue('title')}</div>
-    ),
-  },
-  {
-    accessorKey: 'description',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Course, unknown>
-        column={column}
-        title="Description"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="capitalize">
-        {(row.getValue('description') as string).slice(0, 30)}
-      </div>
     ),
   },
   {
@@ -104,7 +89,6 @@ function EditCourse({
 
   const { data, setData, patch } = useForm({
     title: course.title,
-    description: course.description,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -142,16 +126,6 @@ function EditCourse({
               name="title"
               value={data.title}
               onChange={(e) => setData('title', e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              placeholder="Description"
-              children={data.description}
-              onChange={(e) => setData('description', e.target.value)}
             />
           </div>
           <Button type="submit">Save changes</Button>

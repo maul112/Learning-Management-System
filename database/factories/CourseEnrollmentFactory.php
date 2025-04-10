@@ -21,7 +21,6 @@ class CourseEnrollmentFactory extends Factory
         return [
             'student_id' => User::factory()->student(),
             'course_id' => Course::factory(),
-            'status' => 'ongoing',
         ];
     }
 }

@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Module>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\StudentLessonProgress>
  */
-class ModuleFactory extends Factory
+class StudentLessonProgressFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,8 +17,7 @@ class ModuleFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->sentence(),
-            'course_id' => Course::factory(),
+            //
         ];
     }
 }

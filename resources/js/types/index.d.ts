@@ -12,6 +12,7 @@ export interface BreadcrumbItem {
 
 export interface NavGroup {
   title: string;
+  icon?: LucideIcon | null;
   items: NavItem[];
 }
 
@@ -47,7 +48,6 @@ export interface User {
 export interface Course {
   id: number;
   title: string;
-  description: string;
   instructorId: string;
   instructor: string;
 }
@@ -55,8 +55,6 @@ export interface Course {
 export interface Module {
   id: number;
   title: string;
-  content: string;
-  video_url: string;
   course_id: number;
   course: string;
 }

@@ -23,8 +23,6 @@ class UpdateModuleRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:30',
-            'description' => 'required|string',
-            'video_url' => 'nullable|string',
         ];
     }
 }

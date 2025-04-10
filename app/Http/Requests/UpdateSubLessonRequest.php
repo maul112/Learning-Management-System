@@ -4,16 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreModuleRequest extends FormRequest
+class UpdateSubLessonRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        // logika untuk pengecekan apakah admin atau bukan
-
-        return true;
+        return false;
     }
 
     /**
@@ -24,8 +22,7 @@ class StoreModuleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string',
-            'course_id' => 'required|exists:courses,id',
+            //
         ];
     }
 }

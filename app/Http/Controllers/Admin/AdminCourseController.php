@@ -50,7 +50,7 @@ class AdminCourseController extends Controller
 
             Course::create($validated);
 
-            return redirect()->back()->with('success', 'Course created successfully.');
+            return redirect()->route('courses.index')->with('success', 'Course created successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 

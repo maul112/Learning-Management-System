@@ -10,9 +10,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
+import { NavGroup, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Book, BookOpen, Folder, LayoutGrid, UsersRound } from 'lucide-react';
+import {
+  Book,
+  BookOpen,
+  BookOpenCheck,
+  Folder,
+  LayoutGrid,
+  UsersRound,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -21,20 +28,40 @@ const mainNavItems: NavItem[] = [
     href: '/dashboard',
     icon: LayoutGrid,
   },
+];
+
+const mainNavGroupItems: NavGroup[] = [
   {
     title: 'Users',
-    href: '/users',
     icon: UsersRound,
+    items: [
+      {
+        title: 'All Users',
+        href: '/users',
+        icon: UsersRound,
+      },
+    ],
   },
   {
     title: 'Courses',
-    href: '/courses',
     icon: Book,
-  },
-  {
-    title: 'Modules',
-    href: '/modules',
-    icon: BookOpen,
+    items: [
+      {
+        title: 'All Courses',
+        href: '/courses',
+        icon: Book,
+      },
+      {
+        title: 'Modules',
+        href: '/modules',
+        icon: BookOpen,
+      },
+      {
+        title: 'Lessons',
+        href: '/lessons',
+        icon: BookOpenCheck,
+      },
+    ],
   },
 ];
 
@@ -67,7 +94,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        <NavMain items={mainNavItems} />
+        <NavMain items={mainNavItems} groupItems={mainNavGroupItems} />
       </SidebarContent>
 
       <SidebarFooter>

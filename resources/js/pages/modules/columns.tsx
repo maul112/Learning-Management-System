@@ -12,22 +12,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import VideoPlayer from '@/components/video-player';
 import { cn } from '@/lib/utils';
 import { Module } from '@/types';
 import { useForm } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { X } from 'lucide-react';
 import { useState } from 'react';
 
 export const columns: ColumnDef<Module>[] = [
@@ -35,8 +25,12 @@ export const columns: ColumnDef<Module>[] = [
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onChange={table.getToggleAllPageRowsSelectedHandler()}
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
@@ -52,42 +46,8 @@ export const columns: ColumnDef<Module>[] = [
       <DataTableColumnHeader<Module, unknown> column={column} title="Title" />
     ),
     cell: ({ row }) => {
-      return (
-        <div className="capitalize">
-          {row.getValue('title')}
-        </div>
-      );
+      return <div className="capitalize">{row.getValue('title')}</div>;
     },
-  },
-  {
-    accessorKey: 'video_url',
-    header: 'Video',
-    cell: ({ row }) => (
-      <Drawer>
-        <DrawerTrigger asChild>
-          <Button variant="link">Watch Video</Button>
-        </DrawerTrigger>
-        <DrawerContent className="h-screen">
-          <DrawerHeader className="flex justify-center items-center">
-            <DrawerClose asChild>
-              <Button variant="outline" className="w-14 h-14 rounded-full">
-                <X className="h-7 w-7" />
-              </Button>
-            </DrawerClose>
-          </DrawerHeader>
-          <div className="p-4 pb-0">
-            <div className="flex items-center justify-center space-x-2">
-              <VideoPlayer
-                url={
-                  row.getValue('video_url') ??
-                  'https://www.youtube.com/watch?v=3Fb7Qv36of4&list=RD3Fb7Qv36of4&start_radio=1'
-                }
-              />
-            </div>
-          </div>
-        </DrawerContent>
-      </Drawer>
-    ),
   },
   {
     accessorKey: 'course',
@@ -120,7 +80,6 @@ function EditModule({
   const [open, setOpen] = useState<boolean>(false);
   const { data, setData, errors, patch } = useForm({
     title: module.title,
-    content: module.content,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -157,18 +116,6 @@ function EditModule({
               onChange={(e) => setData('title', e.target.value)}
             />
             <InputError message={errors.title} />
-          </div>
-          <div className="grid items-start gap-4">
-            <Label htmlFor="content">Content</Label>
-            <Textarea
-              id="content"
-              name="content"
-              value={data.content}
-              onChange={(e) => setData('content', e.target.value)}
-            >
-              {data.content}
-            </Textarea>
-            <InputError message={errors.content} />
           </div>
           <Button type="submit">Save changes</Button>
         </form>

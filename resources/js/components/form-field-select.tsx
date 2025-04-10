@@ -1,0 +1,98 @@
+import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { useState } from 'react';
+
+interface FormFieldSelectProps<TData> {
+  data: TData[];
+  label?: string;
+  placeholder?: string;
+  value: string | number;
+  displayValue?: string; // Optional: custom display string
+  onChange: (value: string | number, item: TData) => void;
+  getOptionLabel: (item: TData) => string;
+  getOptionValue: (item: TData) => string | number;
+  message?: string;
+}
+
+export default function FormFieldSelect<TData>({
+  data,
+  label = 'Select',
+  placeholder = 'Select option...',
+  value,
+  displayValue,
+  onChange,
+  getOptionLabel,
+  getOptionValue,
+  message,
+}: FormFieldSelectProps<TData>) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="grid gap-2">
+      {label && <Label>{label}</Label>}
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="justify-between"
+          >
+            {displayValue || placeholder}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="p-0">
+          <Command>
+            <CommandInput placeholder={`Search ${label.toLowerCase()}...`} />
+            <CommandList>
+              <CommandEmpty>No option found.</CommandEmpty>
+              <CommandGroup>
+                {data.map((item) => {
+                  const itemValue = getOptionValue(item);
+                  const labelText = getOptionLabel(item);
+                  return (
+                    <CommandItem
+                      key={itemValue}
+                      value={labelText}
+                      onSelect={() => {
+                        onChange(itemValue, item);
+                        setOpen(false);
+                      }}
+                    >
+                      {labelText}
+                      <Check
+                        className={cn(
+                          'ml-auto h-4 w-4',
+                          itemValue === value ? 'opacity-100' : 'opacity-0',
+                        )}
+                      />
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+      {message && <InputError message={message} />}
+    </div>
+  );
+}
