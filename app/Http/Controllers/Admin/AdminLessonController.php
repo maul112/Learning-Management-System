@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Lesson;
 use App\Http\Requests\StoreLessonRequest;
 use App\Http\Requests\UpdateLessonRequest;
+use App\Http\Resources\LessonResource;
+use App\Http\Resources\ModuleResource;
+use App\Models\Module;
+use Inertia\Inertia;
 
 class AdminLessonController extends Controller
 {
@@ -14,7 +18,11 @@ class AdminLessonController extends Controller
      */
     public function index()
     {
-        //
+        $lessons = Lesson::with('module', 'subLessons')->get();
+
+        return Inertia::render('lessons/index', [
+            'lessons' => LessonResource::collection($lessons)
+        ]);
     }
 
     /**
@@ -22,7 +30,11 @@ class AdminLessonController extends Controller
      */
     public function create()
     {
-        //
+        $modules = Module::all();
+
+        return Inertia::render('lessons/create', [
+            'modules' => ModuleResource::collection($modules),
+        ]);
     }
 
     /**

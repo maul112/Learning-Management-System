@@ -58,3 +58,10 @@ export interface Module {
   course_id: number;
   course: string;
 }
+
+export interface Lesson {
+  id: number;
+  title: string;
+  module_id: number;
+  module: string;
+}
