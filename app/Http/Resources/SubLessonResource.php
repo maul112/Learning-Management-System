@@ -19,7 +19,6 @@ class SubLessonResource extends JsonResource
             'title' => $this->title,
             'content' => $this->content,
             'order' => $this->order,
-            'lesson_id' => $this->lesson_id,
             'lesson' => new LessonResource($this->lesson),
         ];
     }

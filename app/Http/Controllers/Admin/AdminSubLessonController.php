@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\SubLesson;
 use App\Http\Requests\StoreSubLessonRequest;
 use App\Http\Requests\UpdateSubLessonRequest;
+use App\Http\Resources\LessonResource;
+use App\Http\Resources\SubLessonResource;
+use App\Models\Lesson;
+use Inertia\Inertia;
 
 class AdminSubLessonController extends Controller
 {
@@ -14,7 +18,13 @@ class AdminSubLessonController extends Controller
      */
     public function index()
     {
-        //
+        $subLessons = SubLesson::with('lesson')->get();
+
+        return Inertia::render('sub-lessons/index', [
+            'subLessons' => SubLessonResource::collection($subLessons),
+            'success' => session('success'),
+            'error' => session('error')
+        ]);
     }
 
     /**
@@ -22,7 +32,13 @@ class AdminSubLessonController extends Controller
      */
     public function create()
     {
-        //
+        $lessons = Lesson::all();
+
+        return Inertia::render('sub-lessons/create', [
+            'lessons' => LessonResource::collection($lessons),
+            'success' => session('success'),
+            'error' => session('error')
+        ]);
     }
 
     /**

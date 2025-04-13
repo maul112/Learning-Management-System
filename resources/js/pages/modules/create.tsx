@@ -52,8 +52,11 @@ export default function ModuleCreate({
           <FormLayout onSubmit={handleSubmit}>
             <FormFieldInput
               htmlFor="title"
-              placeholder="Module title"
               label="Title"
+              type="text"
+              id="title"
+              name="title"
+              placeholder="Module title"
               value={data.title || ''}
               onChange={(e) => setData('title', e.target.value)}
               message={errors.title || ''}

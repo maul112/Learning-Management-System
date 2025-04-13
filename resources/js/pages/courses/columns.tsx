@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { Course } from '@/types';
+import { Course, User } from '@/types';
 import { useForm } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
@@ -59,7 +59,9 @@ export const columns: ColumnDef<Course>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('instructor')}</div>
+      <div className="capitalize">
+        {(row.getValue('instructor') as User)?.name}
+      </div>
     ),
   },
   {

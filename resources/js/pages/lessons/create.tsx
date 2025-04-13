@@ -55,6 +55,9 @@ export default function LessonsCreate({
               htmlFor="title"
               label="Title"
               type="text"
+              id="title"
+              name="title"
+              placeholder="Enter lesson title"
               value={data.title}
               onChange={(e) => setData('title', e.target.value)}
               message={errors.title || ''}
@@ -63,6 +66,9 @@ export default function LessonsCreate({
               htmlFor="order"
               label="Order"
               type="number"
+              id="order"
+              name="order"
+              placeholder="Enter lesson order"
               value={data.order}
               onChange={(e) => setData('order', e.target.value)}
               message={errors.order || ''}

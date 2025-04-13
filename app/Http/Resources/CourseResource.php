@@ -18,8 +18,7 @@ class CourseResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'instructor_id' => $this->instructor_id,
-            'instructor' => $this->instructor->name,
+            'instructor' => new UserResource($this->instructor),
         ];
     }
 }

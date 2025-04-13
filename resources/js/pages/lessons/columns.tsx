@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { Lesson } from '@/types';
+import { Lesson, Module } from '@/types';
 import { useForm } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
@@ -54,7 +54,15 @@ export const columns: ColumnDef<Lesson>[] = [
       <DataTableColumnHeader<Lesson, unknown> column={column} title="Module" />
     ),
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('module')}</div>
+      <div className="capitalize">
+        {(row.getValue('module') as Module)?.title}
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'order',
+    header: ({ column }) => (
+      <DataTableColumnHeader<Lesson, unknown> column={column} title="Order" />
     ),
   },
   {

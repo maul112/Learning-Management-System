@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateLessonRequest;
 use App\Http\Resources\LessonResource;
 use App\Http\Resources\ModuleResource;
 use App\Models\Module;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class AdminLessonController extends Controller
@@ -42,7 +43,17 @@ class AdminLessonController extends Controller
      */
     public function store(StoreLessonRequest $request)
     {
-        //
+        try {
+            $validated = $request->validated();
+
+            Lesson::create($validated);
+
+            return redirect()->route('lessons.index')->with('success', 'Lesson created successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to create lesson.');
+        }
     }
 
     /**
@@ -66,7 +77,17 @@ class AdminLessonController extends Controller
      */
     public function update(UpdateLessonRequest $request, Lesson $lesson)
     {
-        //
+        try {
+            $validated = $request->validated();
+
+            $lesson->update($validated);
+
+            return redirect()->back()->with('success', 'Lesson updated successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to update lesson.');
+        }
     }
 
     /**
@@ -74,6 +95,14 @@ class AdminLessonController extends Controller
      */
     public function destroy(Lesson $lesson)
     {
-        //
+        try {
+            $lesson->delete();
+
+            return redirect()->back()->with('success', 'Lesson deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to delete lesson.');
+        }
     }
 }

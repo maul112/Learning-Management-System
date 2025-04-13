@@ -49,19 +49,28 @@ export interface Course {
   id: number;
   title: string;
   instructorId: string;
-  instructor: string;
+  instructor: User;
 }
 
 export interface Module {
   id: number;
   title: string;
-  course_id: number;
-  course: string;
+  course: Course;
+  lessons: Lesson[];
 }
 
 export interface Lesson {
   id: number;
   title: string;
-  module_id: number;
-  module: string;
+  order: number;
+  module: Module;
+  subLessons: SubLesson[];
+}
+
+export interface SubLesson {
+  id: number;
+  title: string;
+  content: string;
+  order: number;
+  lesson: Lesson;
 }
