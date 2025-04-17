@@ -24,7 +24,9 @@ class AdminLessonController extends Controller
         $lessons = Lesson::with('module', 'subLessons')->get();
 
         return Inertia::render('lessons/index', [
-            'lessons' => LessonResource::collection($lessons)
+            'lessons' => LessonResource::collection($lessons),
+            'success' => session('success'),
+            'error' => session('error')
         ]);
     }
 

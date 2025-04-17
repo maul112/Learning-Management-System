@@ -1,44 +1,47 @@
 import FormFieldInput from '@/components/form-field-input';
+import FormFieldMarkdown from '@/components/form-field-markdown';
 import FormFieldSelect from '@/components/form-field-select';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem, User as Instructor, User } from '@/types';
+import { BreadcrumbItem, Lesson, SubLesson } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Courses',
-    href: '/courses',
+    title: 'Sub Lessons',
+    href: '/sub-lessons',
   },
   {
-    title: 'Create',
-    href: '/courses/create',
+    title: 'Edit',
+    href: '/sub-lessons/edit',
   },
 ];
 
-export default function CourseCreate({
-  instructors,
+export default function EditSubLesson({
+  subLesson,
+  lessons,
   success,
   error,
 }: {
-  instructors: {
-    data: Instructor[];
-  };
+  subLesson: { data: SubLesson };
+  lessons: { data: Lesson[] };
   success?: string;
   error?: string;
 }) {
-  const { data, setData, post, processing, errors, reset } = useForm({
-    title: '',
-    instructor_id: 0,
+  const { data, setData, put, processing, errors } = useForm({
+    title: subLesson.data.title,
+    content: subLesson.data.content,
+    order: subLesson.data.order,
+    lesson_id: subLesson.data.lesson.id,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    post(route('courses.store'), {
-      onFinish: () => reset('title', 'instructor_id'),
+    put(route('sub-lessons.update', subLesson.data.id), {
+      preserveScroll: true,
       onError: (e) => console.log(e),
     });
   };
@@ -47,7 +50,7 @@ export default function CourseCreate({
     <AppLayout breadcrumbs={breadcrumbs}>
       {success && toast.success(success)}
       {error && toast.error(error)}
-      <Head title="Create User" />
+      <Head title="Edit Sub Lesson" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
           <FormLayout onSubmit={handleSubmit}>
@@ -57,24 +60,39 @@ export default function CourseCreate({
               type="text"
               id="title"
               name="title"
-              placeholder="Javascript"
               value={data.title}
               onChange={(e) => setData('title', e.target.value)}
               message={errors.title || ''}
             />
-            <FormFieldSelect<User>
-              data={instructors.data}
-              label="Instructor"
-              value={data.instructor_id}
+            <FormFieldMarkdown
+              htmlFor="content"
+              label="Content"
+              value={data.content}
+              onChange={(value) => setData('content', value || '')}
+              message={errors.content || ''}
+            />
+            <FormFieldInput
+              htmlFor="order"
+              label="Order"
+              type="number"
+              id="order"
+              name="order"
+              value={data.order}
+              onChange={(e) => setData('order', Number(e.target.value))}
+              message={errors.order || ''}
+            />
+            <FormFieldSelect
+              data={lessons.data}
+              label="Lesson"
+              value={data.lesson_id}
+              onChange={(value) => setData('lesson_id', Number(value))}
               displayValue={
-                instructors.data.find(
-                  (instructor) => instructor.id === data.instructor_id,
-                )?.name || ''
+                lessons.data.find((lesson) => lesson.id === data.lesson_id)
+                  ?.title || ''
               }
-              onChange={(value) => setData('instructor_id', Number(value))}
-              getOptionLabel={(instructor) => instructor.name}
-              getOptionValue={(instructor) => instructor.id}
-              message={errors.instructor_id || ''}
+              getOptionLabel={(lesson: Lesson) => lesson.title}
+              getOptionValue={(lesson: Lesson) => String(lesson.id)}
+              message={errors.lesson_id || ''}
             />
             <Button
               type="submit"
@@ -83,7 +101,7 @@ export default function CourseCreate({
               disabled={processing}
             >
               {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-              Create
+              Save
             </Button>
           </FormLayout>
         </div>

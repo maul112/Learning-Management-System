@@ -16,7 +16,6 @@ import FormLayout from '@/layouts/form-layout';
 import { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -54,13 +53,10 @@ export default function UsersCreate({
     });
   };
 
-  useEffect(() => {
-    if (success) toast.success(success);
-    if (error) toast.error(error);
-  }, [success, error]);
-
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
+      {success && toast.success(success)}
+      {error && toast.error(error)}
       <Head title="Create User" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">

@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateSubLessonRequest;
 use App\Http\Resources\LessonResource;
 use App\Http\Resources\SubLessonResource;
 use App\Models\Lesson;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class AdminSubLessonController extends Controller
@@ -46,7 +47,17 @@ class AdminSubLessonController extends Controller
      */
     public function store(StoreSubLessonRequest $request)
     {
-        //
+        try {
+            $validated = $request->validated();
+
+            SubLesson::create($validated);
+
+            return redirect()->route('sub-lessons.index')->with('success', 'Sub lesson created successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->route('sub-lessons.create')->with('error', 'Something went wrong');
+        }
     }
 
     /**
@@ -62,7 +73,14 @@ class AdminSubLessonController extends Controller
      */
     public function edit(SubLesson $subLesson)
     {
-        //
+        $lessons = Lesson::all();
+
+        return Inertia::render('sub-lessons/edit', [
+            'subLesson' => new SubLessonResource($subLesson),
+            'lessons' => LessonResource::collection($lessons),
+            'success' => session('success'),
+            'error' => session('error')
+        ]);
     }
 
     /**
@@ -70,7 +88,17 @@ class AdminSubLessonController extends Controller
      */
     public function update(UpdateSubLessonRequest $request, SubLesson $subLesson)
     {
-        //
+        try {
+            $validated = $request->validated();
+
+            $subLesson->update($validated);
+
+            return redirect()->route('sub-lessons.index')->with('success', 'Sub lesson updated successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Something went wrong');
+        }
     }
 
     /**
@@ -78,6 +106,14 @@ class AdminSubLessonController extends Controller
      */
     public function destroy(SubLesson $subLesson)
     {
-        //
+        try {
+            $subLesson->delete();
+
+            return redirect()->route('sub-lessons.index')->with('success', 'Sub lesson deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Something went wrong');
+        }
     }
 }

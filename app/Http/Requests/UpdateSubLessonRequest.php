@@ -11,7 +11,7 @@ class UpdateSubLessonRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateSubLessonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'nullable|string',
+            'content' => 'nullable|string',
+            'order' => 'nullable|integer',
+            'lesson_id' => 'required|exists:lessons,id',
         ];
     }
 }
