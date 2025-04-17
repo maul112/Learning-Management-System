@@ -37,6 +37,7 @@ export const columns: ColumnDef<Module>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onChange={row.getToggleSelectedHandler()}
+        aria-label="Select row"
       />
     ),
   },

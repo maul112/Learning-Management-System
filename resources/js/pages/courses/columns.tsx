@@ -36,6 +36,7 @@ export const columns: ColumnDef<Course>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
+        arial-label="Select row"
       />
     ),
     enableSorting: false,

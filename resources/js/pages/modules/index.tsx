@@ -3,8 +3,9 @@ import { DataTable } from '@/components/data-table';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem, Module } from '@/types';
 import { Head } from '@inertiajs/react';
-import { columns } from './columns';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
+import { columns } from './columns';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -22,11 +23,13 @@ export default function Modules({
   success?: string;
   error?: string;
 }) {
+  useEffect(() => {
+    if (success) toast.success(success);
+    if (error) toast.error(error);
+  }, [success, error]);
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      {success && toast.success(success)}
-      {error && toast.error(error)}
       <Head title="Modules" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">

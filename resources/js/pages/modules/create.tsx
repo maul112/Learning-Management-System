@@ -72,7 +72,7 @@ export default function ModuleCreate({
               onChange={(value) => setData('course_id', Number(value))}
               getOptionLabel={(course) => course.title}
               getOptionValue={(course) => course.id}
-              message={errors.course_id}
+              message={errors.course_id || ''}
             />
             <Button
               type="submit"

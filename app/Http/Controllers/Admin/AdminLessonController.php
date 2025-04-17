@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Lesson;
 use App\Http\Requests\StoreLessonRequest;
 use App\Http\Requests\UpdateLessonRequest;
+use App\Http\Resources\CourseResource;
 use App\Http\Resources\LessonResource;
 use App\Http\Resources\ModuleResource;
+use App\Models\Course;
 use App\Models\Module;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -31,9 +33,11 @@ class AdminLessonController extends Controller
      */
     public function create()
     {
+        $courses = Course::all();
         $modules = Module::all();
 
         return Inertia::render('lessons/create', [
+            'courses' => CourseResource::collection($courses),
             'modules' => ModuleResource::collection($modules),
         ]);
     }

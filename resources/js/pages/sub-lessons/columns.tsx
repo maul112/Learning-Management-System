@@ -37,6 +37,22 @@ export const columns: ColumnDef<SubLesson>[] = [
     },
   },
   {
+    accessorKey: 'lesson',
+    header: ({ column }) => (
+      <DataTableColumnHeader<SubLesson, unknown>
+        column={column}
+        title="Lesson"
+      />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="capitalize">
+          {(row.getValue('lesson') as SubLesson)?.title}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: 'order',
     header: ({ column }) => (
       <DataTableColumnHeader<SubLesson, unknown>
@@ -50,6 +66,7 @@ export const columns: ColumnDef<SubLesson>[] = [
   },
   {
     id: 'actions',
+    header: 'Actions',
     enableSorting: false,
     enableHiding: false,
     cell: ({ row }) => {

@@ -41,7 +41,7 @@ export default function FormFieldSelect<TData>({
   getOptionValue,
   message,
 }: FormFieldSelectProps<TData>) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   return (
     <div className="grid gap-2">

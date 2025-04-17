@@ -50,6 +50,7 @@ export interface Course {
   title: string;
   instructorId: string;
   instructor: User;
+  modules: Module[];
 }
 
 export interface Module {
