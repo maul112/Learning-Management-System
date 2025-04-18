@@ -75,7 +75,16 @@ class AdminLessonController extends Controller
      */
     public function edit(Lesson $lesson)
     {
-        //
+        $courses = Course::all();
+        $modules = Module::all();
+
+        return Inertia::render('admin/lessons/edit', [
+            'lesson' => new LessonResource($lesson),
+            'courses' => CourseResource::collection($courses),
+            'modules' => ModuleResource::collection($modules),
+            'success' => session('success'),
+            'error' => session('error')
+        ]);
     }
 
     /**

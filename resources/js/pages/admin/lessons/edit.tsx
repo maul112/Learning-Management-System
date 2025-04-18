@@ -3,7 +3,7 @@ import FormFieldSelect from '@/components/form-field-select';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem, Course, Module } from '@/types';
+import { BreadcrumbItem, Course, Lesson, Module } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -20,12 +20,16 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function LessonsCreate({
+export default function LessonsEdit({
+  lesson,
   courses,
   modules,
   success,
   error,
 }: {
+  lesson: {
+    data: Lesson;
+  };
   courses: {
     data: Course[];
   };
@@ -35,18 +39,18 @@ export default function LessonsCreate({
   success?: string;
   error?: string;
 }) {
-  const { data, setData, post, processing, errors } = useForm({
-    title: '',
-    order: 0,
-    course_id: 0,
-    module_id: 0,
+  const { data, setData, put, processing, errors } = useForm({
+    title: lesson.data.title,
+    order: lesson.data.order,
+    course_id: lesson.data.module.course.id,
+    module_id: lesson.data.module.id,
   });
 
   const [moduleValues, setModuleValues] = useState<Module[]>([]);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    post(route('lessons.store'), {
+    put(route('lessons.update', lesson.data.id), {
       onError: (e) => console.log(e),
     });
   };
@@ -129,7 +133,7 @@ export default function LessonsCreate({
               {processing && (
                 <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Create
+              Save
             </Button>
           </FormLayout>
         </div>

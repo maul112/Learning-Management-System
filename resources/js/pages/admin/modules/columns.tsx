@@ -1,20 +1,10 @@
 import { DataTableColumnHeader } from '@/components/data-table-header';
+import { DeleteModal } from '@/components/delete-modal';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { Course, Module } from '@/types';
-import { Link, useForm } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
 
 export const columns: ColumnDef<Module>[] = [
   {
@@ -98,7 +88,7 @@ export const columns: ColumnDef<Module>[] = [
     cell: ({ row }) => (
       <div className="flex gap-2">
         <EditModule module={row.original} />
-        <DeleteModule module={row.original} />
+        <DeleteModal resourceName="module" id={row.original.id} />
       </div>
     ),
   },
@@ -109,41 +99,5 @@ function EditModule({ module }: { module: Module }) {
     <Button className="cursor-pointer" variant="secondary">
       <Link href={route('modules.edit', module.id)}>Edit</Link>
     </Button>
-  );
-}
-
-function DeleteModule({ module }: { module: Module }) {
-  const [open, setOpen] = useState<boolean>(false);
-  const { delete: destroy } = useForm();
-
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    destroy(route('modules.destroy', module.id), {
-      onFinish: () => setOpen(false),
-    });
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="cursor-pointer" variant="destructive">
-          Delete
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Module</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this module?
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <DialogFooter>
-            <Button type="submit">Delete</Button>
-            <DialogClose>Cancel</DialogClose>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
   );
 }

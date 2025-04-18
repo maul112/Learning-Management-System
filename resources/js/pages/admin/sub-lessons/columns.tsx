@@ -1,20 +1,10 @@
 import { DataTableColumnHeader } from '@/components/data-table-header';
+import { DeleteModal } from '@/components/delete-modal';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { SubLesson } from '@/types';
-import { Link, useForm } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
 
 export const columns: ColumnDef<SubLesson>[] = [
   {
@@ -86,7 +76,7 @@ export const columns: ColumnDef<SubLesson>[] = [
       return (
         <div className="flex gap-2">
           <EditSubLesson subLesson={subLesson} />
-          <DeleteSubLesson subLesson={subLesson} />
+          <DeleteModal resourceName="sub-lesson" id={subLesson.id} />
         </div>
       );
     },
@@ -96,46 +86,7 @@ export const columns: ColumnDef<SubLesson>[] = [
 function EditSubLesson({ subLesson }: { subLesson: SubLesson }) {
   return (
     <Button className="cursor-pointer" variant="secondary">
-      <Link href={route('sub-lessons.edit', subLesson.id)}>
-        Edit
-      </Link>
+      <Link href={route('sub-lessons.edit', subLesson.id)}>Edit</Link>
     </Button>
-  );
-}
-
-function DeleteSubLesson({ subLesson }: { subLesson: SubLesson }) {
-  const [open, setOpen] = useState<boolean>(false);
-
-  const { delete: destroy } = useForm();
-
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    destroy(route('sub-lessons.destroy', subLesson.id), {
-      onFinish: () => setOpen(false),
-    });
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="cursor-pointer" variant="destructive">
-          Delete
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Sub Lesson</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this sub lesson?
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <DialogFooter>
-            <Button type="submit">Delete</Button>
-            <DialogClose>Cancel</DialogClose>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
   );
 }

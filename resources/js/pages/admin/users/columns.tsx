@@ -1,34 +1,13 @@
 import { DataTableColumnHeader } from '@/components/data-table-header';
+import { DeleteModal } from '@/components/delete-modal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { User } from '@/types';
-import { useForm } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
 
 export const columns: ColumnDef<User, string>[] = [
   {
@@ -116,128 +95,17 @@ export const columns: ColumnDef<User, string>[] = [
       return (
         <div className="flex gap-5">
           <EditUser user={user} />
-          <DeleteUser user={user} />
+          <DeleteModal resourceName="user" id={user.id} />
         </div>
       );
     },
   },
 ];
 
-type EditUserProps = {
-  user: User;
-  className?: string;
-} & React.ComponentProps<'form'>;
-
-function EditUser({ user, className }: EditUserProps) {
-  const [open, setOpen] = useState<boolean>(false);
-  const { data, setData, patch } = useForm({
-    name: user.name,
-    email: user.email,
-    status: user.status,
-  });
-
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    patch(route('users.update', user.id), {
-      preserveScroll: true,
-      onFinish: () => setOpen(false),
-      onError: (e) => console.log(e),
-    });
-  };
+function EditUser({ user }: { user: User }) {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="cursor-pointer" variant="secondary">
-          Edit
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit User</DialogTitle>
-          <DialogDescription>
-            Make changes to users data here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
-
-        <form
-          onSubmit={handleSubmit}
-          className={cn('grid items-start gap-4', className)}
-        >
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              type="email"
-              id="email"
-              onChange={(e) => setData('email', e.target.value)}
-              defaultValue={data.email}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              onChange={(e) => setData('name', e.target.value)}
-              defaultValue={data.name}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="status">Status</Label>
-            <Select
-              onValueChange={(value) => setData('status', value)}
-              defaultValue={user.status}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Select a status</SelectLabel>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="suspend">Suspend</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <Button type="submit">Save changes</Button>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function DeleteUser({ user }: { user: User }) {
-  const [open, setOpen] = useState<boolean>(false);
-
-  const { delete: destroy } = useForm();
-
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    destroy(route('users.destroy', user.id), {
-      onFinish: () => setOpen(false),
-    });
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="cursor-pointer" variant="destructive">
-          Delete
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete User</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this user?
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <DialogFooter>
-            <Button type="submit">Delete</Button>
-            <DialogClose>Cancel</DialogClose>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <Button className="cursor-pointer" variant="secondary">
+      <Link href={route('users.edit', user.id)}>Edit</Link>
+    </Button>
   );
 }

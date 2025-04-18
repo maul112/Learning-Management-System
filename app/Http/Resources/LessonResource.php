@@ -20,7 +20,11 @@ class LessonResource extends JsonResource
             'order' => $this->order,
             'module' => [
                 'id' => $this->module->id,
-                'title' => $this->module->title
+                'title' => $this->module->title,
+                'course' => [
+                    'id' => $this->module->course->id,
+                    'title' => $this->module->course->title
+                ]
             ],
             'sub_lessons' => SubLessonResource::collection($this->subLessons),
         ];

@@ -74,7 +74,11 @@ class AdminUserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return Inertia::render('admin/users/edit', [
+            'user' => new UserResource($user),
+            'success' => session('success'),
+            'error' => session('error'),
+        ]);
     }
 
     /**

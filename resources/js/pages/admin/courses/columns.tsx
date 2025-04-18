@@ -1,20 +1,10 @@
 import { DataTableColumnHeader } from '@/components/data-table-header';
+import { DeleteModal } from '@/components/delete-modal';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { Course, User } from '@/types';
-import { Link, useForm } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
 
 export const columns: ColumnDef<Course>[] = [
   {
@@ -49,6 +39,20 @@ export const columns: ColumnDef<Course>[] = [
     ),
   },
   {
+    accessorKey: 'description',
+    header: ({ column }) => (
+      <DataTableColumnHeader<Course, unknown>
+        column={column}
+        title="Description"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="capitalize">
+        {(row.getValue('description') as string).slice(0, 50)}
+      </div>
+    ),
+  },
+  {
     accessorKey: 'instructor',
     header: ({ column }) => (
       <DataTableColumnHeader<Course, unknown>
@@ -71,7 +75,7 @@ export const columns: ColumnDef<Course>[] = [
       return (
         <div className="flex space-x-2">
           <EditCourse course={course} />
-          <DeleteCourse course={course} />
+          <DeleteModal resourceName="course" id={course.id} />
         </div>
       );
     },
@@ -83,42 +87,5 @@ function EditCourse({ course }: { course: Course }) {
     <Button className="cursor-pointer" variant="secondary">
       <Link href={route('courses.edit', course.id)}>Edit</Link>
     </Button>
-  );
-}
-
-function DeleteCourse({ course }: { course: Course }) {
-  const [open, setOpen] = useState<boolean>(false);
-
-  const { delete: destroy } = useForm();
-
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    destroy(route('courses.destroy', course.id), {
-      onFinish: () => setOpen(false),
-    });
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="cursor-pointer" variant="destructive">
-          Delete
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Course</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this course?
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <DialogFooter>
-            <Button type="submit">Delete</Button>
-            <DialogClose>Cancel</DialogClose>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
   );
 }
