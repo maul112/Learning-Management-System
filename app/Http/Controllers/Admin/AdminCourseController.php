@@ -21,7 +21,7 @@ class AdminCourseController extends Controller
     {
         $courses = Course::all();
 
-        return Inertia::render('courses/index', [
+        return Inertia::render('admin/courses/index', [
             'courses' => CourseResource::collection($courses),
             'success' => session('success'),
             'error' => session('error'),
@@ -35,7 +35,7 @@ class AdminCourseController extends Controller
     {
         $instructors = User::where('role', 'instructor')->get();
 
-        return Inertia::render('courses/create', [
+        return Inertia::render('admin/courses/create', [
             'instructors' => UserResource::collection($instructors),
         ]);
     }
@@ -84,7 +84,7 @@ class AdminCourseController extends Controller
 
             $course->update($validated);
 
-            return redirect()->back()->with('success', 'Course updated successfully.');
+            return redirect()->route('courses.index')->with('success', 'Course updated successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 

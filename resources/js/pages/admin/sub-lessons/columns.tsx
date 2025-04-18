@@ -96,7 +96,9 @@ export const columns: ColumnDef<SubLesson>[] = [
 function EditSubLesson({ subLesson }: { subLesson: SubLesson }) {
   return (
     <Button className="cursor-pointer" variant="secondary">
-      <Link href={route('sub-lessons.edit', subLesson.id)}>Edit</Link>
+      <Link href={route('sub-lessons.edit', subLesson.id)}>
+        Edit
+      </Link>
     </Button>
   );
 }

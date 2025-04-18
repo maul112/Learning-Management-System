@@ -23,7 +23,7 @@ class AdminLessonController extends Controller
     {
         $lessons = Lesson::with('module', 'subLessons')->get();
 
-        return Inertia::render('lessons/index', [
+        return Inertia::render('admin/lessons/index', [
             'lessons' => LessonResource::collection($lessons),
             'success' => session('success'),
             'error' => session('error')
@@ -38,7 +38,7 @@ class AdminLessonController extends Controller
         $courses = Course::all();
         $modules = Module::all();
 
-        return Inertia::render('lessons/create', [
+        return Inertia::render('admin/lessons/create', [
             'courses' => CourseResource::collection($courses),
             'modules' => ModuleResource::collection($modules),
         ]);
@@ -88,7 +88,7 @@ class AdminLessonController extends Controller
 
             $lesson->update($validated);
 
-            return redirect()->back()->with('success', 'Lesson updated successfully.');
+            return redirect()->route('lessons.index')->with('success', 'Lesson updated successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 

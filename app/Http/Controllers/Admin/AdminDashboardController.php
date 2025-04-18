@@ -22,7 +22,7 @@ class AdminDashboardController extends Controller
             ->where('role', '!=', 'admin')->count();
         $module_count = Module::count();
 
-        return Inertia::render('dashboard', [
+        return Inertia::render('admin/dashboard', [
             'instructorsCount' => $instructors_count,
             'studentsCount' => $students_count,
             'userActiveCount' => $user_active_cound,

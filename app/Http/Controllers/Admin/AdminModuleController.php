@@ -22,7 +22,7 @@ class AdminModuleController extends Controller
     {
         $modules = Module::with('course')->get();
 
-        return Inertia::render('modules/index', [
+        return Inertia::render('admin/modules/index', [
             'modules' => ModuleResource::collection($modules),
             'success' => session('success'),
             'error' => session('error'),
@@ -36,7 +36,7 @@ class AdminModuleController extends Controller
     {
         $courses = Course::all();
 
-        return Inertia::render('modules/create', [
+        return Inertia::render('admin/modules/create', [
             'courses' => CourseResource::collection($courses),
         ]);
     }

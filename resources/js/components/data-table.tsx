@@ -78,7 +78,7 @@ export function DataTable<TData, TValue>({
         />
         <div className="flex items-center gap-2">
           {/* Create Button */}
-          <Link href={route(`${create}s.create`)}>
+          <Link href={route(`${create}s.create`)} prefetch>
             <Button variant="outline">
               <span className="flex items-center gap-2">
                 Create {create}

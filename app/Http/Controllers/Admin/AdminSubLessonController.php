@@ -21,7 +21,7 @@ class AdminSubLessonController extends Controller
     {
         $subLessons = SubLesson::with('lesson')->get();
 
-        return Inertia::render('sub-lessons/index', [
+        return Inertia::render('admin/sub-lessons/index', [
             'subLessons' => SubLessonResource::collection($subLessons),
             'success' => session('success'),
             'error' => session('error')
@@ -35,7 +35,7 @@ class AdminSubLessonController extends Controller
     {
         $lessons = Lesson::all();
 
-        return Inertia::render('sub-lessons/create', [
+        return Inertia::render('admin/sub-lessons/create', [
             'lessons' => LessonResource::collection($lessons),
             'success' => session('success'),
             'error' => session('error')
@@ -75,7 +75,7 @@ class AdminSubLessonController extends Controller
     {
         $lessons = Lesson::all();
 
-        return Inertia::render('sub-lessons/edit', [
+        return Inertia::render('admin/sub-lessons/edit', [
             'subLesson' => new SubLessonResource($subLesson),
             'lessons' => LessonResource::collection($lessons),
             'success' => session('success'),

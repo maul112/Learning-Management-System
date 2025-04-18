@@ -19,7 +19,7 @@ class AdminUserController extends Controller
     {
         $users = User::where('role', "!=", "admin")->get();
 
-        return Inertia::render('users/index', [
+        return Inertia::render('admin/users/index', [
             'users' => UserResource::collection($users),
             'success' => session('success'),
             'error' => session('error'),
@@ -31,7 +31,7 @@ class AdminUserController extends Controller
      */
     public function create()
     {
-        return Inertia::render('users/create', [
+        return Inertia::render('admin/users/create', [
             'success' => session('success'),
             'error' => session('error'),
         ]);
@@ -87,7 +87,7 @@ class AdminUserController extends Controller
 
             $user->update($validated);
 
-            return redirect()->back()->with('success', 'User updated successfully.');
+            return redirect()->route('users.index')->with('success', 'User updated successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 

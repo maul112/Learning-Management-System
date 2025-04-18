@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminLessonController;
 use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AdminSubLessonController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,6 +21,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('modules', AdminModuleController::class);
     Route::resource('lessons', AdminLessonController::class);
     Route::resource('sub-lessons', AdminSubLessonController::class);
+    Route::prefix('student')->group(function () {
+        Route::get('dashboard', [StudentController::class, 'index'])->name('student.dashboard');
+        Route::get('academic', [StudentController::class, 'academic'])->name('student.academic');
+    });
 });
 
 require __DIR__ . '/settings.php';
