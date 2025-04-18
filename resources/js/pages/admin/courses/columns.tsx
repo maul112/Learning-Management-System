@@ -11,11 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
 import { Course, User } from '@/types';
-import { useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
 
@@ -81,60 +78,11 @@ export const columns: ColumnDef<Course>[] = [
   },
 ];
 
-function EditCourse({
-  course,
-  className,
-}: {
-  course: Course;
-  className?: string;
-}) {
-  const [open, setOpen] = useState<boolean>(false);
-
-  const { data, setData, patch } = useForm({
-    title: course.title,
-  });
-
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    patch(route('courses.update', course.id), {
-      preserveScroll: true,
-      onFinish: () => setOpen(false),
-      onError: (e) => console.log(e),
-    });
-  };
-
+function EditCourse({ course }: { course: Course }) {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="cursor-pointer" variant="secondary">
-          Edit
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit Course</DialogTitle>
-          <DialogDescription>
-            Make changes to course data here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
-        <form
-          onSubmit={handleSubmit}
-          className={cn('grid items-start gap-4', className)}
-        >
-          <div className="grid gap-2">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              type="text"
-              id="title"
-              name="title"
-              value={data.title}
-              onChange={(e) => setData('title', e.target.value)}
-            />
-          </div>
-          <Button type="submit">Save changes</Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <Button className="cursor-pointer" variant="secondary">
+      <Link href={route('courses.edit', course.id)}>Edit</Link>
+    </Button>
   );
 }
 

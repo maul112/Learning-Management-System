@@ -51,7 +51,7 @@ class AdminModuleController extends Controller
 
             Module::create($validated);
 
-            return redirect()->route('courses.index')->with('success', 'Module created successfully.');
+            return redirect()->route('modules.index')->with('success', 'Module created successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
@@ -72,7 +72,14 @@ class AdminModuleController extends Controller
      */
     public function edit(Module $module)
     {
-        //
+        $courses = Course::all();
+
+        return Inertia::render('admin/modules/edit', [
+            'courses' => CourseResource::collection($courses),
+            'module' => new ModuleResource($module),
+            'success' => session('success'),
+            'error' => session('error'),
+        ]);
     }
 
     /**
@@ -85,7 +92,7 @@ class AdminModuleController extends Controller
 
             $module->update($validated);
 
-            return redirect()->back()->with('success', 'Module updated successfully.');
+            return redirect()->route('modules.index')->with('success', 'Module updated successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 

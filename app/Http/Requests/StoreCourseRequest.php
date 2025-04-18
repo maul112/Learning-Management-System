@@ -23,6 +23,7 @@ class StoreCourseRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:30',
+            'description' => 'required|string',
             'instructor_id' => 'required|exists:users,id',
         ];
     }

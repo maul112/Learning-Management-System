@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Module;
+use App\Models\Lesson;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -27,7 +27,7 @@ class QuizFactory extends Factory
             'question' => $this->faker->sentence(),
             'options' => json_encode($options),
             'answer' => $options[array_rand($options)],
-            'module_id' => Module::factory(),
+            'lesson_id' => Lesson::factory(),
         ];
     }
 }

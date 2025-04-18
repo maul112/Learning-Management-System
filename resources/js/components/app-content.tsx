@@ -6,8 +6,8 @@ interface AppContentProps extends React.ComponentProps<'main'> {
 }
 
 export function AppContent({
-  variant = 'header',
   children,
+  variant = 'header',
   ...props
 }: AppContentProps) {
   if (variant === 'sidebar') {

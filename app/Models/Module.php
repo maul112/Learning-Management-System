@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Module extends Model
@@ -14,6 +15,10 @@ class Module extends Model
 
     protected $fillable = [
         'title',
+        'description',
+        'order',
+        'duration',
+        'difficulty',
         'course_id'
     ];
 
@@ -38,6 +43,34 @@ class Module extends Model
                 Lesson::class,
                 'module_id',
                 'id'
+            );
+    }
+
+    /**
+     * Get the course's enrolled students.
+     * @return BelongsToMany<User, Course, \Illuminate\Database\Eloquent\Relations\Pivot>
+     */
+    public function students(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(
+                User::class,
+                'module_enrollments',
+                'module_id',
+                'student_id'
+            )
+            ->withPivot('progress', 'status')
+            ->withTimestamps();
+    }
+
+    public function certificates(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(
+                User::class,
+                'certificates',
+                'module_id',
+                'student_id'
             );
     }
 }

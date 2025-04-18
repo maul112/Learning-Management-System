@@ -1,5 +1,4 @@
 import { DataTableColumnHeader } from '@/components/data-table-header';
-import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -12,11 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
 import { Course, Module } from '@/types';
-import { useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
 
@@ -64,6 +60,39 @@ export const columns: ColumnDef<Module>[] = [
     },
   },
   {
+    accessorKey: 'order',
+    header: ({ column }) => (
+      <DataTableColumnHeader<Module, unknown> column={column} title="Order" />
+    ),
+    cell: ({ row }) => {
+      return <div className="capitalize">{row.getValue('order')}</div>;
+    },
+  },
+  {
+    accessorKey: 'duration',
+    header: ({ column }) => (
+      <DataTableColumnHeader<Module, unknown>
+        column={column}
+        title="Duration"
+      />
+    ),
+    cell: ({ row }) => {
+      return <div className="capitalize">{row.getValue('duration')} Hours</div>;
+    },
+  },
+  {
+    accessorKey: 'difficulty',
+    header: ({ column }) => (
+      <DataTableColumnHeader<Module, unknown>
+        column={column}
+        title="Difficulty"
+      />
+    ),
+    cell: ({ row }) => {
+      return <div className="capitalize">{row.getValue('difficulty')}</div>;
+    },
+  },
+  {
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => (
@@ -75,57 +104,11 @@ export const columns: ColumnDef<Module>[] = [
   },
 ];
 
-function EditModule({
-  module,
-  className,
-}: {
-  module: Module;
-  className?: string;
-}) {
-  const [open, setOpen] = useState<boolean>(false);
-  const { data, setData, errors, patch } = useForm({
-    title: module.title,
-  });
-
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    patch(route('modules.update', module.id), {
-      onFinish: () => setOpen(false),
-      onError: (e) => console.log(e),
-    });
-  };
-
+function EditModule({ module }: { module: Module }) {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="cursor-pointer" variant="secondary">
-          Edit
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit Module</DialogTitle>
-          <DialogDescription>
-            Make changes to module data here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
-        <form
-          onSubmit={handleSubmit}
-          className={cn('grid items-start gap-4', className)}
-        >
-          <div className="grid items-start gap-4">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={data.title}
-              onChange={(e) => setData('title', e.target.value)}
-            />
-            <InputError message={errors.title} />
-          </div>
-          <Button type="submit">Save changes</Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <Button className="cursor-pointer" variant="secondary">
+      <Link href={route('modules.edit', module.id)}>Edit</Link>
+    </Button>
   );
 }
 

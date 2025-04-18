@@ -71,7 +71,14 @@ class AdminCourseController extends Controller
      */
     public function edit(Course $course)
     {
-        //
+        $instructors = User::where('role', 'instructor')->get();
+
+        return Inertia::render('admin/courses/edit', [
+            'instructors' => UserResource::collection($instructors),
+            'course' => new CourseResource($course),
+            'success' => session('success'),
+            'error' => session('error'),
+        ]);
     }
 
     /**

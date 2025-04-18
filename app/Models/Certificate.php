@@ -13,7 +13,7 @@ class Certificate extends Model
 
     protected $fillable = [
         'student_id',
-        'course_id',
+        'module_id',
     ];
 
     /**
@@ -34,11 +34,11 @@ class Certificate extends Model
      * Get the course that owns the certificate.
      * @return BelongsTo<Course, Certificate>
      */
-    public function course(): BelongsTo
+    public function module(): BelongsTo
     {
         return $this
             ->belongsTo(
-                Course::class,
+                Module::class,
                 'course_id',
                 'id'
             );

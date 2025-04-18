@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('student')->group(function () {
         Route::get('dashboard', [StudentController::class, 'index'])->name('student.dashboard');
         Route::get('academic', [StudentController::class, 'academic'])->name('student.academic');
+        Route::get('courses', [StudentController::class, 'courses'])->name('student.courses');
     });
 });
 

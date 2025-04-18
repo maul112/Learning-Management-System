@@ -48,7 +48,8 @@ export interface User {
 export interface Course {
   id: number;
   title: string;
-  instructorId: string;
+  description: string;
+  instructor_id: number;
   instructor: User;
   modules: Module[];
 }
@@ -56,6 +57,11 @@ export interface Course {
 export interface Module {
   id: number;
   title: string;
+  description: string;
+  order: number;
+  duration: number;
+  difficulty: string;
+  course_id: number;
   course: Course;
   lessons: Lesson[];
 }

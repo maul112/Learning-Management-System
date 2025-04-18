@@ -1,4 +1,5 @@
 import FormFieldInput from '@/components/form-field-input';
+import FormFieldMarkdown from '@/components/form-field-markdown';
 import FormFieldSelect from '@/components/form-field-select';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
@@ -32,6 +33,7 @@ export default function CourseCreate({
 }) {
   const { data, setData, post, processing, errors, reset } = useForm({
     title: '',
+    description: '',
     instructor_id: 0,
   });
 
@@ -61,6 +63,13 @@ export default function CourseCreate({
               value={data.title}
               onChange={(e) => setData('title', e.target.value)}
               message={errors.title || ''}
+            />
+            <FormFieldMarkdown
+              htmlFor="description"
+              label="Description"
+              value={data.description}
+              onChange={(value) => setData('description', value || '')}
+              message={errors.description || ''}
             />
             <FormFieldSelect<User>
               data={instructors.data}

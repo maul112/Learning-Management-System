@@ -16,17 +16,8 @@ class Quiz extends Model
         'question',
         'options',
         'answer',
-        'module_id',
+        'lesson_id',
     ];
-
-    /**
-     * Get the module that owns the quiz.
-     * @return BelongsTo<Module, Quiz>
-     */
-    public function module(): BelongsTo
-    {
-        return $this->belongsTo(Module::class);
-    }
 
     /**
      * Get the student quiz's submissions.

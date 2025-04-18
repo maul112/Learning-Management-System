@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem, Course } from '@/types';
+import { BreadcrumbItem, Course, Module } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -29,29 +29,33 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function ModuleCreate({
+export default function ModuleEdit({
   courses,
+  module,
   sucess,
   error,
 }: {
   courses: {
     data: Course[];
   };
+  module: {
+    data: Module;
+  };
   sucess?: string;
   error?: string;
 }) {
-  const { data, setData, post, processing, errors } = useForm({
-    title: '',
-    description: '',
-    order: 0,
-    duration: 0,
-    difficulty: '',
-    course_id: 0,
+  const { data, setData, put, processing, errors } = useForm({
+    title: module.data.title,
+    description: module.data.description,
+    order: module.data.order,
+    duration: module.data.duration,
+    difficulty: module.data.difficulty,
+    course_id: module.data.course_id,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    post(route('modules.store'), {
+    put(route('modules.update', module.data.id), {
       onError: (e) => console.log(e),
     });
   };
@@ -145,7 +149,7 @@ export default function ModuleCreate({
               {processing && (
                 <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Create
+              Save
             </Button>
           </FormLayout>
         </div>

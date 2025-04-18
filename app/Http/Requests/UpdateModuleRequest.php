@@ -22,7 +22,11 @@ class UpdateModuleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:30',
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'order' => 'required|integer',
+            'duration' => 'required|integer',
+            'difficulty' => 'required|in:beginner,intermediate,advanced',
         ];
     }
 }
