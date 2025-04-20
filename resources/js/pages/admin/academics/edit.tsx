@@ -1,0 +1,81 @@
+import FormFieldInput from '@/components/form-field-input';
+import FormFieldMarkdown from '@/components/form-field-markdown';
+import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/app-layout';
+import FormLayout from '@/layouts/form-layout';
+import { Academic, BreadcrumbItem } from '@/types';
+import { Head, useForm } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
+import { toast } from 'sonner';
+
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Academics',
+    href: '/academics',
+  },
+  {
+    title: 'Edit',
+    href: '/academics/edit',
+  },
+];
+
+export default function AcademicsEdit({
+  academic,
+  success,
+  error,
+}: {
+  academic: { data: Academic };
+  success?: string;
+  error?: string;
+}) {
+  const { data, setData, put, processing, errors, reset } = useForm({
+    title: academic.data.title,
+    description: academic.data.description,
+  });
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    put(route('academics.update', academic.data.id), {
+      onFinish: () => reset('title', 'description'),
+      onError: (e) => console.log(e),
+    });
+  };
+
+  return (
+    <AppLayout breadcrumbs={breadcrumbs}>
+      {success && toast.success(success)}
+      {error && toast.error(error)}
+      <Head title="Edit Academic" />
+      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+        <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
+          <FormLayout onSubmit={handleSubmit}>
+            <FormFieldInput
+              htmlFor="title"
+              label="Title"
+              type="text"
+              value={data.title}
+              onChange={(e) => setData('title', e.target.value)}
+              message={errors.title || ''}
+            />
+            <FormFieldMarkdown
+              htmlFor="description"
+              label="Description"
+              value={data.description}
+              onChange={(value) => setData('description', value || '')}
+              message={errors.description || ''}
+            />
+            <Button
+              type="submit"
+              className="mt-4 w-full"
+              tabIndex={4}
+              disabled={processing}
+            >
+              {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+              Save
+            </Button>
+          </FormLayout>
+        </div>
+      </div>
+    </AppLayout>
+  );
+}

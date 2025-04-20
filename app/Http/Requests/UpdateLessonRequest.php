@@ -23,6 +23,7 @@ class UpdateLessonRequest extends FormRequest
     {
         return [
             'title' => 'nullable|string',
+            'content' => 'nullable|string',
             'order' => 'nullable|integer',
             'module_id' => 'nullable|exists:modules,id',
         ];

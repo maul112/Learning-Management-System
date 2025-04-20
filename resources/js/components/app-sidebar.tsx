@@ -36,11 +36,15 @@ const mainNavGroupItems: NavGroup[] = [
     ],
   },
   {
-    title: 'Courses',
+    title: 'Classes',
     icon: Book,
     items: [
       {
-        title: 'All Courses',
+        title: 'Academics',
+        href: '/academics',
+      },
+      {
+        title: 'Courses',
         href: '/courses',
       },
       {
@@ -50,10 +54,6 @@ const mainNavGroupItems: NavGroup[] = [
       {
         title: 'Lessons',
         href: '/lessons',
-      },
-      {
-        title: 'Sub Lessons',
-        href: '/sub-lessons',
       },
     ],
   },

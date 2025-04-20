@@ -1,8 +1,8 @@
 import { useInitials } from '@/hooks/use-initials';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { User } from '@/types';
-import { Link } from '@inertiajs/react';
+import { SharedData, User } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
@@ -33,6 +33,7 @@ export function StudentNavUser({
   items,
   variant = 'header',
 }: StudentNavUserProps) {
+  const { auth } = usePage<SharedData>().props;
   const getInitials = useInitials();
   const isMobile = useIsMobile();
 
@@ -43,6 +44,21 @@ export function StudentNavUser({
         variant === 'sidebar' && !isMobile ? 'mr-20' : '',
       )}
     >
+      {auth.user && (
+        <Button variant="ghost">
+          <Link
+            href={
+              auth.user.role === 'admin'
+                ? route('dashboard')
+                : auth.user.role === 'instructor'
+                  ? route('instructor.dashboard')
+                  : route('student.dashboard')
+            }
+          >
+            Dashboard
+          </Link>
+        </Button>
+      )}
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>

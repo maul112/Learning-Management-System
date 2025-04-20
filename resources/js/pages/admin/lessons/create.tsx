@@ -1,4 +1,5 @@
 import FormFieldInput from '@/components/form-field-input';
+import FormFieldMarkdown from '@/components/form-field-markdown';
 import FormFieldSelect from '@/components/form-field-select';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
@@ -37,6 +38,7 @@ export default function LessonsCreate({
 }) {
   const { data, setData, post, processing, errors } = useForm({
     title: '',
+    content: '',
     order: 0,
     course_id: 0,
     module_id: 0,
@@ -81,6 +83,13 @@ export default function LessonsCreate({
               value={data.title}
               onChange={(e) => setData('title', e.target.value)}
               message={errors.title || ''}
+            />
+            <FormFieldMarkdown
+              htmlFor="content"
+              label="Content"
+              value={data.content}
+              onChange={(value) => setData('content', value || '')}
+              message={errors.content || ''}
             />
             <FormFieldInput
               htmlFor="order"

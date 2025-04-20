@@ -15,8 +15,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/lessons',
   },
   {
-    title: 'Create',
-    href: '/lessons/create',
+    title: 'Edit',
+    href: '/lessons/edit',
   },
 ];
 

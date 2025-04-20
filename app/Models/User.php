@@ -73,10 +73,10 @@ class User extends Authenticatable
     {
         return $this
             ->belongsToMany(
-                Module::class,
-                'module_enrollments',
+                Course::class,
+                'course_enrollments',
                 'student_id',
-                'module_id'
+                'course_id'
             )
             ->withPivot('progress', 'status')
             ->withTimestamps();

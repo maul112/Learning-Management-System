@@ -15,10 +15,7 @@ class Module extends Model
 
     protected $fillable = [
         'title',
-        'description',
         'order',
-        'duration',
-        'difficulty',
         'course_id'
     ];
 
@@ -44,23 +41,6 @@ class Module extends Model
                 'module_id',
                 'id'
             );
-    }
-
-    /**
-     * Get the course's enrolled students.
-     * @return BelongsToMany<User, Course, \Illuminate\Database\Eloquent\Relations\Pivot>
-     */
-    public function students(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(
-                User::class,
-                'module_enrollments',
-                'module_id',
-                'student_id'
-            )
-            ->withPivot('progress', 'status')
-            ->withTimestamps();
     }
 
     public function certificates(): BelongsToMany

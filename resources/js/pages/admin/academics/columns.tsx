@@ -2,11 +2,11 @@ import { DataTableColumnHeader } from '@/components/data-table-header';
 import { DeleteModal } from '@/components/delete-modal';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Lesson, Module } from '@/types';
+import { Academic } from '@/types';
 import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
-export const columns: ColumnDef<Lesson>[] = [
+export const columns: ColumnDef<Academic>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -23,64 +23,55 @@ export const columns: ColumnDef<Lesson>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
+        arial-label="Select row"
       />
     ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: 'title',
     header: ({ column }) => (
-      <DataTableColumnHeader<Lesson, unknown> column={column} title="Title" />
+      <DataTableColumnHeader<Academic, unknown> column={column} title="Title" />
     ),
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue('title')}</div>
     ),
   },
   {
-    accessorKey: 'module',
+    accessorKey: 'description',
     header: ({ column }) => (
-      <DataTableColumnHeader<Lesson, unknown> column={column} title="Module" />
+      <DataTableColumnHeader<Academic, unknown>
+        column={column}
+        title="Description"
+      />
     ),
     cell: ({ row }) => (
       <div className="capitalize">
-        {(row.getValue('module') as Module)?.title}
+        {(row.getValue('description') as string).slice(0, 50)}
       </div>
-    ),
-  },
-  {
-    accessorKey: 'id',
-    header: 'Content',
-    cell: ({ row }) => (
-      <div className="capitalize">
-        <Link className='underline' href={route('lessons.show', row.getValue("id"))}>Lihat</Link>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'order',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Lesson, unknown> column={column} title="Order" />
     ),
   },
   {
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
-      const lesson = row.original;
+      const academic = row.original;
 
       return (
         <div className="flex space-x-2">
-          <EditLesson lesson={lesson} />
-          <DeleteModal resourceName="lesson" id={lesson.id} />
+          <EditAcademic academic={academic} />
+          <DeleteModal resourceName="academic" id={academic.id} />
         </div>
       );
     },
   },
 ];
 
-function EditLesson({ lesson }: { lesson: Lesson }) {
+function EditAcademic({ academic }: { academic: Academic }) {
   return (
     <Button className="cursor-pointer" variant="secondary">
-      <Link href={route('lessons.edit', lesson.id)}>Edit</Link>
+      <Link href={route('academics.edit', academic.id)}>Edit</Link>
     </Button>
   );
 }

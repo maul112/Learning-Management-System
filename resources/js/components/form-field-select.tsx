@@ -61,7 +61,10 @@ export default function FormFieldSelect<TData>({
         </PopoverTrigger>
         <PopoverContent className="p-0">
           <Command>
-            <CommandInput placeholder={`Search ${label.toLowerCase()}...`} />
+            <CommandInput
+              defaultValue={displayValue}
+              placeholder={`Search ${label.toLowerCase()}...`}
+            />
             <CommandList>
               <CommandEmpty>No option found.</CommandEmpty>
               <CommandGroup>

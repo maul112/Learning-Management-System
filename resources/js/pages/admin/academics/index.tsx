@@ -1,23 +1,23 @@
 import { DataTable } from '@/components/data-table';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem, SubLesson } from '@/types';
+import { Academic, BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { toast } from 'sonner';
 import { columns } from './columns';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Sub Lessons',
-    href: '/sub-lessons',
+    title: 'Academics',
+    href: '/academics',
   },
 ];
 
-export default function SubLessons({
-  subLessons,
+export default function Academics({
+  academics,
   success,
   error,
 }: {
-  subLessons: { data: SubLesson[] };
+  academics: { data: Academic[] };
   success?: string;
   error?: string;
 }) {
@@ -25,14 +25,14 @@ export default function SubLessons({
     <AppLayout breadcrumbs={breadcrumbs}>
       {success && toast.success(success)}
       {error && toast.error(error)}
-      <Head title="Sub Lessons" />
+      <Head title="academics" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-          <DataTable<SubLesson, string>
+          <DataTable<Academic, string>
             columns={columns}
-            data={subLessons.data}
+            data={academics.data}
             searchKey="title"
-            create="sub-lesson"
+            create="academic"
           />
         </div>
       </div>

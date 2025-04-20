@@ -2,9 +2,17 @@ import FormFieldInput from '@/components/form-field-input';
 import FormFieldMarkdown from '@/components/form-field-markdown';
 import FormFieldSelect from '@/components/form-field-select';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem, User as Instructor, User } from '@/types';
+import { Academic, BreadcrumbItem, User as Instructor, User } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -21,10 +29,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function CourseCreate({
+  academics,
   instructors,
   success,
   error,
 }: {
+  academics: {
+    data: Academic[];
+  };
   instructors: {
     data: Instructor[];
   };
@@ -34,6 +46,10 @@ export default function CourseCreate({
   const { data, setData, post, processing, errors, reset } = useForm({
     title: '',
     description: '',
+    order: 0,
+    duration: 0,
+    difficulty: '',
+    academic_id: 0,
     instructor_id: 0,
   });
 
@@ -70,6 +86,56 @@ export default function CourseCreate({
               value={data.description}
               onChange={(value) => setData('description', value || '')}
               message={errors.description || ''}
+            />
+            <FormFieldInput
+              htmlFor="order"
+              label="Order"
+              type="number"
+              id="order"
+              name="order"
+              value={data.order}
+              onChange={(e) => setData('order', Number(e.target.value))}
+              message={errors.order || ''}
+            />
+            <FormFieldInput
+              htmlFor="duration"
+              label="Duration"
+              type="number"
+              id="duration"
+              name="duration"
+              value={data.duration}
+              onChange={(e) => setData('duration', Number(e.target.value))}
+              message={errors.duration || ''}
+            />
+            <div className="grid gap-2">
+              <Label>Difficulty</Label>
+              <Select
+                value={data.difficulty}
+                onValueChange={(value) => setData('difficulty', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a difficulty" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="beginner">Beginner</SelectItem>
+                  <SelectItem value="intermediate">Intermediate</SelectItem>
+                  <SelectItem value="advanced">Advanced</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <FormFieldSelect<Academic>
+              data={academics.data}
+              label="Academic"
+              value={data.academic_id}
+              displayValue={
+                academics.data.find(
+                  (academic) => academic.id === data.academic_id,
+                )?.title || ''
+              }
+              onChange={(value) => setData('academic_id', Number(value))}
+              getOptionLabel={(academic) => academic.title}
+              getOptionValue={(academic) => academic.id}
+              message={errors.academic_id || ''}
             />
             <FormFieldSelect<User>
               data={instructors.data}

@@ -22,8 +22,13 @@ class UpdateCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:30',
-            'description' => 'required|string',
+            'title' => 'nullable|string',
+            'description' => 'nullable|string',
+            'order' => 'nullable|integer',
+            'duration' => 'nullable|integer',
+            'difficulty' => 'nullable|in:beginner,intermediate,advanced',
+            'academic_id' => 'nullable|exists:academics,id',
+            'instructor_id' => 'nullable|exists:users,id',
         ];
     }
 }

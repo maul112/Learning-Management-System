@@ -1,44 +1,40 @@
 import FormFieldInput from '@/components/form-field-input';
 import FormFieldMarkdown from '@/components/form-field-markdown';
-import FormFieldSelect from '@/components/form-field-select';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem, Lesson } from '@/types';
+import { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Sub Lessons',
-    href: '/sub-lessons',
+    title: 'Academics',
+    href: '/academics',
   },
   {
     title: 'Create',
-    href: '/sub-lessons/create',
+    href: '/academics/create',
   },
 ];
 
-export default function CreateSubLesson({
-  lessons,
+export default function AcademicsCreate({
   success,
   error,
 }: {
-  lessons: { data: Lesson[] };
   success?: string;
   error?: string;
 }) {
-  const { data, setData, post, processing, errors } = useForm({
+  const { data, setData, post, processing, errors, reset } = useForm({
     title: '',
-    content: '',
-    order: '',
-    lesson_id: 0,
+    description: '',
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    post(route('sub-lessons.store'), {
+    post(route('academics.store'), {
+      onFinish: () => reset('title', 'description'),
       onError: (e) => console.log(e),
     });
   };
@@ -47,7 +43,7 @@ export default function CreateSubLesson({
     <AppLayout breadcrumbs={breadcrumbs}>
       {success && toast.success(success)}
       {error && toast.error(error)}
-      <Head title="Create User" />
+      <Head title="Create Academic" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
           <FormLayout onSubmit={handleSubmit}>
@@ -55,41 +51,16 @@ export default function CreateSubLesson({
               htmlFor="title"
               label="Title"
               type="text"
-              id="title"
-              name="title"
               value={data.title}
               onChange={(e) => setData('title', e.target.value)}
               message={errors.title || ''}
             />
             <FormFieldMarkdown
-              htmlFor="content"
-              label="Content"
-              value={data.content}
-              onChange={(value) => setData('content', value || '')}
-              message={errors.content || ''}
-            />
-            <FormFieldInput
-              htmlFor="order"
-              label="Order"
-              type="number"
-              id="order"
-              name="order"
-              value={data.order}
-              onChange={(e) => setData('order', e.target.value)}
-              message={errors.order || ''}
-            />
-            <FormFieldSelect
-              data={lessons.data}
-              label="Lesson"
-              value={data.lesson_id}
-              onChange={(value) => setData('lesson_id', Number(value))}
-              displayValue={
-                lessons.data.find((lesson) => lesson.id === data.lesson_id)
-                  ?.title || ''
-              }
-              getOptionLabel={(lesson: Lesson) => lesson.title}
-              getOptionValue={(lesson: Lesson) => String(lesson.id)}
-              message={errors.lesson_id || ''}
+              htmlFor="description"
+              label="Description"
+              value={data.description}
+              onChange={(value) => setData('description', value || '')}
+              message={errors.description || ''}
             />
             <Button
               type="submit"

@@ -21,7 +21,7 @@ export function StudentNavMain({ items = [] }: { items: NavItem[] }) {
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex items-center gap-10">
+    <nav className="flex items-center gap-10">
       {isMobile && (
         <NavigationMenu>
           <NavigationMenuList>
@@ -66,6 +66,6 @@ export function StudentNavMain({ items = [] }: { items: NavItem[] }) {
             )}
           </Link>
         ))}
-    </div>
+    </nav>
   );
 }

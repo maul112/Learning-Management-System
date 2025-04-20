@@ -2,9 +2,16 @@ import FormFieldInput from '@/components/form-field-input';
 import FormFieldMarkdown from '@/components/form-field-markdown';
 import FormFieldSelect from '@/components/form-field-select';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem, Course, User } from '@/types';
+import { Academic, BreadcrumbItem, Course, User } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -15,17 +22,21 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/courses',
   },
   {
-    title: 'Create',
-    href: '/courses/create',
+    title: 'Edit',
+    href: '/courses/edit',
   },
 ];
 
 export default function CourseEdit({
+  academics,
   instructors,
   course,
   success,
   error,
 }: {
+  academics: {
+    data: Academic[];
+  };
   instructors: {
     data: User[];
   };
@@ -38,7 +49,11 @@ export default function CourseEdit({
   const { data, setData, put, processing, errors, reset } = useForm({
     title: course.data.title,
     description: course.data.description,
-    instructor_id: course.data.instructor_id,
+    order: course.data.order,
+    duration: course.data.duration,
+    difficulty: course.data.difficulty,
+    academic_id: course.data.academic.id,
+    instructor_id: course.data.instructor.id,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -74,6 +89,54 @@ export default function CourseEdit({
               value={data.description}
               onChange={(value) => setData('description', value || '')}
               message={errors.description || ''}
+            />
+            <FormFieldInput
+              htmlFor="order"
+              label="Order"
+              type="number"
+              id="order"
+              name="order"
+              value={data.order}
+              onChange={(e) => setData('order', Number(e.target.value))}
+              message={errors.order || ''}
+            />
+            <FormFieldInput
+              htmlFor="duration"
+              label="Duration"
+              type="number"
+              id="duration"
+              name="duration"
+              value={data.duration}
+              onChange={(e) => setData('duration', Number(e.target.value))}
+              message={errors.duration || ''}
+            />
+            <Select
+              defaultValue={data.difficulty}
+              value={data.difficulty}
+              onValueChange={(value) => setData('difficulty', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select difficulty" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="beginner">Beginner</SelectItem>
+                <SelectItem value="intermediate">Intermediate</SelectItem>
+                <SelectItem value="advanced">Advanced</SelectItem>
+              </SelectContent>
+            </Select>
+            <FormFieldSelect<Academic>
+              data={academics.data}
+              label="Academic"
+              value={data.academic_id}
+              displayValue={
+                academics.data.find(
+                  (academic) => academic.id === data.academic_id,
+                )?.title || ''
+              }
+              onChange={(value) => setData('academic_id', Number(value))}
+              getOptionLabel={(academic) => academic.title}
+              getOptionValue={(academic) => academic.id}
+              message={errors.academic_id || ''}
             />
             <FormFieldSelect<User>
               data={instructors.data}

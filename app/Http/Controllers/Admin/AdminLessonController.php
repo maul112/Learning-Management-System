@@ -21,7 +21,7 @@ class AdminLessonController extends Controller
      */
     public function index()
     {
-        $lessons = Lesson::with('module', 'subLessons')->get();
+        $lessons = Lesson::with(['module'])->get();
 
         return Inertia::render('admin/lessons/index', [
             'lessons' => LessonResource::collection($lessons),

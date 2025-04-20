@@ -17,6 +17,7 @@ class LessonResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'content' => $this->content,
             'order' => $this->order,
             'module' => [
                 'id' => $this->module->id,
@@ -26,7 +27,6 @@ class LessonResource extends JsonResource
                     'title' => $this->module->course->title
                 ]
             ],
-            'sub_lessons' => SubLessonResource::collection($this->subLessons),
         ];
     }
 }

@@ -16,8 +16,22 @@ class Course extends Model
     protected $fillable = [
         'title',
         'description',
+        'order',
+        'duration',
+        'difficulty',
+        'academic_id',
         'instructor_id',
     ];
+
+    public function academic(): BelongsTo
+    {
+        return $this
+            ->belongsTo(
+                Academic::class,
+                'academic_id',
+                'id'
+            );
+    }
 
     /**
      * Get the user that instructs the course.
@@ -43,6 +57,17 @@ class Course extends Model
                 Module::class,
                 'course_id',
                 'id'
+            );
+    }
+
+    public function students(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(
+                User::class,
+                'course_enrollments',
+                'course_id',
+                'student_id'
             );
     }
 

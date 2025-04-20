@@ -23,6 +23,7 @@ class StoreLessonRequest extends FormRequest
     {
         return [
             'title' => 'required|string',
+            'content' => 'required|string',
             'order' => 'required|integer',
             'module_id' => 'required|exists:modules,id',
         ];

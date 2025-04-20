@@ -55,31 +55,7 @@ export const columns: ColumnDef<Module>[] = [
       <DataTableColumnHeader<Module, unknown> column={column} title="Order" />
     ),
     cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue('order')}</div>;
-    },
-  },
-  {
-    accessorKey: 'duration',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Module, unknown>
-        column={column}
-        title="Duration"
-      />
-    ),
-    cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue('duration')} Hours</div>;
-    },
-  },
-  {
-    accessorKey: 'difficulty',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Module, unknown>
-        column={column}
-        title="Difficulty"
-      />
-    ),
-    cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue('difficulty')}</div>;
+      return <div className="capitalize">Langkah {row.getValue('order')}</div>;
     },
   },
   {

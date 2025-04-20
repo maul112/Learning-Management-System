@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AcademicResource;
 use App\Models\Course;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\UserResource;
+use App\Models\Academic;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -33,10 +35,14 @@ class AdminCourseController extends Controller
      */
     public function create()
     {
+        $academics = Academic::all();
         $instructors = User::where('role', 'instructor')->get();
 
         return Inertia::render('admin/courses/create', [
+            'academics' => AcademicResource::collection($academics),
             'instructors' => UserResource::collection($instructors),
+            'success' => session('success'),
+            'error' => session('error'),
         ]);
     }
 
@@ -71,9 +77,11 @@ class AdminCourseController extends Controller
      */
     public function edit(Course $course)
     {
+        $academics = Academic::all();
         $instructors = User::where('role', 'instructor')->get();
 
         return Inertia::render('admin/courses/edit', [
+            'academics' => AcademicResource::collection($academics),
             'instructors' => UserResource::collection($instructors),
             'course' => new CourseResource($course),
             'success' => session('success'),

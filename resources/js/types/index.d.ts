@@ -45,11 +45,21 @@ export interface User {
   [key: string]: unknown; // This allows for additional properties...
 }
 
+export interface Academic {
+  id: number;
+  title: string;
+  description: string;
+  courses: Course[];
+}
+
 export interface Course {
   id: number;
   title: string;
   description: string;
-  instructor_id: number;
+  order: number;
+  duration: number;
+  difficulty: string;
+  academic: Academic;
   instructor: User;
   modules: Module[];
 }
@@ -57,11 +67,7 @@ export interface Course {
 export interface Module {
   id: number;
   title: string;
-  description: string;
   order: number;
-  duration: number;
-  difficulty: string;
-  course_id: number;
   course: Course;
   lessons: Lesson[];
 }
@@ -69,15 +75,7 @@ export interface Module {
 export interface Lesson {
   id: number;
   title: string;
-  order: number;
-  module: Module;
-  subLessons: SubLesson[];
-}
-
-export interface SubLesson {
-  id: number;
-  title: string;
   content: string;
   order: number;
-  lesson: Lesson;
+  module: Module;
 }

@@ -15,6 +15,7 @@ class Lesson extends Model
 
     protected $fillable = [
         'title',
+        'content',
         'order',
         'module_id',
     ];
@@ -22,11 +23,6 @@ class Lesson extends Model
     public function module(): BelongsTo
     {
         return $this->belongsTo(Module::class);
-    }
-
-    public function subLessons(): HasMany
-    {
-        return $this->hasMany(SubLesson::class);
     }
 
     public function quiz(): HasOne

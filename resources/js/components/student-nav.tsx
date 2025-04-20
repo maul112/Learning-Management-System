@@ -50,11 +50,16 @@ export function StudentNav({
 }) {
   const { auth } = usePage<SharedData>().props;
   const isMobile = useIsMobile();
+  const page = usePage();
+
+  if (!page.url.startsWith('/student')) {
+    return null;
+  }
 
   return (
     <nav
       className={cn(
-        'flex items-center justify-between py-5 fixed top-0 left-0 right-0 z-50 shadow-md bg-background',
+        'bg-background fixed top-0 right-0 left-0 z-50 flex items-center justify-between py-5 shadow-md',
         variant === 'sidebar' && !isMobile ? 'px-8' : 'px-24',
         isMobile && 'px-8',
       )}

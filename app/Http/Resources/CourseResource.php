@@ -18,7 +18,18 @@ class CourseResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'instructor' => new UserResource($this->instructor),
+            'order' => $this->order,
+            'duration' => $this->duration,
+            'difficulty' => $this->difficulty,
+            'academic' => [
+                'id' => $this->academic->id,
+                'title' => $this->academic->title
+            ],
+            'instructor' => [
+                'id' => $this->instructor->id,
+                'name' => $this->instructor->name
+            ],
+            'modules' => ModuleResource::collection($this->modules),
         ];
     }
 }

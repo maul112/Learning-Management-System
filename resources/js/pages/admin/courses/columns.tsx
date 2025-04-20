@@ -39,20 +39,6 @@ export const columns: ColumnDef<Course>[] = [
     ),
   },
   {
-    accessorKey: 'description',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Course, unknown>
-        column={column}
-        title="Description"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="capitalize">
-        {(row.getValue('description') as string).slice(0, 50)}
-      </div>
-    ),
-  },
-  {
     accessorKey: 'instructor',
     header: ({ column }) => (
       <DataTableColumnHeader<Course, unknown>
@@ -67,10 +53,32 @@ export const columns: ColumnDef<Course>[] = [
     ),
   },
   {
+    accessorKey: 'order',
+    header: ({ column }) => (
+      <DataTableColumnHeader<Course, unknown> column={column} title="Order" />
+    ),
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue('order')}</div>
+    ),
+  },
+  {
+    accessorKey: 'difficulty',
+    header: ({ column }) => (
+      <DataTableColumnHeader<Course, unknown>
+        column={column}
+        title="Difficulty"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue('difficulty')}</div>
+    ),
+  },
+  {
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
       const course = row.original;
+      console.log(course);
 
       return (
         <div className="flex space-x-2">
