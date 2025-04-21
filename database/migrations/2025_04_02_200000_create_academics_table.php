@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('academics', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('image')->nullable();
             $table->string('description');
             $table->timestamps();
         });

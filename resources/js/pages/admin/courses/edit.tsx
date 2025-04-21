@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { Academic, BreadcrumbItem, Course, User } from '@/types';
+import { Academic, BreadcrumbItem, Course } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -29,16 +29,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function CourseEdit({
   academics,
-  instructors,
   course,
   success,
   error,
 }: {
   academics: {
     data: Academic[];
-  };
-  instructors: {
-    data: User[];
   };
   course: {
     data: Course;
@@ -53,13 +49,12 @@ export default function CourseEdit({
     duration: course.data.duration,
     difficulty: course.data.difficulty,
     academic_id: course.data.academic.id,
-    instructor_id: course.data.instructor.id,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     put(route('courses.update', course.data.id), {
-      onFinish: () => reset('title', 'instructor_id'),
+      onFinish: () => reset('title'),
       onError: (e) => console.log(e),
     });
   };
@@ -137,20 +132,6 @@ export default function CourseEdit({
               getOptionLabel={(academic) => academic.title}
               getOptionValue={(academic) => academic.id}
               message={errors.academic_id || ''}
-            />
-            <FormFieldSelect<User>
-              data={instructors.data}
-              label="Instructor"
-              value={data.instructor_id}
-              displayValue={
-                instructors.data.find(
-                  (instructor) => instructor.id === data.instructor_id,
-                )?.name || ''
-              }
-              onChange={(value) => setData('instructor_id', Number(value))}
-              getOptionLabel={(instructor) => instructor.name}
-              getOptionValue={(instructor) => instructor.id}
-              message={errors.instructor_id || ''}
             />
             <Button
               type="submit"

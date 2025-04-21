@@ -23,12 +23,12 @@ class StoreCourseRequest extends FormRequest
     {
         return [
             'title' => 'required|string',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'required|string',
             'order' => 'required|integer',
             'duration' => 'required|integer',
             'difficulty' => 'required|in:beginner,intermediate,advanced',
             'academic_id' => 'required|exists:academics,id',
-            'instructor_id' => 'required|exists:users,id',
         ];
     }
 }

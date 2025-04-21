@@ -55,7 +55,7 @@ export const columns: ColumnDef<Module>[] = [
       <DataTableColumnHeader<Module, unknown> column={column} title="Order" />
     ),
     cell: ({ row }) => {
-      return <div className="capitalize">Langkah {row.getValue('order')}</div>;
+      return <div className="capitalize">{row.getValue('order')}</div>;
     },
   },
   {

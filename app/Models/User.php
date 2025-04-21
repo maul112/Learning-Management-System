@@ -52,20 +52,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user's courses as an instructor.
-     * @return HasMany<Course, User>
-     */
-    public function instructorCourses(): HasMany
-    {
-        return $this
-            ->hasMany(
-                Course::class,
-                'instructor_id',
-                'id'
-            );
-    }
-
-    /**
      * Get the user's courses as a student.
      * @return BelongsToMany<Course, User, \Illuminate\Database\Eloquent\Relations\Pivot>
      */

@@ -23,12 +23,12 @@ class UpdateCourseRequest extends FormRequest
     {
         return [
             'title' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
             'order' => 'nullable|integer',
             'duration' => 'nullable|integer',
             'difficulty' => 'nullable|in:beginner,intermediate,advanced',
             'academic_id' => 'nullable|exists:academics,id',
-            'instructor_id' => 'nullable|exists:users,id',
         ];
     }
 }

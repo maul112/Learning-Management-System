@@ -2,7 +2,7 @@ import { DataTableColumnHeader } from '@/components/data-table-header';
 import { DeleteModal } from '@/components/delete-modal';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Course, User } from '@/types';
+import { Course } from '@/types';
 import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
@@ -36,20 +36,6 @@ export const columns: ColumnDef<Course>[] = [
     ),
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue('title')}</div>
-    ),
-  },
-  {
-    accessorKey: 'instructor',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Course, unknown>
-        column={column}
-        title="Instructor"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="capitalize">
-        {(row.getValue('instructor') as User)?.name}
-      </div>
     ),
   },
   {

@@ -34,19 +34,6 @@ class Course extends Model
     }
 
     /**
-     * Get the user that instructs the course.
-     * @return BelongsTo<User, Course>
-     */
-    public function instructor(): BelongsTo
-    {
-        return $this
-            ->belongsTo(
-                User::class,
-                'instructor_id'
-            );
-    }
-
-    /**
      * Get the course's modules.
      * @return HasMany<Module, Course>
      */

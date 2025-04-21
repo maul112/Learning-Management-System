@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { Academic, BreadcrumbItem, User as Instructor, User } from '@/types';
+import { Academic, BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -30,15 +30,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function CourseCreate({
   academics,
-  instructors,
   success,
   error,
 }: {
   academics: {
     data: Academic[];
-  };
-  instructors: {
-    data: Instructor[];
   };
   success?: string;
   error?: string;
@@ -50,13 +46,12 @@ export default function CourseCreate({
     duration: 0,
     difficulty: '',
     academic_id: 0,
-    instructor_id: 0,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     post(route('courses.store'), {
-      onFinish: () => reset('title', 'instructor_id'),
+      onFinish: () => reset('title'),
       onError: (e) => console.log(e),
     });
   };
@@ -136,20 +131,6 @@ export default function CourseCreate({
               getOptionLabel={(academic) => academic.title}
               getOptionValue={(academic) => academic.id}
               message={errors.academic_id || ''}
-            />
-            <FormFieldSelect<User>
-              data={instructors.data}
-              label="Instructor"
-              value={data.instructor_id}
-              displayValue={
-                instructors.data.find(
-                  (instructor) => instructor.id === data.instructor_id,
-                )?.name || ''
-              }
-              onChange={(value) => setData('instructor_id', Number(value))}
-              getOptionLabel={(instructor) => instructor.name}
-              getOptionValue={(instructor) => instructor.id}
-              message={errors.instructor_id || ''}
             />
             <Button
               type="submit"

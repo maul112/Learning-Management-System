@@ -107,8 +107,7 @@ export default function UsersEdit({
                   <SelectGroup>
                     <SelectLabel>Roles</SelectLabel>
                     <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="instructor">Instructor</SelectItem>
-                    <SelectItem value="student">student</SelectItem>
+                    <SelectItem value="student">Student</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>

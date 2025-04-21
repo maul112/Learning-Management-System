@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('image')->nullable();
             $table->longText('description');
             $table->integer('order');
             $table->integer('duration');
             $table->enum('difficulty', ['beginner', 'intermediate', 'advanced'])->default('beginner');
             $table->foreignId('academic_id')->constrained('academics', 'id')->onDelete('cascade');
-            $table->foreignId('instructor_id')->constrained('users', 'id')->onDelete('cascade');
             $table->timestamps();
         });
     }

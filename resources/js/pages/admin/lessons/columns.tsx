@@ -38,6 +38,17 @@ export const columns: ColumnDef<Lesson>[] = [
   {
     accessorKey: 'module',
     header: ({ column }) => (
+      <DataTableColumnHeader<Lesson, unknown> column={column} title="Course" />
+    ),
+    cell: ({ row }) => (
+      <div className="capitalize">
+        {(row.getValue('module') as Module)?.course.title}
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'module',
+    header: ({ column }) => (
       <DataTableColumnHeader<Lesson, unknown> column={column} title="Module" />
     ),
     cell: ({ row }) => (
@@ -47,18 +58,23 @@ export const columns: ColumnDef<Lesson>[] = [
     ),
   },
   {
+    accessorKey: 'order',
+    header: ({ column }) => (
+      <DataTableColumnHeader<Lesson, unknown> column={column} title="Order" />
+    ),
+  },
+  {
     accessorKey: 'id',
     header: 'Content',
     cell: ({ row }) => (
       <div className="capitalize">
-        <Link className='underline' href={route('lessons.show', row.getValue("id"))}>Lihat</Link>
+        <Link
+          className="underline"
+          href={route('lessons.show', row.getValue('id'))}
+        >
+          Lihat
+        </Link>
       </div>
-    ),
-  },
-  {
-    accessorKey: 'order',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Lesson, unknown> column={column} title="Order" />
     ),
   },
   {
