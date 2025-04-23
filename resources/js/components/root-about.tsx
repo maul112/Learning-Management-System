@@ -42,12 +42,16 @@ export function RootAbout() {
             terjamin,
           </p>
           <p className="text-muted-foreground text-center">
-            NextLMS juga memiliki reviewer profesional yang akan
-            mengulas kode Anda.
+            NextLMS juga memiliki reviewer profesional yang akan mengulas kode
+            Anda.
           </p>
         </div>
-        <div className="flex flex-col justify-center gap-20 lg:flex-row">
-          <Accordion type="single" collapsible className="w-full p-4 lg:w-1/3">
+        <div className="flex flex-col justify-center gap-5 lg:gap-20 lg:flex-row">
+          <Accordion
+            type="single"
+            collapsible
+            className="order-2 w-full p-4 lg:order-1 lg:w-1/3"
+          >
             {accordionItems.map((item) => (
               <AccordionItem value={item.title} key={item.title}>
                 <AccordionTrigger className="h-20 text-lg font-semibold">
@@ -59,7 +63,7 @@ export function RootAbout() {
               </AccordionItem>
             ))}
           </Accordion>
-          <div className="bg-muted h-96 w-full lg:w-xl"></div>
+          <div className="bg-muted h-96 w-full lg:w-xl order-1 lg:order-2"></div>
         </div>
       </section>
     </RootContent>

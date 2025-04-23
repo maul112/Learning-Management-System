@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { RootNavMain } from './root-nav-main';
@@ -59,8 +60,26 @@ export function RootNav() {
           </>
         )}
       </div>
-      {auth.user?.role === 'student' && (
+      {auth.user?.role === 'student' ? (
         <StudentNavUser user={auth.user} items={navListItems} />
+      ) : (
+        <div className={cn('flex items-center')}>
+          {auth.user && (
+            <Button variant="ghost">
+              <Link
+                href={
+                  auth.user.role === 'admin'
+                    ? route('dashboard')
+                    : auth.user.role === 'instructor'
+                      ? route('instructor.dashboard')
+                      : route('student.dashboard')
+                }
+              >
+                Dashboard
+              </Link>
+            </Button>
+          )}
+        </div>
       )}
     </nav>
   );

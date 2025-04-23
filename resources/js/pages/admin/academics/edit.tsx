@@ -1,3 +1,4 @@
+import { ImagePreviewInput } from '@/components/form-field-file';
 import FormFieldInput from '@/components/form-field-input';
 import FormFieldMarkdown from '@/components/form-field-markdown';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import FormLayout from '@/layouts/form-layout';
 import { Academic, BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -28,23 +30,30 @@ export default function AcademicsEdit({
   success?: string;
   error?: string;
 }) {
-  const { data, setData, put, processing, errors, reset } = useForm({
+  const { data, setData, put, processing, errors } = useForm({
     title: academic.data.title,
+    image: null as File | null,
     description: academic.data.description,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     put(route('academics.update', academic.data.id), {
-      onFinish: () => reset('title', 'description'),
       onError: (e) => console.log(e),
     });
   };
 
+  useEffect(() => {
+    if (success) toast.success(success);
+    if (error) toast.error(error);
+  }, [success, error]);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      {success && toast.success(success)}
-      {error && toast.error(error)}
       <Head title="Edit Academic" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
@@ -56,6 +65,13 @@ export default function AcademicsEdit({
               value={data.title}
               onChange={(e) => setData('title', e.target.value)}
               message={errors.title || ''}
+            />
+            <ImagePreviewInput
+              htmlFor="image"
+              label="Image"
+              currentImageUrl={`/storage/${academic.data.image}`}
+              onChange={(file) => setData('image', file as File)}
+              error={errors.image}
             />
             <FormFieldMarkdown
               htmlFor="description"

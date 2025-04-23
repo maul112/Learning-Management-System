@@ -12,6 +12,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Academic;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class AdminCourseController extends Controller
@@ -51,8 +52,14 @@ class AdminCourseController extends Controller
      */
     public function store(StoreCourseRequest $request)
     {
+        dd($request->all());    
         try {
             $validated = $request->validated();
+
+            if ($request->hasFile('image')) {
+                $imageUrl = $request->file('image')->store('courses', 'public');
+                $validated['image'] = $imageUrl;
+            }
 
             Course::create($validated);
 
@@ -95,6 +102,16 @@ class AdminCourseController extends Controller
         try {
             $validated = $request->validated();
 
+            if ($request->hasFile('image')) {
+                if ($course->image && Storage::disk('public')->exists($course->image)) {
+                    Storage::disk('public')->delete($course->image);
+                }
+                $imageUrl = $request->file('image')->store('courses', 'public');
+                $validated['image'] = $imageUrl;
+            } else {
+                unset($validated['image']);
+            }
+
             $course->update($validated);
 
             return redirect()->route('courses.index')->with('success', 'Course updated successfully.');
@@ -111,6 +128,10 @@ class AdminCourseController extends Controller
     public function destroy(Course $course)
     {
         try {
+            if ($course->image && Storage::disk('public')->exists($course->image)) {
+                Storage::disk('public')->delete($course->image);
+            }
+
             $course->delete();
 
             return redirect()->back()->with('success', 'Course deleted successfully.');

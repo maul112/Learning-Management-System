@@ -40,11 +40,11 @@ export function CardsCarousel() {
 
   return (
     <RootContent>
-      <section className="h-full w-full px-20">
+      <section className="h-full w-full px-10">
         <Carousel items={cards} />
       </section>
-      <section className="bg-muted mx-20 mb-10 flex items-center justify-between py-10">
-        <div className="w-[30rem] px-7">
+      <section className="bg-muted mx-10 mb-10 flex flex-col items-center justify-between py-10 lg:flex-row">
+        <div className="w-full px-7 lg:w-[30rem]">
           <h2 className="mb-3 text-3xl font-semibold">
             {updateDetails('title')}
           </h2>
@@ -61,7 +61,7 @@ export function CardsCarousel() {
             {updateDetails('description')}
           </p>
         </div>
-        <div className="h-[34rem] w-2xl overflow-hidden">
+        <div className="h-[34rem] w-full overflow-hidden lg:w-2xl">
           <Carousel items={cardDetails} />
         </div>
       </section>

@@ -12,6 +12,7 @@ class Academic extends Model
 
     protected $fillable = [
         'title',
+        'image',
         'description',
     ];
 

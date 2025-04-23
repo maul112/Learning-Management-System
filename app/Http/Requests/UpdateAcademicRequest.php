@@ -23,6 +23,7 @@ class UpdateAcademicRequest extends FormRequest
     {
         return [
             'title' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5000',
             'description' => 'nullable|string',
         ];
     }

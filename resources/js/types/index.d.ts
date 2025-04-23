@@ -48,6 +48,7 @@ export interface User {
 export interface Academic {
   id: number;
   title: string;
+  image: string;
   description: string;
   courses: Course[];
 }
@@ -55,6 +56,7 @@ export interface Academic {
 export interface Course {
   id: number;
   title: string;
+  image: string;
   description: string;
   order: number;
   duration: number;

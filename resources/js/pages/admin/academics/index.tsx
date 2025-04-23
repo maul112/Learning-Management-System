@@ -27,6 +27,8 @@ export default function Academics({
     if (error) toast.error(error);
   }, [success, error]);
 
+  console.log(academics.data)
+
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="academics" />

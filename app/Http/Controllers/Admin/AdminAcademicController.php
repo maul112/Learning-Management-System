@@ -8,6 +8,7 @@ use App\Http\Requests\StoreAcademicRequest;
 use App\Http\Requests\UpdateAcademicRequest;
 use App\Http\Resources\AcademicResource;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class AdminAcademicController extends Controller
@@ -41,6 +42,11 @@ class AdminAcademicController extends Controller
     {
         try {
             $validated = $request->validated();
+
+            if ($request->hasFile('image')) {
+                $imageUrl = $request->file('image')->store('academics', 'public');
+                $validated['image'] = $imageUrl;
+            }
 
             Academic::create($validated);
 
@@ -78,6 +84,16 @@ class AdminAcademicController extends Controller
         try {
             $validated = $request->validated();
 
+            if ($request->hasFile('image')) {
+                if ($academic->image && Storage::disk('public')->exists($academic->image)) {
+                    Storage::disk('public')->delete($academic->image);
+                }
+                $imageUrl = $request->file('image')->store('academics', 'public');
+                $validated['image'] = $imageUrl;
+            } else {
+                unset($validated['image']);
+            }
+
             $academic->update($validated);
 
             return redirect()->route('academics.index')->with('success', 'Academic updated successfully.');
@@ -94,6 +110,11 @@ class AdminAcademicController extends Controller
     public function destroy(Academic $academic)
     {
         try {
+
+            if ($academic->image && Storage::disk('public')->exists($academic->image)) {
+                Storage::disk('public')->delete($academic->image);
+            }
+
             $academic->delete();
 
             return redirect()->route('academics.index')->with('success', 'Academic deleted successfully.');

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { SharedData, User } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
+import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';
@@ -36,6 +37,7 @@ export function StudentNavUser({
   const { auth } = usePage<SharedData>().props;
   const getInitials = useInitials();
   const isMobile = useIsMobile();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div
@@ -99,6 +101,31 @@ export function StudentNavUser({
           <Button className="w-full">Mark all as read</Button>
         </HoverCardContent>
       </HoverCard>
+      {isMobile && (
+        <div
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex h-10 w-10 flex-col justify-center gap-2 px-1"
+        >
+          <span
+            className={cn(
+              'bg-accent-foreground h-px w-full origin-bottom-left transition-all duration-300',
+              isOpen ? 'rotate-[35deg]' : '',
+            )}
+          />
+          <span
+            className={cn(
+              'bg-accent-foreground h-px w-full transition-all duration-300',
+              isOpen ? 'scale-0' : '',
+            )}
+          />
+          <span
+            className={cn(
+              'bg-accent-foreground h-px w-full origin-bottom-left transition-all duration-300',
+              isOpen ? '-rotate-[35deg]' : '',
+            )}
+          />
+        </div>
+      )}
     </div>
   );
 }

@@ -23,6 +23,7 @@ class StoreAcademicRequest extends FormRequest
     {
         return [
             'title' => 'required|string',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5000',
             'description' => 'required|string',
         ];
     }
