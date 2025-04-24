@@ -27,7 +27,7 @@ export function NavMenu({ type = 'link', title, href, items }: NavMenuProps) {
             <NavigationMenuContent>
               <ul className="w-[200px] gap-3">
                 {items?.map((item) => (
-                  <li>
+                  <li key={item.title}>
                     <NavigationMenuLink asChild>
                       <Link href={item.href}>{item.title}</Link>
                     </NavigationMenuLink>
@@ -45,11 +45,11 @@ export function NavMenu({ type = 'link', title, href, items }: NavMenuProps) {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link href={href || '#'} className="cursor-pointer">
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
+            <Link href={href || '#'} className="cursor-pointer">
               {title}
-            </NavigationMenuLink>
-          </Link>
+            </Link>
+          </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>

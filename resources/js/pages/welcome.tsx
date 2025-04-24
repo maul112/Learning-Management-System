@@ -1,8 +1,11 @@
-import { CardsCarousel } from '@/components/cards-carousel';
 import { RootAbout } from '@/components/root-about';
 import { RootEvent } from '@/components/root-event';
+import { RootJoin } from '@/components/root-join';
 import { RootJumbotron } from '@/components/root-jumbotron';
+import { RootLearningPath } from '@/components/root-learning-path';
 import { RootPartner } from '@/components/root-partner';
+import { RootStandartGlobal } from '@/components/root-standart-global';
+import { RootTestimoni } from '@/components/root-testimoni';
 import RootLayout from '@/layouts/root-layout';
 import { Head } from '@inertiajs/react';
 
@@ -14,7 +17,10 @@ export default function Welcome() {
       <RootPartner />
       <RootEvent />
       <RootAbout />
-      <CardsCarousel />
+      <RootLearningPath />
+      <RootStandartGlobal />
+      <RootJoin />
+      <RootTestimoni />
     </RootLayout>
   );
 }

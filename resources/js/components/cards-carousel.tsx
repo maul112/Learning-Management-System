@@ -43,7 +43,7 @@ export function CardsCarousel() {
       <section className="h-full w-full px-10">
         <Carousel items={cards} />
       </section>
-      <section className="bg-muted mx-10 mb-10 flex flex-col items-center justify-between py-10 lg:flex-row">
+      <section className="bg-muted mx-10 mb-10 flex flex-col items-center justify-between py-10 lg:flex-row rounded-xl">
         <div className="w-full px-7 lg:w-[30rem]">
           <h2 className="mb-3 text-3xl font-semibold">
             {updateDetails('title')}

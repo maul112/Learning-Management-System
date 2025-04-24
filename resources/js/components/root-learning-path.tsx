@@ -1,12 +1,5 @@
+import { CardsCarousel } from './cards-carousel';
 import { RootContent } from './root-content';
-import { Card, CardContent } from './ui/card';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from './ui/carousel';
 
 export function RootLearningPath() {
   return (
@@ -21,33 +14,12 @@ export function RootLearningPath() {
             dengan kurikulum yang dibangun bersama pelaku industri ternama.
           </p>
         </div>
-        <div className="mb-20 flex items-center justify-center gap-5">
+        <div className="mb-20 flex items-center justify-center gap-5 flex-wrap">
           {[1, 2, 3, 4, 5].map((index) => (
             <div key={index} className="bg-muted h-20 w-48"></div>
           ))}
         </div>
-        <Carousel className="w-full max-w-2xl">
-          <CarouselContent className="-ml-2">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <CarouselItem
-                key={index}
-                className="pl-2 md:basis-1/2 lg:basis-1/3"
-              >
-                <div className="p-1">
-                  <Card>
-                    <CardContent className="flex aspect-square items-center justify-center p-6">
-                      <span className="text-2xl font-semibold">
-                        {index + 1}
-                      </span>
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+        <CardsCarousel />
       </section>
     </RootContent>
   );
