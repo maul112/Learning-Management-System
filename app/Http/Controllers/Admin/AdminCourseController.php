@@ -52,7 +52,6 @@ class AdminCourseController extends Controller
      */
     public function store(StoreCourseRequest $request)
     {
-        dd($request->all());    
         try {
             $validated = $request->validated();
 

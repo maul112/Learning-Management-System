@@ -6,21 +6,31 @@ import { RootLearningPath } from '@/components/root-learning-path';
 import { RootPartner } from '@/components/root-partner';
 import { RootStandartGlobal } from '@/components/root-standart-global';
 import { RootTestimoni } from '@/components/root-testimoni';
+import { DataProvider } from '@/contexts/DataContext';
 import RootLayout from '@/layouts/root-layout';
+import { Academic } from '@/types';
 import { Head } from '@inertiajs/react';
 
-export default function Welcome() {
+type DataPropsType = {
+  academics: {
+    data: Academic[];
+  };
+};
+
+export default function Welcome({ academics }: DataPropsType) {
   return (
-    <RootLayout>
-      <Head title="Welcome" />
-      <RootJumbotron />
-      <RootPartner />
-      <RootEvent />
-      <RootAbout />
-      <RootLearningPath />
-      <RootStandartGlobal />
-      <RootJoin />
-      <RootTestimoni />
-    </RootLayout>
+    <DataProvider initialData={{ academics }}>
+      <RootLayout>
+        <Head title="Welcome" />
+        <RootJumbotron />
+        <RootPartner />
+        <RootEvent />
+        <RootAbout />
+        <RootLearningPath />
+        <RootStandartGlobal />
+        <RootJoin />
+        <RootTestimoni />
+      </RootLayout>
+    </DataProvider>
   );
 }

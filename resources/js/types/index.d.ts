@@ -62,8 +62,8 @@ export interface Course {
   duration: number;
   difficulty: string;
   academic: Academic;
-  instructor: User;
   modules: Module[];
+  users: User[];
 }
 
 export interface Module {
@@ -81,3 +81,9 @@ export interface Lesson {
   order: number;
   module: Module;
 }
+
+export type DataContextType = {
+  academics: {
+    data: Academic[];
+  };
+};

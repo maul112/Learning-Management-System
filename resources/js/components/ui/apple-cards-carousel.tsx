@@ -10,6 +10,7 @@ import {
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import {  motion } from "motion/react";
+import { Academic } from "@/types";
 
 interface CarouselProps {
   items: JSX.Element[];
@@ -17,11 +18,6 @@ interface CarouselProps {
   scrollLeftValue?: number;
   scrollRightValue?: number;
 }
-
-type Card = {
-  src: string;
-  title: string;
-};
 
 export const CarouselContext = createContext<{
   onCardClose: (index: number) => void;
@@ -150,39 +146,39 @@ export const Carousel = ({ items, initialScroll = 0, scrollLeftValue = -300, scr
 };
 
 export const Card = ({
-  card,
+  academic,
   index,
   layout = false,
   isActive,
   setIsActive,
 }: {
-  card: Card;
+  academic: Academic;
   index: number;
   layout?: boolean;
-  isActive: Set<string>;
-  setIsActive: React.Dispatch<Set<string>>;
+  isActive: string;
+  setIsActive: React.Dispatch<string>;
 }) => {
 
 
   return (
     <>
       <motion.button
-        onClick={() => setIsActive(new Set([card.title]))}
+        onClick={() => setIsActive(academic.title)}
         data-index={index}
-        layoutId={layout ? `card-${card.title}` : undefined}
-        className={cn("relative z-10 flex h-80 w-56 flex-col items-start justify-start overflow-hidden rounded-3xl bg-gray-100 md:h-52 dark:bg-neutral-900 transition-all duration-300", isActive.has(card.title) ? "md:w-96" : "md:w-80")}
+        layoutId={layout ? `card-${academic.title}` : undefined}
+        className={cn("relative z-10 flex h-80 w-56 flex-col items-start justify-start overflow-hidden rounded-3xl bg-gray-100 md:h-52 dark:bg-neutral-900 transition-all duration-300", isActive == academic.title ? "md:w-96" : "md:w-80")}
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
         <div className="relative z-40 p-8">
           <motion.p
             className="mt-2 max-w-xs text-left font-sans text-xl font-semibold [text-wrap:balance] text-white md:text-3xl"
           >
-            {card.title}
+            {academic.title}
           </motion.p>
         </div>
         <BlurImage
-          src={card.src}
-          alt={card.title}
+          src={academic.image}
+          alt={academic.title}
           fill
           width={400}
           height={600}
@@ -221,7 +217,7 @@ export const BlurImage = ({
           className,
         )}
         onLoad={() => setLoading(false)}
-        src={src}
+        src={`/storage/${src}`}
         width={width}
         height={height}
         alt={alt ? alt : "Background of a beautiful view"}

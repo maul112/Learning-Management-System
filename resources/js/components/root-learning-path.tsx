@@ -14,7 +14,7 @@ export function RootLearningPath() {
             dengan kurikulum yang dibangun bersama pelaku industri ternama.
           </p>
         </div>
-        <div className="mb-20 flex items-center justify-center gap-5 flex-wrap">
+        <div className="mb-20 flex flex-wrap items-center justify-center gap-5">
           {[1, 2, 3, 4, 5].map((index) => (
             <div key={index} className="bg-muted h-20 w-48"></div>
           ))}

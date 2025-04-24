@@ -7,11 +7,16 @@ use App\Http\Controllers\Admin\AdminLessonController;
 use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\StudentController;
+use App\Http\Resources\AcademicResource;
+use App\Models\Academic;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('welcome');
+    $academics = Academic::with(['courses'])->get();
+    return Inertia::render('welcome', [
+        'academics' => AcademicResource::collection($academics)
+    ]);
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {

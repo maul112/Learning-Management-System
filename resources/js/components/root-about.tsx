@@ -46,8 +46,9 @@ export function RootAbout() {
             Anda.
           </p>
         </div>
-        <div className="flex flex-col justify-center gap-5 lg:gap-20 lg:flex-row">
+        <div className="flex flex-col justify-center gap-5 lg:flex-row lg:gap-20">
           <Accordion
+            defaultValue="Kurikulum standar industri global"
             type="single"
             collapsible
             className="order-2 w-full p-4 lg:order-1 lg:w-1/3"
@@ -63,7 +64,7 @@ export function RootAbout() {
               </AccordionItem>
             ))}
           </Accordion>
-          <div className="bg-muted h-96 w-full lg:w-xl order-1 lg:order-2"></div>
+          <div className="bg-muted order-1 h-96 w-full lg:order-2 lg:w-xl"></div>
         </div>
       </section>
     </RootContent>
