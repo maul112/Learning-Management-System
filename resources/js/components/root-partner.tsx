@@ -1,4 +1,6 @@
 import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
+import { Marquee } from './ui/marquee';
 
 export function RootPartner() {
   const isMobile = useIsMobile();
@@ -25,6 +27,34 @@ export function RootPartner() {
               <div key={index} className="bg-muted h-20 w-48"></div>
             ))}
           </div>
+        </div>
+      )}
+      {isMobile && (
+        <div
+          className={cn(
+            'relative flex h-full w-full items-center justify-center overflow-hidden',
+            isMobile ? 'flex-col' : 'flex-row',
+          )}
+        >
+          <Marquee
+            pauseOnHover
+            vertical={isMobile ? false : true}
+            className="[--duration:20s]"
+          >
+            {[1, 2, 3, 4, 5, 6].map((index) => (
+              <div key={index} className="bg-muted h-20 w-48"></div>
+            ))}
+          </Marquee>
+          <Marquee
+            reverse
+            pauseOnHover
+            vertical={isMobile ? false : true}
+            className="[--duration:20s]"
+          >
+            {[1, 2, 3, 4, 5, 6].map((index) => (
+              <div key={index} className="bg-muted h-20 w-48"></div>
+            ))}
+          </Marquee>
         </div>
       )}
     </section>
