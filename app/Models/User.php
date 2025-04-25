@@ -97,4 +97,14 @@ class User extends Authenticatable
                 'module_id'
             );
     }
+
+    public function studentRatings(): HasMany
+    {
+        return $this
+            ->hasMany(
+                Rating::class,
+                'student_id',
+                'id'
+            );
+    }
 }

@@ -64,25 +64,10 @@ export function RootNav() {
         <StudentNavUser user={auth.user} items={navListItems} />
       )}
       {auth.user?.role === 'admin' && (
-        <div
-          className={cn(
-            'flex items-center',
-            auth.user?.role === 'admin' ? 'hidden' : '',
-          )}
-        >
+        <div className={cn('flex items-center')}>
           {auth.user && (
             <Button variant="ghost">
-              <Link
-                href={
-                  auth.user.role === 'admin'
-                    ? route('dashboard')
-                    : auth.user.role === 'instructor'
-                      ? route('instructor.dashboard')
-                      : route('student.dashboard')
-                }
-              >
-                Dashboard
-              </Link>
+              <Link href={route('dashboard')}>Dashboard</Link>
             </Button>
           )}
         </div>

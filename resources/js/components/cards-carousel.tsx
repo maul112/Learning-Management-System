@@ -46,8 +46,8 @@ export function CardsCarousel() {
       <section className="h-full w-full px-10">
         <Carousel items={cards!} />
       </section>
-      <section className="bg-muted mx-10 mb-10 flex flex-col items-center justify-between rounded-xl py-10 lg:flex-row">
-        <div className="w-full px-7 lg:w-[30rem]">
+      <section className="bg-muted mx-10 mb-10 flex flex-col justify-between rounded-xl py-10 lg:flex-row">
+        <div className="w-full px-7 pt-28 lg:w-[30rem]">
           <h2 className="mb-3 text-3xl font-semibold">
             {updateAcademicDetails('title').toLocaleString()}
           </h2>

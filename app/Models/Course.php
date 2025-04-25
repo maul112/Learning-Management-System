@@ -74,4 +74,14 @@ class Course extends Model
                 'student_id'
             );
     }
+
+    public function ratings(): HasMany
+    {
+        return $this
+            ->hasMany(
+                Rating::class,
+                'course_id',
+                'id'
+            );
+    }
 }

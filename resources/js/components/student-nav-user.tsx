@@ -48,17 +48,7 @@ export function StudentNavUser({
     >
       {auth.user && (
         <Button variant="ghost">
-          <Link
-            href={
-              auth.user.role === 'admin'
-                ? route('dashboard')
-                : auth.user.role === 'instructor'
-                  ? route('instructor.dashboard')
-                  : route('student.dashboard')
-            }
-          >
-            Dashboard
-          </Link>
+          <Link href={route('student.dashboard')}>Dashboard</Link>
         </Button>
       )}
       <NavigationMenu>
