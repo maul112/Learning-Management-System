@@ -121,7 +121,7 @@ export const Carousel = ({ items, initialScroll = 0, scrollLeftValue = -300, scr
                   opacity: 0,
                   y: 20,
                 }}
-                animate={{
+                whileInView={{
                   opacity: 1,
                   y: 0,
                   transition: {

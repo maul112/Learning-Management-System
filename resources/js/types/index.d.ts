@@ -32,6 +32,15 @@ export interface SharedData {
   [key: string]: unknown;
 }
 
+export interface Event {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  link: string;
+  by: string;
+}
+
 export interface User {
   id: number;
   name: string;
@@ -83,6 +92,9 @@ export interface Lesson {
 }
 
 export type DataContextType = {
+  events: {
+    data: Event[];
+  };
   academics: {
     data: Academic[];
   };

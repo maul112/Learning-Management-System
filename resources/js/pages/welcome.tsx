@@ -8,18 +8,17 @@ import { RootStandartGlobal } from '@/components/root-standart-global';
 import { RootTestimoni } from '@/components/root-testimoni';
 import { DataProvider } from '@/contexts/DataContext';
 import RootLayout from '@/layouts/root-layout';
-import { Academic } from '@/types';
+import { DataContextType } from '@/types';
 import { Head } from '@inertiajs/react';
 
-type DataPropsType = {
-  academics: {
-    data: Academic[];
+export default function Welcome({ events, academics }: DataContextType) {
+  const initialData = {
+    events,
+    academics,
   };
-};
 
-export default function Welcome({ academics }: DataPropsType) {
   return (
-    <DataProvider initialData={{ academics }}>
+    <DataProvider initialData={initialData}>
       <RootLayout>
         <Head title="Welcome" />
         <RootJumbotron />

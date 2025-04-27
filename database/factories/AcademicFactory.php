@@ -17,7 +17,30 @@ class AcademicFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => fake()->sentence(),
+            'image' => fake()->imageUrl(),
+            'description' => fake()->paragraph(),
         ];
+    }
+
+    public function title($title = null)
+    {
+        return $this->state(fn() => [
+            'title' => $title,
+        ]);
+    }
+
+    public function description($description = null)
+    {
+        return $this->state(fn() => [
+            'description' => $description,
+        ]);
+    }
+
+    public function image($imageUrl = null)
+    {
+        return $this->state(fn() => [
+            'image' => $imageUrl,
+        ]);
     }
 }

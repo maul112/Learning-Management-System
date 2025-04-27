@@ -2,6 +2,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { ArrowRightCircle, Code2, PlayCircle } from 'lucide-react';
 import { RootContent } from './root-content';
+import { BlurFade } from './ui/blur-fade';
 import { Button } from './ui/button';
 import { Marquee } from './ui/marquee';
 
@@ -13,15 +14,34 @@ export function RootStandartGlobal() {
       <section className="lg:bg-muted mx-10 mb-10 grid grid-cols-1 overflow-hidden rounded-xl lg:h-96 lg:grid-cols-2">
         <div className="m-5 px-5 pt-7 lg:px-10">
           <h2 className="mb-5 text-2xl font-bold lg:text-3xl">
-            Belajar dengan kelas standar industri global
+            <BlurFade direction="up" duration={0.7} inView>
+              Belajar dengan kelas standar industri global
+            </BlurFade>
           </h2>
           <p className="text-muted-foreground lg:text-md mb-5 text-sm">
-            Kelas di NextLMS Academy tersedia bagi yang belum memiliki kemampuan
-            programming (dasar) hingga yang sudah profesional.
+            <BlurFade
+              direction="right"
+              duration={0.7}
+              delay={0.5}
+              offset={20}
+              inView
+            >
+              Kelas di NextLMS Academy tersedia bagi yang belum memiliki
+              kemampuan programming (dasar) hingga yang sudah profesional.
+            </BlurFade>
           </p>
           <Button variant="link" className="group text-md cursor-pointer">
-            Lihat semua kelas
-            <ArrowRightCircle className="h-7 w-7 transition-all duration-150 group-hover:translate-x-1" />
+            <BlurFade
+              direction="right"
+              duration={0.7}
+              delay={0.8}
+              offset={20}
+              inView
+              className="flex items-center gap-2"
+            >
+              Lihat semua kelas
+              <ArrowRightCircle className="h-7 w-7 transition-all duration-150 group-hover:translate-x-1" />
+            </BlurFade>
           </Button>
         </div>
         <div
@@ -66,18 +86,37 @@ export function RootStandartGlobal() {
         <div className="lg:w-1/3">
           <Code2 className="bg-accent-foreground text-muted mb-5 h-10 w-10 px-1" />
           <h2 className="mb-5 text-2xl font-bold">
-            Kenal lebih dekat dengan kami!
+            <BlurFade direction="up" duration={0.7} inView>
+              Kenal lebih dekat dengan kami!
+            </BlurFade>
           </h2>
           <p className="text-muted-foreground mb-10">
-            Sebagai platform edukasi teknologi, pengembangan skill para
-            developer adalah fokus Dicoding. Untuk mencapainya, tersedia
-            berbagai kelas online, program pelatihan, dan sertifikasi
-            pemrograman dengan kualitas yang terjamin serta 2 layanan utama:
-            Code Review & Forum Diskusi.
+            <BlurFade
+              direction="right"
+              duration={0.7}
+              delay={0.5}
+              offset={20}
+              inView
+            >
+              Sebagai platform edukasi teknologi, pengembangan skill para
+              developer adalah fokus Dicoding. Untuk mencapainya, tersedia
+              berbagai kelas online, program pelatihan, dan sertifikasi
+              pemrograman dengan kualitas yang terjamin serta 2 layanan utama:
+              Code Review & Forum Diskusi.
+            </BlurFade>
           </p>
           <Button variant="link" className="text-lg">
-            <PlayCircle />
-            Tonton video
+            <BlurFade
+              direction="right"
+              duration={0.7}
+              delay={0.8}
+              offset={20}
+              inView
+              className="flex items-center gap-2"
+            >
+              <PlayCircle />
+              Tonton video
+            </BlurFade>
           </Button>
         </div>
       </section>

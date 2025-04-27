@@ -1,24 +1,39 @@
 import { Card, Carousel } from '@/components/ui/apple-cards-carousel';
 import { useData } from '@/contexts/DataContext';
-import { Academic, Course } from '@/types';
-import { motion } from 'framer-motion';
-import { Award, Book, ChartNoAxesColumnIncreasing, Users2 } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Course } from '@/types';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Award,
+  Book,
+  ChartNoAxesColumnIncreasing,
+  Users,
+  Users2,
+} from 'lucide-react';
+import { useState } from 'react';
 import { RootContent } from './root-content';
 import { Separator } from './ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 export function CardsCarousel() {
   const data = useData();
+  const isMobile = useIsMobile();
   const [isActive, setIsActive] = useState<string>('Android Developer');
 
-  const cards = data?.data?.academics.data.map((academic, index) => (
-    <Card
-      key={academic.title}
-      academic={academic}
-      index={index}
-      isActive={isActive}
-      setIsActive={setIsActive}
-    />
+  const academicCards = data?.data?.academics.data.map((academic, index) => (
+    <TabsTrigger
+      key={index}
+      value={academic.title}
+      className="bg-background"
+      asChild
+    >
+      <Card
+        academic={academic}
+        index={index}
+        isActive={isActive}
+        setIsActive={setIsActive}
+      />
+    </TabsTrigger>
   ));
 
   const courseCards = data?.data?.academics.data
@@ -27,47 +42,90 @@ export function CardsCarousel() {
       <CardCourse key={index} course={course} />
     ));
 
-  const updateAcademicDetails = useCallback(
-    (col: keyof Academic) => {
-      const foundItem = data?.data?.academics.data.find(
-        (academic) => academic.title === isActive,
-      );
-      if (col === 'courses') {
-        return foundItem ? (foundItem[col] as Course[]) : [];
-      } else {
-        return foundItem ? foundItem[col] : '';
-      }
-    },
-    [data?.data?.academics, isActive],
-  );
-
   return (
     <RootContent>
-      <section className="h-full w-full px-10">
-        <Carousel items={cards!} />
-      </section>
-      <section className="bg-muted mx-10 mb-10 flex flex-col justify-between rounded-xl py-10 lg:flex-row">
-        <div className="w-full px-7 pt-28 lg:w-[30rem]">
-          <h2 className="mb-3 text-3xl font-semibold">
-            {updateAcademicDetails('title').toLocaleString()}
-          </h2>
-          <p className="text-muted-foreground mb-3 flex gap-2 text-sm">
-            <Book className="h-4 w-4" />
-            {(updateAcademicDetails('courses') as Course[]).length} Kelas
-          </p>
-          {/* <p className="text-muted-foreground mb-3 flex gap-2 text-sm">
-            <Users className="h-4 w-4" />
-            {updateDetails('users')} siswa belajar di learning path ini
-          </p> */}
-          <Separator className="bg-muted-foreground mb-5" />
-          <p className="text-muted-foreground leading-relaxed">
-            {updateAcademicDetails('description').toLocaleString()}
-          </p>
-        </div>
-        <div className="h-[34rem] w-full overflow-hidden lg:w-2xl">
-          <Carousel items={courseCards!} />
-        </div>
-      </section>
+      <Tabs
+        defaultValue={isActive}
+        value={isActive}
+        onValueChange={(value) => setIsActive(value)}
+      >
+        <section className="mx-10 flex h-24 items-center overflow-auto lg:mt-32 lg:overflow-visible">
+          <TabsList className="bg-background">
+            {isMobile ? (
+              <div className="flex w-full gap-4">
+                {data?.data?.academics.data.map((academic, index) => (
+                  <TabsTrigger
+                    key={index}
+                    value={academic.title}
+                    className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=inactive]:bg-muted data-[state=inactive]:hover:bg-muted/80 relative flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium capitalize"
+                  >
+                    {academic.title}
+                    {isActive == academic.title && (
+                      <motion.div
+                        className="bg-primary absolute -bottom-1 left-0 h-0.5"
+                        layoutId="activeTabIndicator"
+                        layout
+                      />
+                    )}
+                  </TabsTrigger>
+                ))}
+              </div>
+            ) : (
+              <Carousel items={academicCards!} />
+            )}
+          </TabsList>
+        </section>
+        <section className="bg-muted mx-10 mt-10 mb-10 flex flex-col justify-between rounded-xl py-10 lg:mt-40 lg:flex-row">
+          <AnimatePresence>
+            {data?.data?.academics.data.map((academic, index) => (
+              <TabsContent
+                key={index}
+                value={academic.title}
+                className="w-full px-7 pt-28 lg:w-[30rem]"
+              >
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="mb-3 text-3xl font-semibold"
+                >
+                  {academic.title}
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="text-muted-foreground mb-3 flex gap-2 text-sm"
+                >
+                  <Book className="h-4 w-4" />
+                  {academic.courses.length} Kelas
+                </motion.p>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="text-muted-foreground mb-3 flex gap-2 text-sm"
+                >
+                  <Users className="h-4 w-4" />
+                  {academic.courses.length} Siswa
+                </motion.p>
+                <Separator className="bg-muted-foreground mb-5" />
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="text-muted-foreground leading-relaxed"
+                >
+                  {academic.description}
+                </motion.p>
+              </TabsContent>
+            ))}
+          </AnimatePresence>
+          <div className="h-[34rem] w-full overflow-hidden lg:w-2xl">
+            <Carousel items={courseCards!} />
+          </div>
+        </section>
+      </Tabs>
     </RootContent>
   );
 }

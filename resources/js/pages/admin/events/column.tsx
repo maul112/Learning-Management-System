@@ -2,11 +2,11 @@ import { DataTableColumnHeader } from '@/components/data-table-header';
 import { DeleteModal } from '@/components/delete-modal';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Course } from '@/types';
+import { Event } from '@/types';
 import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
-export const columns: ColumnDef<Course>[] = [
+export const columns: ColumnDef<Event>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -23,7 +23,7 @@ export const columns: ColumnDef<Course>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        arial-label="Select row"
+        aria-label="Select row"
       />
     ),
     enableSorting: false,
@@ -32,53 +32,36 @@ export const columns: ColumnDef<Course>[] = [
   {
     accessorKey: 'title',
     header: ({ column }) => (
-      <DataTableColumnHeader<Course, unknown> column={column} title="Title" />
+      <DataTableColumnHeader<Event, unknown> column={column} title="Title" />
     ),
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue('title')}</div>
     ),
   },
   {
-    accessorKey: 'order',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Course, unknown> column={column} title="Order" />
-    ),
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('order')}</div>
-    ),
+    accessorKey: 'link',
+    header: 'Link',
+    cell: ({ row }) => <Button variant="link">{row.getValue('link')}</Button>,
   },
   {
-    accessorKey: 'difficulty',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Course, unknown>
-        column={column}
-        title="Difficulty"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('difficulty')}</div>
-    ),
+    accessorKey: 'by',
+    header: 'By',
+    cell: ({ row }) => <div className="capitalize">{row.getValue('by')}</div>,
   },
   {
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
-      const course = row.original;
+      const event = row.original;
 
       return (
         <div className="flex space-x-2">
-          <EditCourse course={course} />
-          <DeleteModal resourceName="course" id={course.id} />
+          <Button className="cursor-pointer" variant="secondary">
+            <Link href={route('events.edit', event.id)}>Edit</Link>
+          </Button>
+          <DeleteModal resourceName="event" id={event.id} />
         </div>
       );
     },
   },
 ];
-
-function EditCourse({ course }: { course: Course }) {
-  return (
-    <Button className="cursor-pointer" variant="secondary">
-      <Link href={route('courses.edit', course.id)}>Edit</Link>
-    </Button>
-  );
-}

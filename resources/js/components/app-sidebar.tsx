@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/sidebar';
 import { NavGroup, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Book, BookOpen, Folder, LayoutGrid, UsersRound } from 'lucide-react';
+import { Book, BookOpen, Calendar1, Folder, LayoutGrid, UsersRound } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -21,6 +21,11 @@ const mainNavItems: NavItem[] = [
     href: '/dashboard',
     icon: LayoutGrid,
   },
+  {
+    title: 'Events',
+    href: '/events',
+    icon: Calendar1,
+  }
 ];
 
 const mainNavGroupItems: NavGroup[] = [

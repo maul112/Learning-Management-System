@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { RootContent } from './root-content';
+import { BlurFade } from './ui/blur-fade';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
@@ -40,11 +41,21 @@ export function RootJoin() {
       <section className="mx-10 my-10 grid grid-cols-1 gap-6 lg:h-[500px] lg:grid-cols-2 lg:gap-3 lg:p-10">
         <div className="h-full w-full lg:p-5">
           <h2 className="mb-5 text-2xl font-semibold lg:text-3xl">
-            Bergabung dengan jaringan developer terbesar
+            <BlurFade direction="up" duration={0.7} inView>
+              Bergabung dengan jaringan developer terbesar
+            </BlurFade>
           </h2>
           <p className="text-muted-foreground mb-5 w-96 text-sm">
-            Selain belajar di Academy, Anda juga bisa mengikuti kegiatan dan
-            layanan kami yang lain
+            <BlurFade
+              direction="right"
+              duration={0.7}
+              delay={0.5}
+              offset={20}
+              inView
+            >
+              Selain belajar di Academy, Anda juga bisa mengikuti kegiatan dan
+              layanan kami yang lain
+            </BlurFade>
           </p>
           <Tabs
             defaultValue={isActiveTab}

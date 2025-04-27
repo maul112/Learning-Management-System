@@ -21,7 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function AcademicsEdit({
+export default function AcademicEdit({
   academic,
   success,
   error,

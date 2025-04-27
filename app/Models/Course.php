@@ -21,7 +21,6 @@ class Course extends Model
         'duration',
         'difficulty',
         'academic_id',
-        'instructor_id',
     ];
 
     public function academic(): BelongsTo
