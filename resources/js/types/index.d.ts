@@ -98,4 +98,7 @@ export type DataContextType = {
   academics: {
     data: Academic[];
   };
+  courses: {
+    data: Course[];
+  }
 };

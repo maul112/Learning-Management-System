@@ -11,10 +11,15 @@ import RootLayout from '@/layouts/root-layout';
 import { DataContextType } from '@/types';
 import { Head } from '@inertiajs/react';
 
-export default function Welcome({ events, academics }: DataContextType) {
+export default function Welcome({
+  events,
+  academics,
+  courses,
+}: DataContextType) {
   const initialData = {
     events,
     academics,
+    courses,
   };
 
   return (

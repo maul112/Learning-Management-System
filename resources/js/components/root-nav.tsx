@@ -1,11 +1,20 @@
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useData } from '@/contexts/DataContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
+import { useEffect, useRef, useState } from 'react';
 import { RootNavMain } from './root-nav-main';
 import { StudentNavUser } from './student-nav-user';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from './ui/command';
+import { Input } from './ui/input';
 
 const navListItems = [
   {
@@ -27,8 +36,65 @@ const navListItems = [
 ];
 
 export function RootNav() {
+  const data = useData();
   const { auth } = usePage<SharedData>().props;
   const isMobile = useIsMobile();
+  const [open, setOpen] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    if (e.target.value.length > 0) {
+      setOpen(true);
+    }
+  };
+
+  // Handle click outside to close popover
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(event.target as Node) &&
+        !(event.target as HTMLElement).closest('[data-popover-content]')
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Focus input when popover opens
+  useEffect(() => {
+    if (open && inputRef.current) {
+      // Small delay to ensure the popover is rendered
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 10);
+    }
+  }, [open]);
+
+  // Handle keyboard events
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      setOpen(false);
+    } else if (e.key === 'ArrowDown' && open) {
+      e.preventDefault();
+      // Focus the first command item
+      const firstItem = document.querySelector('[cmdk-item]') as HTMLElement;
+      firstItem?.focus();
+    }
+  };
+
+  // Filter courses based on search
+  const filteredCourses =
+    data?.data?.courses.data.filter((course) =>
+      course.title.toLowerCase().includes(search.toLowerCase()),
+    ) || [];
 
   return (
     <nav className="bg-background fixed top-0 right-0 left-0 z-50 flex items-center justify-between px-8 py-5 shadow-md">
@@ -43,7 +109,50 @@ export function RootNav() {
 
         {!isMobile && (
           <>
-            <Input type="search" placeholder="Search" className="w-72" />
+            <div className="relative">
+              <Input
+                ref={inputRef}
+                type="text"
+                value={search}
+                onChange={handleInputChange}
+                onFocus={() => search.length > 0 && setOpen(true)}
+                onKeyDown={handleKeyDown}
+                placeholder="Apa yang ingin Anda pelajari?"
+                className="w-[300px] rounded-md border px-4 py-2"
+              />
+
+              {open && filteredCourses.length > 0 && (
+                <div
+                  className="bg-popover absolute top-full left-0 z-50 mt-1 w-[300px] rounded-md border shadow-md"
+                  data-popover-content
+                >
+                  <Command className="rounded-lg border shadow-md">
+                    <CommandList>
+                      {filteredCourses.length === 0 ? (
+                        <CommandEmpty>Tidak ditemukan.</CommandEmpty>
+                      ) : (
+                        <CommandGroup>
+                          {filteredCourses.map((course) => (
+                            <CommandItem
+                              key={course.id}
+                              value={course.title}
+                              onSelect={() => {
+                                // Handle selection
+                                setSearch(course.title);
+                                setOpen(false);
+                              }}
+                              className="cursor-pointer"
+                            >
+                              {course.title}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      )}
+                    </CommandList>
+                  </Command>
+                </div>
+              )}
+            </div>
             <RootNavMain />
           </>
         )}

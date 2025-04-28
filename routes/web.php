@@ -9,8 +9,10 @@ use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\StudentController;
 use App\Http\Resources\AcademicResource;
+use App\Http\Resources\CourseResource;
 use App\Http\Resources\EventResource;
 use App\Models\Academic;
+use App\Models\Course;
 use App\Models\Event;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,9 +20,11 @@ use Inertia\Inertia;
 Route::get('/', function () {
     $events = Event::all();
     $academics = Academic::with(['courses'])->get();
+    $courses = Course::all();
     return Inertia::render('welcome', [
         'events' => EventResource::collection($events),
-        'academics' => AcademicResource::collection($academics)
+        'academics' => AcademicResource::collection($academics),
+        'courses' => CourseResource::collection($courses),
     ]);
 })->name('home');
 
