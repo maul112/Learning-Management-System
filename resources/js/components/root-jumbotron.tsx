@@ -61,7 +61,7 @@ export function RootJumbotron() {
             initial="hidden"
             animate="show"
             variants={itemZoomVariant}
-            src="https://assets.cdn.dicoding.com/original/commons/homepage-hero.png"
+            src="/jumbotron.png"
             alt=""
           />
         </div>

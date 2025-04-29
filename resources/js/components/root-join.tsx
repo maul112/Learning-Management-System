@@ -18,18 +18,21 @@ const tabs = [
     icon: Rocket,
     description:
       'Kami telah menyelenggarakan berbagai macam challenge dengan jutaan hadiah. Dengan platform Challenge, developer bisa mengasah skill yang dipelajari dari Academy.',
+    image: '/challange.jpg',
   },
   {
     title: 'event',
     icon: CalendarDays,
     description:
       'Berkolaborasi dengan komunitas developer, kami telah menyelenggarakan event di berbagai kota yang dihadiri puluhan ribu developer dan praktisi teknologi Indonesia.',
+    image: '/event.jpg',
   },
   {
     title: 'job',
     icon: BriefcaseBusiness,
     description:
       'Bekerjasama dengan beberapa industri, kami telah membantu developer Indonesia dalam mencari lapangan pekerjaan yang sesuai dengan skillnya.',
+    image: '/job.jpg',
   },
 ];
 
@@ -114,7 +117,19 @@ export function RootJoin() {
             </AnimatePresence>
           </Tabs>
         </div>
-        <div className="bg-muted h-96 w-full lg:h-full"></div>
+        <div className="bg-muted h-96 w-full lg:h-full">
+          {tabs.map((tab, index) => (
+            <div
+              key={index}
+              className={`h-full w-full bg-cover bg-center ${
+                isActiveTab == tab.title ? 'block' : 'hidden'
+              }`}
+              style={{
+                backgroundImage: `url(${tab.image})`,
+              }}
+            />
+          ))}
+        </div>
       </section>
     </RootContent>
   );

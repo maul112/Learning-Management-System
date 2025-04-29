@@ -3,6 +3,27 @@ import { cn } from '@/lib/utils';
 import { BlurFade } from './ui/blur-fade';
 import { Marquee } from './ui/marquee';
 
+const partnerList = [
+  'google.png',
+  'microsoft.png',
+  'aws.png',
+  'ibm.png',
+  'indosat.png',
+  'kemenparekraf.png',
+  'lintasarta.png',
+  'line.png',
+  'alcatel.png',
+  'samsung.png',
+  'ericsson.png',
+  'dbsf.png',
+  'lenovo.png',
+  'intel.png',
+  'xl.png',
+  'kemkominfo.png',
+  'kampus-merdeka.png',
+  'bangkit.png',
+];
+
 export function RootPartner() {
   const isMobile = useIsMobile();
 
@@ -16,44 +37,44 @@ export function RootPartner() {
       {!isMobile && (
         <div className="flex flex-col gap-7">
           <div className="flex items-center justify-center gap-7">
-            {[1, 2, 3, 4, 5, 6].map((index) => (
+            {Array.from(partnerList.slice(0, 6)).map((partner, index) => (
               <BlurFade
                 direction="up"
                 duration={0.7}
                 delay={index * 0.1}
                 inView
                 key={index}
-                className="bg-muted flex h-20 w-48 items-center justify-center"
+                className="bg-accent-foreground flex h-20 w-48 items-center justify-center rounded-xl"
               >
-                {index}
+                <img className="w-36" src={`/${partner}`} alt="partner" />
               </BlurFade>
             ))}
           </div>
           <div className="flex items-center justify-center gap-7">
-            {[1, 2, 3, 4, 5, 6].map((index) => (
+            {Array.from(partnerList.slice(6, 12)).map((partner, index) => (
               <BlurFade
                 direction="up"
                 duration={0.7}
                 delay={index * 0.1}
                 inView
                 key={index}
-                className="bg-muted flex h-20 w-48 items-center justify-center"
+                className="bg-accent-foreground flex h-20 w-48 items-center justify-center rounded-xl"
               >
-                {index}
+                <img className="w-36" src={`/${partner}`} alt="partner" />
               </BlurFade>
             ))}
           </div>
           <div className="flex items-center justify-center gap-7">
-            {[1, 2, 3, 4, 5, 6].map((index) => (
+            {Array.from(partnerList.slice(12, 18)).map((partner, index) => (
               <BlurFade
                 direction="up"
                 duration={0.7}
                 delay={index * 0.1}
                 inView
                 key={index}
-                className="bg-muted flex h-20 w-48 items-center justify-center"
+                className="bg-accent-foreground flex h-20 w-48 items-center justify-center rounded-xl"
               >
-                {index}
+                <img className="w-36" src={`/${partner}`} alt="partner" />
               </BlurFade>
             ))}
           </div>
@@ -71,8 +92,17 @@ export function RootPartner() {
             vertical={isMobile ? false : true}
             className="[--duration:20s]"
           >
-            {[1, 2, 3, 4, 5, 6].map((index) => (
-              <div key={index} className="bg-muted h-20 w-48"></div>
+            {Array.from(partnerList.slice(0, 13)).map((partner, index) => (
+              <BlurFade
+                direction="up"
+                duration={0.7}
+                delay={index * 0.1}
+                inView
+                key={index}
+                className="bg-accent-foreground flex h-20 w-48 items-center justify-center rounded-xl"
+              >
+                <img className="w-36" src={`/${partner}`} alt="partner" />
+              </BlurFade>
             ))}
           </Marquee>
           <Marquee
@@ -81,8 +111,13 @@ export function RootPartner() {
             vertical={isMobile ? false : true}
             className="[--duration:20s]"
           >
-            {[1, 2, 3, 4, 5, 6].map((index) => (
-              <div key={index} className="bg-muted h-20 w-48"></div>
+            {Array.from(partnerList.slice(4, 18)).map((partner, index) => (
+              <div
+                key={index}
+                className="bg-accent-foreground flex h-20 w-48 items-center justify-center rounded-xl"
+              >
+                <img className="w-36" src={`/${partner}`} alt="partner" />
+              </div>
             ))}
           </Marquee>
         </div>

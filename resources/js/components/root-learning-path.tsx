@@ -2,6 +2,14 @@ import { CardsCarousel } from './cards-carousel';
 import { RootContent } from './root-content';
 import { BlurFade } from './ui/blur-fade';
 
+const learningPaths = [
+  'google.png',
+  'microsoft.png',
+  'aws.png',
+  'ibm.png',
+  'line.png',
+];
+
 export function RootLearningPath() {
   return (
     <RootContent>
@@ -36,16 +44,16 @@ export function RootLearningPath() {
           </p>
         </div>
         <div className="mb-20 flex flex-wrap items-center justify-center gap-5">
-          {[1, 2, 3, 4, 5].map((index) => (
+          {learningPaths.map((learning, index) => (
             <BlurFade
               key={index}
               direction="up"
               duration={0.7}
               delay={index * 0.1}
               inView
-              className="bg-muted flex h-20 w-48 items-center justify-center"
+              className="bg-accent-foreground flex h-20 w-48 items-center justify-center rounded-xl"
             >
-              {index}
+              <img className="w-36" src={`/${learning}`} alt="learning" />
             </BlurFade>
           ))}
         </div>

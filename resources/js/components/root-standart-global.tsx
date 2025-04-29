@@ -1,5 +1,7 @@
+import { useData } from '@/contexts/DataContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { Course } from '@/types';
 import { ArrowRightCircle, Code2, PlayCircle } from 'lucide-react';
 import { RootContent } from './root-content';
 import { BlurFade } from './ui/blur-fade';
@@ -7,7 +9,12 @@ import { Button } from './ui/button';
 import { Marquee } from './ui/marquee';
 
 export function RootStandartGlobal() {
+  const data = useData();
   const isMobile = useIsMobile();
+
+  const firstRow = data?.data?.courses.data.slice(0, 3);
+  const secondRow = data?.data?.courses.data.slice(3, 6);
+  const thirdRow = data?.data?.courses.data.slice(6, 9);
 
   return (
     <RootContent>
@@ -55,8 +62,8 @@ export function RootStandartGlobal() {
             vertical={isMobile ? false : true}
             className="[--duration:20s]"
           >
-            {firstRow.map((review) => (
-              <ReviewCard key={review.username} {...review} />
+            {firstRow?.map((course) => (
+              <ReviewCard key={course.id} course={course} />
             ))}
           </Marquee>
           <Marquee
@@ -65,8 +72,8 @@ export function RootStandartGlobal() {
             vertical={isMobile ? false : true}
             className="[--duration:20s]"
           >
-            {secondRow.map((review) => (
-              <ReviewCard key={review.username} {...review} />
+            {secondRow?.map((course) => (
+              <ReviewCard key={course.id} course={course} />
             ))}
           </Marquee>
           {!isMobile && (
@@ -75,8 +82,8 @@ export function RootStandartGlobal() {
               vertical={isMobile ? false : true}
               className="[--duration:20s]"
             >
-              {secondRow.map((review) => (
-                <ReviewCard key={review.username} {...review} />
+              {thirdRow?.map((course) => (
+                <ReviewCard key={course.id} course={course} />
               ))}
             </Marquee>
           )}
@@ -124,61 +131,23 @@ export function RootStandartGlobal() {
   );
 }
 
-const reviews = [
-  {
-    name: 'Jack',
-    username: '@jack',
-    body: "I've never seen anything like this before. It's amazing. I love it.",
-    img: 'https://avatar.vercel.sh/jack',
-  },
-  {
-    name: 'Jill',
-    username: '@jill',
-    body: "I don't know what to say. I'm speechless. This is amazing.",
-    img: 'https://avatar.vercel.sh/jill',
-  },
-  {
-    name: 'John',
-    username: '@john',
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: 'https://avatar.vercel.sh/john',
-  },
-];
-
-const firstRow = reviews.slice(0, reviews.length / 2);
-const secondRow = reviews.slice(reviews.length / 2);
-
-const ReviewCard = ({
-  img,
-  name,
-  username,
-  body,
-}: {
-  img: string;
-  name: string;
-  username: string;
-  body: string;
-}) => {
+const ReviewCard = ({ course }: { course: Course }) => {
   return (
     <figure
       className={cn(
-        'relative h-full w-64 cursor-pointer overflow-hidden rounded-xl border p-4 sm:w-36 lg:w-fit',
+        'relative h-full w-64 cursor-pointer overflow-hidden rounded-xl border sm:w-36 lg:w-fit',
         // light styles
         'border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]',
         // dark styles
         'dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]',
       )}
     >
-      <div className="flex flex-row items-center gap-2">
-        <img className="rounded-full" width="32" height="32" alt="" src={img} />
-        <div className="flex flex-col">
-          <figcaption className="text-sm font-medium dark:text-white">
-            {name}
-          </figcaption>
-          <p className="text-xs font-medium dark:text-white/40">{username}</p>
-        </div>
+      <div className="objcet-cover h-full w-full bg-cover bg-center">
+        <img src={`/storage/${course.image}`} alt="" />
+        <h3 className="absolute top-2 left-2 text-sm font-semibold">
+          {course.title}
+        </h3>
       </div>
-      <blockquote className="mt-2 text-sm">{body}</blockquote>
     </figure>
   );
 };
