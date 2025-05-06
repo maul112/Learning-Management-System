@@ -149,7 +149,7 @@ export function RootAbout() {
                 >
                   <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-xl">
                     <img
-                      src={item.image || '/placeholder.svg'}
+                      src={item.image}
                       alt={item.title}
                       className="h-full w-full object-contain"
                     />

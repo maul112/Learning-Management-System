@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { RootContent } from './root-content';
 import { BlurFade } from './ui/blur-fade';
 import { Button } from './ui/button';
+import RotatingText from './ui/rotating-text';
 
 export function RootJumbotron() {
   return (
@@ -17,15 +18,25 @@ export function RootJumbotron() {
             </h2>
             <h2 className="text-2xl font-semibold md:text-4xl">
               <BlurFade
+                className="flex items-center gap-3"
                 direction="right"
                 offset={20}
                 duration={0.7}
                 delay={0.5}
                 inView
               >
-                <span className="rounded-xl bg-cyan-500 px-2 py-1">
-                  Developer
-                </span>{' '}
+                <RotatingText
+                  texts={['Developer', 'Designer', 'Engineer']}
+                  mainClassName="px-2 sm:px-2 md:px-3 bg-cyan-300 text-black overflow-hidden py-0.5 sm:py-1 md:py-2 rounded-lg w-fit"
+                  staggerFrom={'last'}
+                  initial={{ y: '100%' }}
+                  animate={{ y: 0 }}
+                  exit={{ y: '-120%' }}
+                  staggerDuration={0.025}
+                  splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+                  transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+                  rotationInterval={4000}
+                />
                 Profesional
               </BlurFade>
             </h2>

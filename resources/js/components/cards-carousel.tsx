@@ -30,6 +30,7 @@ export function CardsCarousel() {
       <Card
         academic={academic}
         index={index}
+        layout={isMobile}
         isActive={isActive}
         setIsActive={setIsActive}
       />

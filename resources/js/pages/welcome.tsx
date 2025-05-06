@@ -1,5 +1,6 @@
 import { RootAbout } from '@/components/root-about';
 import { RootEvent } from '@/components/root-event';
+import { RootFooter } from '@/components/root-footer';
 import { RootJoin } from '@/components/root-join';
 import { RootJumbotron } from '@/components/root-jumbotron';
 import { RootLearningPath } from '@/components/root-learning-path';
@@ -34,6 +35,7 @@ export default function Welcome({
         <RootStandartGlobal />
         <RootJoin />
         <RootTestimoni />
+        <RootFooter />
       </RootLayout>
     </DataProvider>
   );
