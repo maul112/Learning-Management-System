@@ -92,7 +92,7 @@ export function RootNav() {
 
   // Filter courses based on search
   const filteredCourses =
-    data?.data?.courses.data.filter((course) =>
+    data?.data?.courses!.data.filter((course) =>
       course.title.toLowerCase().includes(search.toLowerCase()),
     ) || [];
 

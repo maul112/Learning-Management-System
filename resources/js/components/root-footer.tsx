@@ -100,8 +100,9 @@ export function RootFooter() {
             </ul>
           </div>
         </div>
-        <div className='mt-10'>
-            <Separator />
+        <div className="mt-10">
+          <Separator />
+          <h1 className="mt-10 text-center text-[15rem] font-bold">NEXTLMS</h1>
         </div>
       </footer>
     </RootContent>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminEventController;
 use App\Http\Controllers\Admin\AdminLessonController;
 use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\LearningPathController;
 use App\Http\Controllers\StudentController;
 use App\Http\Resources\AcademicResource;
 use App\Http\Resources\CourseResource;
@@ -27,6 +28,11 @@ Route::get('/', function () {
         'courses' => CourseResource::collection($courses),
     ]);
 })->name('home');
+
+Route::controller(LearningPathController::class)->group(function () {
+    Route::get('learning-path', 'index')->name('learning-path.index');
+    Route::get('learning-path/{academic}', 'show')->name('learning-path.show');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');

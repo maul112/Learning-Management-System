@@ -12,9 +12,8 @@ export function RootStandartGlobal() {
   const data = useData();
   const isMobile = useIsMobile();
 
-  const firstRow = data?.data?.courses.data.slice(0, 3);
-  const secondRow = data?.data?.courses.data.slice(3, 6);
-  const thirdRow = data?.data?.courses.data.slice(6, 9);
+  const firstRow = data?.data?.courses!.data.slice(0, 3);
+  const secondRow = data?.data?.courses!.data.slice(3, 6);
 
   return (
     <RootContent>
@@ -76,17 +75,6 @@ export function RootStandartGlobal() {
               <ReviewCard key={course.id} course={course} />
             ))}
           </Marquee>
-          {!isMobile && (
-            <Marquee
-              pauseOnHover
-              vertical={isMobile ? false : true}
-              className="[--duration:20s]"
-            >
-              {thirdRow?.map((course) => (
-                <ReviewCard key={course.id} course={course} />
-              ))}
-            </Marquee>
-          )}
         </div>
       </section>
       <section className="bg-muted mx-10 mb-10 rounded-xl p-10">

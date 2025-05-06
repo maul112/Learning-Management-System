@@ -92,13 +92,16 @@ export interface Lesson {
 }
 
 export type DataContextType = {
-  events: {
+  events?: {
     data: Event[];
   };
-  academics: {
+  academics?: {
     data: Academic[];
   };
-  courses: {
+  academic?: {
+    data: Academic;
+  };
+  courses?: {
     data: Course[];
   }
 };
