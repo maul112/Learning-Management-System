@@ -1,14 +1,14 @@
 import { LearningPathContent } from '@/components/learning-path-content';
 import { LearningPathTabs } from '@/components/learning-path-tabs';
+import { RootFooter } from '@/components/root-footer';
 import { DataProvider } from '@/contexts/DataContext';
 import RootLayout from '@/layouts/root-layout';
-import { Academic, Course } from '@/types';
+import { Academic } from '@/types';
 import { Head } from '@inertiajs/react';
 
 export default function LearningPath({
   academic,
   academics,
-  courses,
 }: {
   academic?: {
     data: Academic;
@@ -16,14 +16,10 @@ export default function LearningPath({
   academics: {
     data: Academic[];
   };
-  courses: {
-    data: Course[];
-  };
 }) {
   const initialData = {
     academic,
     academics,
-    courses,
   };
 
   return (
@@ -32,6 +28,7 @@ export default function LearningPath({
         <Head title="Learning Path" />
         <LearningPathTabs />
         <LearningPathContent />
+        <RootFooter />
       </RootLayout>
     </DataProvider>
   );

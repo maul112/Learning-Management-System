@@ -13,7 +13,7 @@ export function LearningPathTabs() {
   );
 
   return (
-    <nav className="p-5 pt-20">
+    <nav className="overflow-auto p-5 pt-20">
       <Tabs
         defaultValue={String(isActive)}
         value={String(isActive)}

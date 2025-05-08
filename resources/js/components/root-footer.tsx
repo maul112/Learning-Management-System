@@ -8,7 +8,7 @@ export function RootFooter() {
     <RootContent>
       <footer className="my-10 p-5 lg:mx-10">
         <Separator className="bg-accent mb-20" />
-        <div className="flex gap-20">
+        <div className="flex flex-wrap gap-20 px-5 md:px-0">
           <div>
             <h3 className="mb-4 text-3xl font-semibold">NextLMS</h3>
             <ul className="flex flex-col gap-1">
@@ -102,7 +102,9 @@ export function RootFooter() {
         </div>
         <div className="mt-10">
           <Separator />
-          <h1 className="mt-10 text-center text-[15rem] font-bold">NEXTLMS</h1>
+          <h1 className="mt-10 text-center text-8xl md:text-[10rem] font-bold lg:text-[15rem]">
+            NEXTLMS
+          </h1>
         </div>
       </footer>
     </RootContent>

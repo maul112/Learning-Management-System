@@ -20,6 +20,7 @@ class CourseFactory extends Factory
         return [
             'title' => fake()->sentence(),
             'image' => fake()->imageUrl(),
+            'information' => fake()->paragraph(),
             'description' => fake()->paragraph(),
             'order' => 0,
             'duration' => 0,

@@ -37,7 +37,7 @@ const lainnyaItems: NavItem[] = [
 export function RootNavMain() {
   return (
     <div className="flex items-center gap-2">
-      <NavMenu title="Learning Path" href="/learning-path" />
+      <NavMenu title="Learning Path" href="/learning-paths" />
       <NavMenu type="dropdown" title="Program" items={langgananItems} />
       <NavMenu type="dropdown" title="Langganan" items={programItems} />
       <NavMenu title="Capaian & Dampak" href="/impact" />

@@ -1,0 +1,112 @@
+import { Course } from '@/types';
+import { Link } from '@inertiajs/react';
+import {
+  ChartColumn,
+  GitCommitHorizontal,
+  StarIcon,
+  TimerIcon,
+  Users2,
+} from 'lucide-react';
+import { RootContent } from './root-content';
+import { Button } from './ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
+import { Separator } from './ui/separator';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip';
+
+export function CourseJumbotron({
+  course,
+}: {
+  course: {
+    data: Course;
+  };
+}) {
+  return (
+    <section className="p-5 pt-32">
+      <RootContent>
+        <div className="flex flex-col gap-5 lg:flex-row">
+          <div className="bg-muted h-60 w-full lg:w-1/4"></div>
+          <div className="w-full lg:w-2/4">
+            <Card className="border-none">
+              <CardHeader>
+                <span className="mb-4 flex gap-1 text-sm font-semibold">
+                  <StarIcon
+                    className="w-6 text-yellow-300"
+                    fill="currentColor"
+                  />
+                  4.00
+                  <GitCommitHorizontal />
+                  <p className="underline">
+                    {course.data.academic.title.split(' ')[0]}
+                  </p>
+                  Learning Path
+                </span>
+                <h1 className="text-2xl font-bold">{course.data.title}</h1>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <ChartColumn className="w-4 text-violet-500" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger className="text-muted-foreground cursor-pointer text-sm underline">
+                          Level: {course.data.difficulty}
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <h3 className="mb-2 text-xl font-semibold">
+                            {course.data.difficulty}
+                          </h3>
+                          <p>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing
+                            elit. Dolorum, hic.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <TimerIcon className="w-4 text-blue-500" />
+                    <span className="text-muted-foreground text-sm">
+                      {course.data.duration} Jam Belajar
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users2 className="w-4" />
+                  <span className="text-muted-foreground text-sm">
+                    100k Siswa Terdaftar
+                  </span>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <p className="text-muted-foreground">
+                  {course.data.information}
+                </p>
+              </CardFooter>
+            </Card>
+          </div>
+          <div className="w-full lg:w-1/4">
+            <Card>
+              <CardHeader>
+                <Button>
+                  <Link href="/">Belajar Sekarang</Link>
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col gap-3">
+                  <Button variant="secondary">Informasi kelas</Button>
+                  <Button variant="secondary">Lihat silabus</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </RootContent>
+      <Separator className="mt-20" />
+    </section>
+  );
+}

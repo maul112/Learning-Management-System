@@ -20,6 +20,8 @@ export function CardsCarousel() {
   const isMobile = useIsMobile();
   const [isActive, setIsActive] = useState<string>('Android Developer');
 
+  console.log(data);
+
   const academicCards = data?.data?.academics!.data.map((academic, index) => (
     <TabsTrigger
       key={index}
@@ -37,8 +39,8 @@ export function CardsCarousel() {
     </TabsTrigger>
   ));
 
-  const courseCards = data?.data?.academics!.data
-    .find((academic) => isActive === academic.title)
+  const courseCards = data?.data
+    ?.academics!.data.find((academic) => isActive === academic.title)
     ?.courses.map((course, index) => (
       <CardCourse key={index} course={course} />
     ));
@@ -173,7 +175,7 @@ function CardCourse({ course }: { course: Course }) {
         </p>
         <p className="text-muted mb-7 flex items-center gap-2 text-sm">
           <Book className="h-4 w-4" />
-          {course.description}
+          {course.information}
         </p>
         <div className="mb-2 flex items-center gap-5">
           <p className="text-muted flex items-center gap-2 text-sm">

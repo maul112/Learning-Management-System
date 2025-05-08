@@ -29,6 +29,9 @@ export interface SharedData {
   auth: Auth;
   ziggy: Config & { location: string };
   sidebarOpen: boolean;
+  courses: {
+    data: Course[];
+  }
   [key: string]: unknown;
 }
 
@@ -66,6 +69,7 @@ export interface Course {
   id: number;
   title: string;
   image: string;
+  information: string;
   description: string;
   order: number;
   duration: number;
@@ -103,5 +107,8 @@ export type DataContextType = {
   };
   courses?: {
     data: Course[];
+  }
+  course?: {
+    data: Course
   }
 };

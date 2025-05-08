@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('image')->nullable();
+            $table->longText('information');
             $table->longText('description');
             $table->integer('order');
             $table->integer('duration');

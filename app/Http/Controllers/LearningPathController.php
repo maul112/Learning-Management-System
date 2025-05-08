@@ -22,13 +22,11 @@ class LearningPathController extends Controller
     {
         $academics = Academic::all();
         $academic->with('courses');
-        $courses = Course::all();
 
-        return Inertia::render('learning-path', [
+        return Inertia::render('learning-paths', [
             'academic_id' => $academic->id,
             'academic' => new AcademicResource($academic),
             'academics' => AcademicResource::collection($academics),
-            'courses' => CourseResource::collection($courses),
         ]);
     }
 }

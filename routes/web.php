@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AcademicController;
 use App\Http\Controllers\Admin\AdminAcademicController;
 use App\Http\Controllers\Admin\AdminCourseController;
 use App\Http\Controllers\Admin\AdminDashboardController;
@@ -30,8 +31,13 @@ Route::get('/', function () {
 })->name('home');
 
 Route::controller(LearningPathController::class)->group(function () {
-    Route::get('learning-path', 'index')->name('learning-path.index');
-    Route::get('learning-path/{academic}', 'show')->name('learning-path.show');
+    Route::get('/learning-paths', 'index')->name('learning-path.index');
+    Route::get('/learning-paths/{academic}', 'show')->name('learning-path.show');
+});
+
+Route::controller(AcademicController::class)->group(function () {
+    Route::get('/academies/{course}', 'index')->name('academics.index');
+    Route::get('/academies/{course}/tutorials/{module}', 'show')->name('academics.show');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

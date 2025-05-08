@@ -5,6 +5,7 @@ import {
   motion,
 } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
+import { Separator } from "./separator";
 
 interface TimelineEntry {
   title: string;
@@ -38,13 +39,14 @@ export const Timeline = ({ heading, description, data }: { heading: string, desc
       ref={containerRef}
     >
       <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10">
-        <h2 className="text-2xl md:text-4xl mb-4 text-black dark:text-white text-center">
+        <motion.h2 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1, transition: { duration: 0.7, type: "spring", damping: 20, stiffness: 400 } }} className="text-2xl md:text-4xl mb-4 text-black dark:text-white text-center">
           {heading}
-        </h2>
-        <p className="text-neutral-700 dark:text-neutral-300 text-sm md:text-base text-center px-2 md:px-32">
+        </motion.h2>
+        <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1, transition: { duration: 0.7, type: "spring", damping: 20, stiffness : 400 } }} className="text-neutral-700 dark:text-muted-foreground text-sm md:text-base text-center px-2 md:px-60">
           {description}
-        </p>
+        </motion.p>
       </div>
+      <Separator className="mt-10" />
 
       <div ref={ref} className="relative max-w-7xl mx-auto pb-20">
         {data.map((item, index) => (

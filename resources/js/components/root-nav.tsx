@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { useData } from '@/contexts/DataContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
@@ -36,7 +35,7 @@ const navListItems = [
 ];
 
 export function RootNav() {
-  const data = useData();
+  const data = usePage<SharedData>();
   const { auth } = usePage<SharedData>().props;
   const isMobile = useIsMobile();
   const [open, setOpen] = useState<boolean>(false);
@@ -92,7 +91,7 @@ export function RootNav() {
 
   // Filter courses based on search
   const filteredCourses =
-    data?.data?.courses!.data.filter((course) =>
+    data.props.courses.data.filter((course) =>
       course.title.toLowerCase().includes(search.toLowerCase()),
     ) || [];
 
