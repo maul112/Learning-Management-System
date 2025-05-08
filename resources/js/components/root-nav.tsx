@@ -142,7 +142,7 @@ export function RootNav() {
                               }}
                               className="cursor-pointer"
                             >
-                              {course.title}
+                              <Link href={`/academies/${course.id}`}>{course.title}</Link>
                             </CommandItem>
                           ))}
                         </CommandGroup>
