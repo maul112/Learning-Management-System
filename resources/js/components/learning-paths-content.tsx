@@ -1,9 +1,10 @@
 import { Separator } from '@/components/ui/separator';
 import { useData } from '@/contexts/DataContext';
-import { SharedData } from '@/types';
+import { Course, SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ChartColumnDecreasingIcon, StarIcon, TimerIcon } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { BorderBeam } from './ui/border-beam';
 import {
   Card,
@@ -26,6 +27,25 @@ import { Label } from './ui/label';
 export function LearningPathsContent() {
   const { courses } = usePage<SharedData>().props;
   const academics = useData()?.data?.academics;
+  const [coursesFilter, setCoursesFilter] = useState<Course[]>([]);
+  const [difficultyFilter, setDifficultyFilter] = useState<string[]>([]);
+  const [academicFilter, setAcademicFilter] = useState<string[]>([]);
+  const [classTypeFilter, setClassTypeFilter] = useState<string[]>([]);
+
+  const filteredCourses = useCallback(() => {
+    return courses.data.filter((course) => {
+      return (
+        (!difficultyFilter.length ||
+          difficultyFilter.includes(course.difficulty)) &&
+        (!academicFilter.length ||
+          academicFilter.includes(course.academic.title))
+      );
+    });
+  }, [academicFilter, difficultyFilter, courses.data]);
+
+  useEffect(() => {
+    setCoursesFilter(filteredCourses);
+  }, [difficultyFilter, academicFilter, classTypeFilter, filteredCourses]);
 
   return (
     <div className="dark:bg-background w-full bg-white font-sans md:px-10">
@@ -44,32 +64,73 @@ export function LearningPathsContent() {
           }}
           className="mb-4 text-center text-xl text-black md:px-60 md:text-3xl dark:text-white"
         >
-          Kelas di NextLMS tersedia dari level dasar hingga profesional sesuai
-          kebutuhan industri terkini
+          Kelas di{' '}
+          <span className="text-background rounded bg-cyan-400 p-1 font-bold">
+            NextLMS
+          </span>{' '}
+          tersedia dari level dasar hingga profesional sesuai kebutuhan industri
+          terkini
         </motion.h2>
       </div>
       <Separator className="mt-10" />
-      <main className="px-36 py-10">
+      <main className="px-3 py-10 md:px-0 lg:px-36">
         <div className="flex items-center justify-evenly gap-3">
           <div className="grid w-full space-y-2">
             <Label htmlFor="tingkat">Tingkat</Label>
             <DropdownMenu>
               <DropdownMenuTrigger className="text-muted-foreground w-full rounded border p-2 px-2 text-start">
-                Semua Tingkat
+                {difficultyFilter.length
+                  ? difficultyFilter.join(', ')
+                  : 'Semua Tingkat'}
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[23.5rem]">
+              <DropdownMenuContent className="lg:w-[23.5rem]">
                 <DropdownMenuLabel>Tingkat Kesulitan</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Checkbox />
+                <DropdownMenuItem
+                  onClick={() =>
+                    difficultyFilter.includes('beginner')
+                      ? setDifficultyFilter(
+                          difficultyFilter.filter(
+                            (item) => item !== 'beginner',
+                          ),
+                        )
+                      : setDifficultyFilter([...difficultyFilter, 'beginner'])
+                  }
+                >
+                  <Checkbox checked={difficultyFilter.includes('beginner')} />
                   Beginner
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Checkbox />
+                <DropdownMenuItem
+                  onClick={() =>
+                    difficultyFilter.includes('intermediate')
+                      ? setDifficultyFilter(
+                          difficultyFilter.filter(
+                            (item) => item !== 'intermediate',
+                          ),
+                        )
+                      : setDifficultyFilter([
+                          ...difficultyFilter,
+                          'intermediate',
+                        ])
+                  }
+                >
+                  <Checkbox
+                    checked={difficultyFilter.includes('intermediate')}
+                  />
                   Intermediate
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Checkbox />
+                <DropdownMenuItem
+                  onClick={() =>
+                    difficultyFilter.includes('Advanced')
+                      ? setDifficultyFilter(
+                          difficultyFilter.filter(
+                            (item) => item !== 'Advanced',
+                          ),
+                        )
+                      : setDifficultyFilter([...difficultyFilter, 'Advanced'])
+                  }
+                >
+                  <Checkbox checked={difficultyFilter.includes('Advanced')} />
                   Advanced
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -79,14 +140,29 @@ export function LearningPathsContent() {
             <Label htmlFor="topik">Topik</Label>
             <DropdownMenu>
               <DropdownMenuTrigger className="text-muted-foreground w-full rounded border p-2 px-2 text-start">
-                Semua Topik
+                {academicFilter.length
+                  ? academicFilter.join(', ')
+                  : 'Semua Topik'}
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[23.5rem]">
+              <DropdownMenuContent className="lg:w-[23.5rem]">
                 <DropdownMenuLabel>Topik Kelas</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {academics?.data.map((academic) => (
-                  <DropdownMenuItem key={academic.id}>
-                    <Checkbox />
+                  <DropdownMenuItem
+                    key={academic.id}
+                    onClick={() =>
+                      academicFilter.includes(academic.title)
+                        ? setAcademicFilter(
+                            academicFilter.filter(
+                              (item) => item !== academic.title,
+                            ),
+                          )
+                        : setAcademicFilter([...academicFilter, academic.title])
+                    }
+                  >
+                    <Checkbox
+                      checked={academicFilter.includes(academic.title)}
+                    />
                     {academic.title}
                   </DropdownMenuItem>
                 ))}
@@ -97,25 +173,50 @@ export function LearningPathsContent() {
             <Label htmlFor="type">Tipe Kelas</Label>
             <DropdownMenu>
               <DropdownMenuTrigger className="text-muted-foreground w-full rounded border p-2 px-2 text-start">
-                Semua Kelas
+                {classTypeFilter.length
+                  ? classTypeFilter.join(', ')
+                  : 'Semua Kelas'}
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[23.5rem]">
+              <DropdownMenuContent className="lg:w-[23.5rem]">
                 <DropdownMenuLabel>Tipe Kelas</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Checkbox />
+                <DropdownMenuItem
+                  onClick={() =>
+                    classTypeFilter.includes('Gratis')
+                      ? setClassTypeFilter(
+                          classTypeFilter.filter((item) => item !== 'Gratis'),
+                        )
+                      : setClassTypeFilter([...classTypeFilter, 'Gratis'])
+                  }
+                >
+                  <Checkbox checked={classTypeFilter.includes('Gratis')} />
                   Kelas Gratis
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Checkbox />
+                <DropdownMenuItem
+                  onClick={() =>
+                    classTypeFilter.includes('Kelas Berbayar')
+                      ? setClassTypeFilter(
+                          classTypeFilter.filter(
+                            (item) => item !== 'Kelas Berbayar',
+                          ),
+                        )
+                      : setClassTypeFilter([
+                          ...classTypeFilter,
+                          'Kelas Berbayar',
+                        ])
+                  }
+                >
+                  <Checkbox
+                    checked={classTypeFilter.includes('Kelas Berbayar')}
+                  />
                   Kelas Berbayar
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
-        <div className="mt-5 grid grid-cols-2 gap-x-5 gap-y-3">
-          {courses.data.map((course) => (
+        <div className="mt-5 grid grid-cols-1 gap-x-5 gap-y-3 md:grid-cols-2">
+          {coursesFilter.map((course) => (
             <Card className="relative">
               <CardHeader>
                 <div className="flex gap-5">

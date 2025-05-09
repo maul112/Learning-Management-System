@@ -13,7 +13,7 @@ export function LearningPathTabs() {
   );
 
   return (
-    <nav className="overflow-auto p-5 pt-20">
+    <nav className="bg-background sticky top-0 overflow-auto p-5 pt-20 z-10">
       <Tabs
         defaultValue={String(isActive)}
         value={String(isActive)}
@@ -21,31 +21,38 @@ export function LearningPathTabs() {
       >
         <TabsList className="bg-background">
           {data?.data?.academics!.data.map((academic) => (
-            <TabsTrigger
-              className="relative h-10 w-56"
+            <Link
               key={academic.id}
-              value={String(academic.id)}
+              href={route('learning-path.show', academic.id)}
             >
-              <Link href={route('learning-path.show', academic.id)}>
+              <TabsTrigger
+                className="relative h-10 w-56 cursor-pointer"
+                value={String(academic.id)}
+              >
                 {academic.title}
-              </Link>
-              {isActive === String(academic.id) && (
+                {isActive === String(academic.id) && (
+                  <motion.div
+                    layoutId="active-tab"
+                    className="bg-primary absolute right-0 bottom-0 left-0 h-px"
+                  />
+                )}
+              </TabsTrigger>
+            </Link>
+          ))}
+          <Link href={route('learning-path.index')}>
+            <TabsTrigger
+              className="relative h-10 w-56 cursor-pointer"
+              value="semua-kelas"
+            >
+              Semua Kelas
+              {isActive === 'semua-kelas' && (
                 <motion.div
                   layoutId="active-tab"
                   className="bg-primary absolute right-0 bottom-0 left-0 h-px"
                 />
               )}
             </TabsTrigger>
-          ))}
-          <TabsTrigger className="relative h-10 w-56" value="semua-kelas">
-            <Link href={route('learning-path.index')}>Semua Kelas</Link>
-            {isActive === 'semua-kelas' && (
-              <motion.div
-                layoutId="active-tab"
-                className="bg-primary absolute right-0 bottom-0 left-0 h-px"
-              />
-            )}
-          </TabsTrigger>
+          </Link>
         </TabsList>
       </Tabs>
     </nav>

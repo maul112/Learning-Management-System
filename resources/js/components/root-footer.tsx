@@ -102,7 +102,7 @@ export function RootFooter() {
         </div>
         <div className="mt-10">
           <Separator />
-          <h1 className="mt-10 text-center text-8xl md:text-[10rem] font-bold lg:text-[15rem]">
+          <h1 className="mt-10 text-center text-[5rem] font-bold md:text-[9rem] lg:text-[13rem]">
             NEXTLMS
           </h1>
         </div>
