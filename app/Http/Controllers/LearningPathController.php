@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AcademicResource;
-use App\Http\Resources\CourseResource;
 use App\Models\Academic;
-use App\Models\Course;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class LearningPathController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $redirect = $request->get('redirect');
         $academics = Academic::all();
 
-        return redirect()->route('learning-path.show', $academics[0]->id);
+        if ($redirect) {
+            return redirect()->route('learning-path.show', $academics[0]->id);
+        }
+
+        return Inertia::render('learning-paths/index', [
+            'academics' => AcademicResource::collection($academics),
+        ]);
     }
 
     public function show(Academic $academic)
@@ -23,7 +28,7 @@ class LearningPathController extends Controller
         $academics = Academic::all();
         $academic->with('courses');
 
-        return Inertia::render('learning-paths', [
+        return Inertia::render('learning-paths/show', [
             'academic_id' => $academic->id,
             'academic' => new AcademicResource($academic),
             'academics' => AcademicResource::collection($academics),

@@ -12,36 +12,13 @@ const langgananItems: NavItem[] = [
   },
 ];
 
-const programItems: NavItem[] = [
-  {
-    title: 'Program 1',
-    href: '#',
-  },
-  {
-    title: 'Program 2',
-    href: '#',
-  },
-];
-
-const lainnyaItems: NavItem[] = [
-  {
-    title: 'Lainnya 1',
-    href: '#',
-  },
-  {
-    title: 'Lainnya 2',
-    href: '#',
-  },
-];
 
 export function RootNavMain() {
   return (
     <div className="flex items-center gap-2">
-      <NavMenu title="Learning Path" href="/learning-paths" />
-      <NavMenu type="dropdown" title="Program" items={langgananItems} />
-      <NavMenu type="dropdown" title="Langganan" items={programItems} />
+      <NavMenu title="Learning Path" href="/learning-paths?redirect=true" />
+      <NavMenu type="dropdown" title="Langganan" items={langgananItems} />
       <NavMenu title="Capaian & Dampak" href="/impact" />
-      <NavMenu type="dropdown" title="Lainnya" items={lainnyaItems} />
     </div>
   );
 }

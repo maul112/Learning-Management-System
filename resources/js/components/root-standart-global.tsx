@@ -12,8 +12,14 @@ export function RootStandartGlobal() {
   const data = useData();
   const isMobile = useIsMobile();
 
-  const firstRow = data?.data?.courses!.data.slice(0, 3);
-  const secondRow = data?.data?.courses!.data.slice(3, 6);
+  const firstRow = data?.data?.courses!.data.slice(
+    0,
+    data.data.courses!.data.length / 2,
+  );
+  const secondRow = data?.data?.courses!.data.slice(
+    3,
+    data.data.courses!.data.length,
+  );
 
   return (
     <RootContent>

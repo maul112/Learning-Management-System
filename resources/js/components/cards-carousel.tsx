@@ -20,8 +20,6 @@ export function CardsCarousel() {
   const isMobile = useIsMobile();
   const [isActive, setIsActive] = useState<string>('Android Developer');
 
-  console.log(data);
-
   const academicCards = data?.data?.academics!.data.map((academic, index) => (
     <TabsTrigger
       key={index}

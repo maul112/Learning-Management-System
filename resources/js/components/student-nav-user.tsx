@@ -35,6 +35,7 @@ export function StudentNavUser({
   variant = 'header',
 }: StudentNavUserProps) {
   const { auth } = usePage<SharedData>().props;
+  const { url } = usePage();
   const getInitials = useInitials();
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +47,7 @@ export function StudentNavUser({
         variant === 'sidebar' && !isMobile ? 'mr-20' : '',
       )}
     >
-      {auth.user && (
+      {auth.user && url !== '/student/dashboard' && (
         <Button variant="ghost">
           <Link href={route('student.dashboard')}>Dashboard</Link>
         </Button>
