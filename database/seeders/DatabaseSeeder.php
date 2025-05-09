@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Academic;
 use App\Models\Course;
+use App\Models\Rating;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -256,6 +257,8 @@ class DatabaseSeeder extends Seeder
             ]
         ];
 
+        $students = User::factory(50)->create();
+
         foreach ($data as $item) {
             Academic::create([
                 'title' => $item['title'],
@@ -264,7 +267,7 @@ class DatabaseSeeder extends Seeder
             ]);
 
             foreach ($item['courses'] as $course) {
-                Course::create([
+                $course = Course::create([
                     'title' => $course['title'],
                     'image' => $course['image'],
                     'information' => $course['information'],
@@ -274,6 +277,15 @@ class DatabaseSeeder extends Seeder
                     'difficulty' => $course['difficulty'],
                     'academic_id' => $course['academic_id']
                 ]);
+
+                foreach ($students as $student) {
+                    Rating::create([
+                        'student_id' => $student->id,
+                        'course_id' => $course->id,
+                        'rating' => fake()->numberBetween(1, 5),
+                        'comment' => fake()->paragraph(),
+                    ]);
+                }
             }
         }
     }

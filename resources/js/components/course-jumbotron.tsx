@@ -1,3 +1,4 @@
+import { useAverage } from '@/hooks/use-average';
 import { Course } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
@@ -34,6 +35,8 @@ export function CourseJumbotron({
     data: Course;
   };
 }) {
+  const getAverage = useAverage();
+
   return (
     <section className="overflow-hidden p-5 pt-32">
       <RootContent>
@@ -47,7 +50,9 @@ export function CourseJumbotron({
                     className="w-6 text-yellow-300"
                     fill="currentColor"
                   />
-                  4.00
+                  {getAverage(
+                    course.data.ratings.map((rating) => rating.rating),
+                  )}
                   <GitCommitHorizontal />
                   <Dialog>
                     <DialogTrigger>

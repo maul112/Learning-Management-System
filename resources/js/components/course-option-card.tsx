@@ -1,3 +1,4 @@
+import { useAverage } from '@/hooks/use-average';
 import { cn } from '@/lib/utils';
 import { Course, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
@@ -60,6 +61,14 @@ export function CourseCard({
 }) {
   const Arrow = isNext ? ArrowRight : ArrowLeft;
   const isNextStep = isNext ? course.data.order + 1 : course.data.order - 1;
+  const ratings = isNext
+    ? data
+        .find((d) => d.order === course.data.order + 1)
+        ?.ratings.map((r) => r.rating)
+    : data
+        .find((d) => d.order === course.data.order - 1)
+        ?.ratings.map((r) => r.rating);
+  const getAverage = useAverage();
 
   return (
     <React.Fragment>
@@ -111,7 +120,9 @@ export function CourseCard({
                     className="w-4 text-yellow-300"
                     fill="currentColor"
                   />
-                  <p className="text-muted-foreground text-xs">4.0</p>
+                  <p className="text-muted-foreground text-xs">
+                    {getAverage(ratings!)}
+                  </p>
                 </span>
                 <span className="flex items-center gap-1">
                   <ChartColumn className="w-4 text-violet-500" />

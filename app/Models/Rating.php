@@ -15,6 +15,7 @@ class Rating extends Model
         'student_id',
         'course_id',
         'rating',
+        'comment',
     ];
 
     public function student(): BelongsTo

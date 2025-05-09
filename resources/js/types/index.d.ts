@@ -31,7 +31,7 @@ export interface SharedData {
   sidebarOpen: boolean;
   courses: {
     data: Course[];
-  }
+  };
   [key: string]: unknown;
 }
 
@@ -77,6 +77,7 @@ export interface Course {
   academic: Academic;
   modules: Module[];
   users: User[];
+  ratings: Rating[];
 }
 
 export interface Module {
@@ -95,6 +96,13 @@ export interface Lesson {
   module: Module;
 }
 
+export interface Rating {
+  id: number;
+  rating: number;
+  course: Course;
+  student: User;
+}
+
 export type DataContextType = {
   events?: {
     data: Event[];
@@ -107,8 +115,8 @@ export type DataContextType = {
   };
   courses?: {
     data: Course[];
-  }
+  };
   course?: {
-    data: Course
-  }
+    data: Course;
+  };
 };

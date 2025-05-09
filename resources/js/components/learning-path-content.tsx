@@ -1,4 +1,5 @@
 import { useData } from '@/contexts/DataContext';
+import { useAverage } from '@/hooks/use-average';
 import { Link } from '@inertiajs/react';
 import {
   Book,
@@ -20,6 +21,7 @@ import { Timeline } from './ui/timeline';
 
 export function LearningPathContent() {
   const academic = useData()?.data?.academic;
+  const getAverage = useAverage();
 
   const academicData = academic?.data.courses.map((course) => ({
     title: 'Langkah ' + String(course.order),
@@ -46,7 +48,7 @@ export function LearningPathContent() {
             </span>
             <span className="text-muted-foreground flex items-center gap-1 text-xs md:text-sm">
               <StarIcon className="text-amber-400" fill="currentColor" />
-              4.0
+              {getAverage(course.ratings.map((rating) => rating.rating))}
             </span>
             <span className="text-muted-foreground flex items-center gap-1 text-xs capitalize md:text-sm">
               <ChartColumn className="text-violet-400" />

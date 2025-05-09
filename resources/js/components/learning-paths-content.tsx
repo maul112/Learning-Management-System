@@ -1,11 +1,11 @@
 import { Separator } from '@/components/ui/separator';
 import { useData } from '@/contexts/DataContext';
+import { useAverage } from '@/hooks/use-average';
 import { Course, SharedData } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ChartColumnDecreasingIcon, StarIcon, TimerIcon } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { BorderBeam } from './ui/border-beam';
 import {
   Card,
   CardContent,
@@ -23,10 +23,12 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Label } from './ui/label';
+import { ShineBorder } from './ui/shine-border';
 
 export function LearningPathsContent() {
   const { courses } = usePage<SharedData>().props;
   const academics = useData()?.data?.academics;
+  const getAverage = useAverage();
   const [coursesFilter, setCoursesFilter] = useState<Course[]>([]);
   const [difficultyFilter, setDifficultyFilter] = useState<string[]>([]);
   const [academicFilter, setAcademicFilter] = useState<string[]>([]);
@@ -78,7 +80,7 @@ export function LearningPathsContent() {
           <div className="grid w-full space-y-2">
             <Label htmlFor="tingkat">Tingkat</Label>
             <DropdownMenu>
-              <DropdownMenuTrigger className="text-muted-foreground w-full rounded border p-2 px-2 text-start">
+              <DropdownMenuTrigger className="text-muted-foreground relative w-full rounded border p-2 px-2 text-start capitalize">
                 {difficultyFilter.length
                   ? difficultyFilter.join(', ')
                   : 'Semua Tingkat'}
@@ -139,7 +141,7 @@ export function LearningPathsContent() {
           <div className="grid w-full space-y-2">
             <Label htmlFor="topik">Topik</Label>
             <DropdownMenu>
-              <DropdownMenuTrigger className="text-muted-foreground w-full rounded border p-2 px-2 text-start">
+              <DropdownMenuTrigger className="text-muted-foreground w-full rounded border p-2 px-2 text-start capitalize">
                 {academicFilter.length
                   ? academicFilter.join(', ')
                   : 'Semua Topik'}
@@ -172,7 +174,7 @@ export function LearningPathsContent() {
           <div className="grid w-full space-y-2">
             <Label htmlFor="type">Tipe Kelas</Label>
             <DropdownMenu>
-              <DropdownMenuTrigger className="text-muted-foreground w-full rounded border p-2 px-2 text-start">
+              <DropdownMenuTrigger className="text-muted-foreground w-full rounded border p-2 px-2 text-start capitalize">
                 {classTypeFilter.length
                   ? classTypeFilter.join(', ')
                   : 'Semua Kelas'}
@@ -222,7 +224,11 @@ export function LearningPathsContent() {
                 <div className="flex gap-5">
                   <div className="h-32 w-60 bg-slate-200"></div>
                   <div className="flex w-full flex-col">
-                    <CardTitle>{course.title}</CardTitle>
+                    <CardTitle>
+                      <Link href={`/academies/${course.id}`}>
+                        {course.title}
+                      </Link>
+                    </CardTitle>
                     <CardDescription className="mt-5 flex items-center gap-4">
                       <span className="flex items-center gap-2">
                         <TimerIcon className="h-4 w-4 text-blue-400" />
@@ -233,9 +239,11 @@ export function LearningPathsContent() {
                           className="h-4 w-4 text-amber-400"
                           fill="currentColor"
                         />
-                        4.0
+                        {getAverage(
+                          course.ratings.map((rating) => rating.rating),
+                        )}
                       </span>
-                      <span className="flex items-center gap-2">
+                      <span className="flex items-center gap-2 capitalize">
                         <ChartColumnDecreasingIcon className="h-4 w-4 text-cyan-400" />
                         {course.difficulty}
                       </span>
@@ -244,7 +252,7 @@ export function LearningPathsContent() {
                 </div>
               </CardHeader>
               <CardContent>{course.information}</CardContent>
-              <BorderBeam />
+              <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} />
             </Card>
           ))}
         </div>
