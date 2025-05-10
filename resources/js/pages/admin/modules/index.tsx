@@ -1,8 +1,8 @@
 import { DataTable } from '@/components/data-table';
 
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem, Module } from '@/types';
-import { Head } from '@inertiajs/react';
+import { BreadcrumbItem, Module, SharedData } from '@/types';
+import { Head, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { columns } from './columns';
@@ -14,18 +14,14 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function Modules({
-  modules,
-  success,
-  error,
-}: {
-  modules: { data: Module[] };
-  success?: string;
-  error?: string;
-}) {
+export default function Modules() {
+  const { modules, success, error } = usePage<
+    SharedData & { modules: { data: Module[] } }
+  >().props;
+
   useEffect(() => {
-    if (success) toast.success(success);
-    if (error) toast.error(error);
+    if (success) toast.success(success as string);
+    if (error) toast.error(error as string);
   }, [success, error]);
 
   return (

@@ -13,8 +13,8 @@ import {
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem, User } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { BreadcrumbItem, SharedData, User } from '@/types';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
@@ -30,33 +30,28 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function UsersEdit({
-  user,
-  success,
-  error,
-}: {
-  user: User;
-  success?: string;
-  error?: string;
-}) {
+export default function UsersEdit() {
+  const { user, success, error } = usePage<
+    SharedData & { user: { data: User } }
+  >().props;
   const { data, setData, put, processing, errors } = useForm({
-    name: user.name,
-    email: user.email,
+    name: user.data.name,
+    email: user.data.email,
     password: '',
-    role: user.role,
-    status: user.status,
+    role: user.data.role,
+    status: user.data.status,
   });
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    put(route('users.update', user.id), {
+    put(route('users.update', user.data.id), {
       onError: (e) => console.log(e),
     });
   };
 
   useEffect(() => {
-    if (success) toast.success(success);
-    if (error) toast.error(error);
+    if (success) toast.success(success as string);
+    if (error) toast.error(error as string);
   }, [success, error]);
 
   return (

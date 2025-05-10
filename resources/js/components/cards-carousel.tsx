@@ -1,7 +1,7 @@
 import { Card, Carousel } from '@/components/ui/apple-cards-carousel';
-import { useData } from '@/contexts/DataContext';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Course } from '@/types';
+import { Academic, Course, SharedData } from '@/types';
+import { usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Award,
@@ -16,11 +16,13 @@ import { Separator } from './ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 export function CardsCarousel() {
-  const data = useData();
+  const { academics } = usePage<
+    SharedData & { academics: { data: Academic[] } }
+  >().props;
   const isMobile = useIsMobile();
   const [isActive, setIsActive] = useState<string>('Android Developer');
 
-  const academicCards = data?.data?.academics!.data.map((academic, index) => (
+  const academicCards = academics.data.map((academic, index) => (
     <TabsTrigger
       key={index}
       value={academic.title}
@@ -37,8 +39,8 @@ export function CardsCarousel() {
     </TabsTrigger>
   ));
 
-  const courseCards = data?.data
-    ?.academics!.data.find((academic) => isActive === academic.title)
+  const courseCards = academics.data
+    .find((academic) => isActive === academic.title)
     ?.courses.map((course, index) => (
       <CardCourse key={index} course={course} />
     ));
@@ -54,7 +56,7 @@ export function CardsCarousel() {
           <TabsList className="bg-background">
             {isMobile ? (
               <div className="flex w-full gap-4">
-                {data?.data?.academics!.data.map((academic, index) => (
+                {academics.data.map((academic, index) => (
                   <TabsTrigger
                     key={index}
                     value={academic.title}
@@ -78,7 +80,7 @@ export function CardsCarousel() {
         </section>
         <section className="bg-muted mx-10 mt-10 mb-10 flex flex-col justify-between rounded-xl py-10 lg:mt-40 lg:flex-row">
           <AnimatePresence>
-            {data?.data?.academics!.data.map((academic, index) => (
+            {academics.data.map((academic, index) => (
               <TabsContent
                 key={index}
                 value={academic.title}

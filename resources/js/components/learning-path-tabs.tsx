@@ -1,12 +1,13 @@
-import { useData } from '@/contexts/DataContext';
+import { Academic, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 
 export function LearningPathTabs() {
-  const data = useData();
-  const { props, url } = usePage();
+  const { props, url } = usePage<
+    SharedData & { academics: { data: Academic[] } }
+  >();
   const academicId = props.academic_id;
   const [isActive, setIsActive] = useState<string | undefined>(
     url === '/learning-paths' ? 'semua-kelas' : String(academicId),
@@ -20,7 +21,7 @@ export function LearningPathTabs() {
         onValueChange={(value) => setIsActive(String(value))}
       >
         <TabsList className="bg-background">
-          {data?.data?.academics!.data.map((academic) => (
+          {props.academics?.data?.map((academic) => (
             <Link
               key={academic.id}
               href={route('learning-path.show', academic.id)}

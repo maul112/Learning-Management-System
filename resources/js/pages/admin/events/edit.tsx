@@ -4,8 +4,8 @@ import FormFieldMarkdown from '@/components/form-field-markdown';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem, Event } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { BreadcrumbItem, Event, SharedData } from '@/types';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
@@ -21,15 +21,10 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function EventEdit({
-  event,
-  success,
-  error,
-}: {
-  event: { data: Event };
-  success?: string;
-  error?: string;
-}) {
+export default function EventEdit() {
+  const { event, success, error } = usePage<
+    SharedData & { event: { data: Event } }
+  >().props;
   const { data, setData, put, processing, errors } = useForm({
     title: event.data.title,
     image: null as File | null,
@@ -46,8 +41,8 @@ export default function EventEdit({
   };
 
   useEffect(() => {
-    if (success) toast.success(success);
-    if (error) toast.error(error);
+    if (success) toast.success(success as string);
+    if (error) toast.error(error as string);
   }, [success, error]);
 
   return (

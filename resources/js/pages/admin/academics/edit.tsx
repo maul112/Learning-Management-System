@@ -4,8 +4,8 @@ import FormFieldMarkdown from '@/components/form-field-markdown';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { Academic, BreadcrumbItem } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { Academic, BreadcrumbItem, SharedData } from '@/types';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
@@ -21,15 +21,10 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function AcademicEdit({
-  academic,
-  success,
-  error,
-}: {
-  academic: { data: Academic };
-  success?: string;
-  error?: string;
-}) {
+export default function AcademicEdit() {
+  const { academic, success, error } = usePage<
+    SharedData & { academic: { data: Academic } }
+  >().props;
   const { data, setData, put, processing, errors } = useForm({
     title: academic.data.title,
     image: null as File | null,
@@ -44,8 +39,8 @@ export default function AcademicEdit({
   };
 
   useEffect(() => {
-    if (success) toast.success(success);
-    if (error) toast.error(error);
+    if (success) toast.success(success as string);
+    if (error) toast.error(error as string);
   }, [success, error]);
 
   useEffect(() => {

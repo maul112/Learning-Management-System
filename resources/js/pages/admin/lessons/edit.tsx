@@ -3,8 +3,8 @@ import FormFieldSelect from '@/components/form-field-select';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem, Course, Lesson, Module } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { BreadcrumbItem, Course, Lesson, Module, SharedData } from '@/types';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -20,25 +20,14 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function LessonsEdit({
-  lesson,
-  courses,
-  modules,
-  success,
-  error,
-}: {
-  lesson: {
-    data: Lesson;
-  };
-  courses: {
-    data: Course[];
-  };
-  modules: {
-    data: Module[];
-  };
-  success?: string;
-  error?: string;
-}) {
+export default function LessonsEdit() {
+  const { lesson, courses, modules, success, error } = usePage<
+    SharedData & {
+      lesson: { data: Lesson };
+      courses: { data: Course[] };
+      modules: { data: Module[] };
+    }
+  >().props;
   const { data, setData, put, processing, errors } = useForm({
     title: lesson.data.title,
     order: lesson.data.order,
@@ -68,8 +57,8 @@ export default function LessonsEdit({
   }, [moduleValues, data.module_id]);
 
   useEffect(() => {
-    if (success) toast.success(success);
-    if (error) toast.error(error);
+    if (success) toast.success(success as string);
+    if (error) toast.error(error as string);
   }, [success, error]);
 
   return (

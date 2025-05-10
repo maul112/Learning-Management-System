@@ -3,8 +3,8 @@ import FormFieldSelect from '@/components/form-field-select';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem, Course } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { BreadcrumbItem, Course, SharedData } from '@/types';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
@@ -20,17 +20,10 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function ModuleCreate({
-  courses,
-  sucess,
-  error,
-}: {
-  courses: {
-    data: Course[];
-  };
-  sucess?: string;
-  error?: string;
-}) {
+export default function ModuleCreate() {
+  const { courses, sucess, error } = usePage<
+    SharedData & { courses: { data: Course[] } }
+  >().props;
   const { data, setData, post, processing, errors } = useForm({
     title: '',
     order: 0,
@@ -45,8 +38,8 @@ export default function ModuleCreate({
   };
 
   useEffect(() => {
-    if (sucess) toast.success(sucess);
-    if (error) toast.error(error);
+    if (sucess) toast.success(sucess as string);
+    if (error) toast.error(error as string);
   }, [sucess, error]);
 
   return (

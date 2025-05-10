@@ -12,8 +12,8 @@ import {
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { Academic, BreadcrumbItem, Course } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { Academic, BreadcrumbItem, Course, SharedData } from '@/types';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
@@ -29,21 +29,10 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function CourseEdit({
-  academics,
-  course,
-  success,
-  error,
-}: {
-  academics: {
-    data: Academic[];
-  };
-  course: {
-    data: Course;
-  };
-  success?: string;
-  error?: string;
-}) {
+export default function CourseEdit() {
+  const { course, academics, success, error } = usePage<
+    SharedData & { course: { data: Course }; academics: { data: Academic[] } }
+  >().props;
   const { data, setData, put, processing, errors } = useForm({
     title: course.data.title,
     image: null as File | null,
@@ -63,8 +52,8 @@ export default function CourseEdit({
   };
 
   useEffect(() => {
-    if (success) toast.success(success);
-    if (error) toast.error(error);
+    if (success) toast.success(success as string);
+    if (error) toast.error(error as string);
   }, [success, error]);
 
   return (

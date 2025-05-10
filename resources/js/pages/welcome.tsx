@@ -7,36 +7,22 @@ import { RootLearningPath } from '@/components/root-learning-path';
 import { RootPartner } from '@/components/root-partner';
 import { RootStandartGlobal } from '@/components/root-standart-global';
 import { RootTestimoni } from '@/components/root-testimoni';
-import { DataProvider } from '@/contexts/DataContext';
 import RootLayout from '@/layouts/root-layout';
-import { DataContextType } from '@/types';
 import { Head } from '@inertiajs/react';
 
-export default function Welcome({
-  events,
-  academics,
-  courses,
-}: DataContextType) {
-  const initialData = {
-    events,
-    academics,
-    courses,
-  };
-
+export default function Welcome() {
   return (
-    <DataProvider initialData={initialData}>
-      <RootLayout>
-        <Head title="Welcome" />
-        <RootJumbotron />
-        <RootPartner />
-        <RootEvent />
-        <RootAbout />
-        <RootLearningPath />
-        <RootStandartGlobal />
-        <RootJoin />
-        <RootTestimoni />
-        <RootFooter />
-      </RootLayout>
-    </DataProvider>
+    <RootLayout>
+      <Head title="Welcome" />
+      <RootJumbotron />
+      <RootPartner />
+      <RootEvent />
+      <RootAbout />
+      <RootLearningPath />
+      <RootStandartGlobal />
+      <RootJoin />
+      <RootTestimoni />
+      <RootFooter />
+    </RootLayout>
   );
 }

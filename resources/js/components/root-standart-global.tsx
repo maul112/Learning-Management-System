@@ -1,7 +1,7 @@
-import { useData } from '@/contexts/DataContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { Course } from '@/types';
+import { Course, SharedData } from '@/types';
+import { usePage } from '@inertiajs/react';
 import { ArrowRightCircle, Code2, PlayCircle } from 'lucide-react';
 import { RootContent } from './root-content';
 import { BlurFade } from './ui/blur-fade';
@@ -9,17 +9,11 @@ import { Button } from './ui/button';
 import { Marquee } from './ui/marquee';
 
 export function RootStandartGlobal() {
-  const data = useData();
+  const { courses } = usePage<SharedData>().props;
   const isMobile = useIsMobile();
 
-  const firstRow = data?.data?.courses!.data.slice(
-    0,
-    data.data.courses!.data.length / 2,
-  );
-  const secondRow = data?.data?.courses!.data.slice(
-    3,
-    data.data.courses!.data.length,
-  );
+  const firstRow = courses.data.slice(0, courses.data.length / 2);
+  const secondRow = courses.data.slice(3, courses.data.length);
 
   return (
     <RootContent>

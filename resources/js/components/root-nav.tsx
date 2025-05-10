@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { SharedData } from '@/types';
+import { Course, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import { RootNavMain } from './root-nav-main';
@@ -35,7 +35,7 @@ const navListItems = [
 ];
 
 export function RootNav() {
-  const data = usePage<SharedData>();
+  const { props } = usePage<SharedData>();
   const { auth } = usePage<SharedData>().props;
   const isMobile = useIsMobile();
   const [open, setOpen] = useState<boolean>(false);
@@ -91,7 +91,7 @@ export function RootNav() {
 
   // Filter courses based on search
   const filteredCourses =
-    data.props.courses.data.filter((course) =>
+    props.courses.data.filter((course: Course) =>
       course.title.toLowerCase().includes(search.toLowerCase()),
     ) || [];
 
@@ -142,7 +142,9 @@ export function RootNav() {
                               }}
                               className="cursor-pointer"
                             >
-                              <Link href={`/academies/${course.id}`}>{course.title}</Link>
+                              <Link href={`/academies/${course.id}`}>
+                                {course.title}
+                              </Link>
                             </CommandItem>
                           ))}
                         </CommandGroup>

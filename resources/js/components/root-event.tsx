@@ -1,18 +1,19 @@
-import { useData } from '@/contexts/DataContext';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Event } from '@/types';
+import { Event, SharedData } from '@/types';
+import { usePage } from '@inertiajs/react';
 import { RootContent } from './root-content';
 import { Carousel } from './ui/apple-cards-carousel';
 import { BlurFade } from './ui/blur-fade';
 import { Card, CardContent, CardHeader } from './ui/card';
 
 export function RootEvent() {
-  const data = useData();
+  const { events } = usePage<SharedData & { events: { data: Event[] } }>()
+    .props;
 
-  const desktopCards = data?.data?.events.data.map((card, index) => (
+  const desktopCards = events.data.map((card, index) => (
     <CardDesktop key={index} card={card} />
   ));
-  const mobileCards = data?.data?.events.data.map((card, index) => (
+  const mobileCards = events.data.map((card, index) => (
     <CardMobile key={index} card={card} />
   ));
   const isMobile = useIsMobile();

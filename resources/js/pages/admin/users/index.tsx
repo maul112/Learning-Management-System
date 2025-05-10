@@ -1,10 +1,10 @@
 import { DataTable } from '@/components/data-table';
 import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem, User } from '@/types';
-import { Head } from '@inertiajs/react';
+import { BreadcrumbItem, SharedData, User } from '@/types';
+import { Head, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { columns } from './columns';
-import { useEffect } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -13,19 +13,15 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function Users({
-  users,
-  success,
-  error,
-}: {
-  users: { data: User[] };
-  success?: string;
-  error?: string;
-}) {
-    useEffect(() => {
-      if (success) toast.success(success);
-      if (error) toast.error(error);
-    }, [success, error]);
+export default function Users() {
+  const { users, success, error } = usePage<
+    SharedData & { users: { data: User[] } }
+  >().props;
+
+  useEffect(() => {
+    if (success) toast.success(success as string);
+    if (error) toast.error(error as string);
+  }, [success, error]);
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>

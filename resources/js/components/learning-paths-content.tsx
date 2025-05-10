@@ -1,6 +1,5 @@
 import { Separator } from '@/components/ui/separator';
-import { useData } from '@/contexts/DataContext';
-import { Course, SharedData } from '@/types';
+import { Academic, Course, SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
@@ -8,22 +7,22 @@ import { CourseCard } from './course-card';
 import { SelectFilter } from './select-filter';
 
 export function LearningPathsContent() {
-  const { courses } = usePage<SharedData>().props;
-  const academics = useData()?.data?.academics;
+  const { courses, academics } = usePage<
+    SharedData & { academics: { data: Academic[] } }
+  >().props;
   const [coursesFilter, setCoursesFilter] = useState<Course[]>([]);
   const [difficultyFilter, setDifficultyFilter] = useState<string[]>([]);
   const [academicFilter, setAcademicFilter] = useState<string[]>([]);
   const [classTypeFilter, setClassTypeFilter] = useState<string[]>([]);
 
   const filteredCourses = useCallback(() => {
-    return courses.data.filter((course) => {
-      return (
+    return courses.data.filter(
+      (course) =>
         (!difficultyFilter.length ||
           difficultyFilter.includes(course.difficulty)) &&
         (!academicFilter.length ||
-          academicFilter.includes(course.academic.title))
-      );
-    });
+          academicFilter.includes(course.academic.title)),
+    );
   }, [academicFilter, difficultyFilter, courses.data]);
 
   useEffect(() => {

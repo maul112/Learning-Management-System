@@ -13,8 +13,8 @@ import {
 } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { BreadcrumbItem, SharedData } from '@/types';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
@@ -30,13 +30,9 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-export default function UsersCreate({
-  success,
-  error,
-}: {
-  success?: string;
-  error?: string;
-}) {
+export default function UsersCreate() {
+  const { success, error } = usePage<SharedData>().props;
+
   const { data, setData, post, processing, errors, reset } = useForm({
     name: '',
     email: '',
@@ -55,8 +51,8 @@ export default function UsersCreate({
   };
 
   useEffect(() => {
-    if (success) toast.success(success);
-    if (error) toast.error(error);
+    if (success) toast.success(success as string);
+    if (error) toast.error(error as string);
   }, [success, error]);
 
   return (
