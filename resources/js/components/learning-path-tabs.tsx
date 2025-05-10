@@ -13,7 +13,7 @@ export function LearningPathTabs() {
   );
 
   return (
-    <nav className="bg-background sticky top-0 overflow-auto p-5 pt-20 z-10">
+    <nav className="bg-background sticky top-0 z-40 overflow-auto p-5 pt-20">
       <Tabs
         defaultValue={String(isActive)}
         value={String(isActive)}

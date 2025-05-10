@@ -28,6 +28,15 @@ import {
   TooltipTrigger,
 } from './ui/tooltip';
 
+const difficultyText: Record<string, string> = {
+  beginner:
+    'Level ini cocok untuk pemula yang belum memiliki pengetahuan sebelumnya. Materi disusun dari dasar dengan penjelasan sederhana dan langkah-langkah yang mudah diikuti.',
+  intermediate:
+    'Ditujukan bagi peserta yang sudah memahami konsep dasar. Materi mencakup pembahasan yang lebih mendalam dan latihan dengan tingkat kesulitan sedang.',
+  advanced:
+    'Diperuntukkan bagi peserta berpengalaman yang ingin memperdalam pemahaman. Fokus pada studi kasus, penerapan nyata, dan tantangan tingkat lanjut.',
+};
+
 export function CourseJumbotron({
   course,
 }: {
@@ -89,10 +98,7 @@ export function CourseJumbotron({
                           <h3 className="mb-2 text-xl font-semibold">
                             {course.data.difficulty}
                           </h3>
-                          <p>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing
-                            elit. Dolorum, hic.
-                          </p>
+                          <p>{difficultyText[course.data.difficulty]}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
