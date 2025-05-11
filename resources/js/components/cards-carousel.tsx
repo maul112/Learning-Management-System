@@ -184,7 +184,7 @@ function CardCourse({ course }: { course: Course }) {
           </p>
           <p className="text-muted flex items-center gap-2 text-sm">
             <Users2 className="h-4 w-4" />
-            {course.users.length}
+            {course.students.length}
           </p>
         </div>
       </div>

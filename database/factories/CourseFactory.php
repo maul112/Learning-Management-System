@@ -25,6 +25,7 @@ class CourseFactory extends Factory
             'order' => 0,
             'duration' => 0,
             'difficulty' => fake()->randomElement(['beginner', 'intermediate', 'advanced']),
+            'type' => fake()->randomElement(['free', 'paid']),
             'academic_id' => 1,
         ];
     }

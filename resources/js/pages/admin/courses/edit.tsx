@@ -2,6 +2,7 @@ import { ImagePreviewInput } from '@/components/form-field-file';
 import FormFieldInput from '@/components/form-field-input';
 import FormFieldMarkdown from '@/components/form-field-markdown';
 import FormFieldSelect from '@/components/form-field-select';
+import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -40,6 +41,7 @@ export default function CourseEdit() {
     order: course.data.order,
     duration: course.data.duration,
     difficulty: course.data.difficulty,
+    type: course.data.type,
     academic_id: course.data.academic.id,
   });
 
@@ -120,6 +122,19 @@ export default function CourseEdit() {
                 <SelectItem value="advanced">Advanced</SelectItem>
               </SelectContent>
             </Select>
+            <Select
+              defaultValue={data.type}
+              value={data.type}
+              onValueChange={(value) => setData('type', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="free">Free</SelectItem>
+                <SelectItem value="paid">Paid</SelectItem>
+              </SelectContent>
+            </Select>
             <FormFieldSelect<Academic>
               data={academics.data}
               label="Academic"
@@ -144,6 +159,7 @@ export default function CourseEdit() {
               Save
             </Button>
           </FormLayout>
+          <BorderBeam size={300} duration={10} />
         </div>
       </div>
     </AppLayout>

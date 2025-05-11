@@ -1,6 +1,7 @@
 import { ImagePreviewInput } from '@/components/form-field-file';
 import FormFieldInput from '@/components/form-field-input';
 import FormFieldMarkdown from '@/components/form-field-markdown';
+import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
@@ -97,6 +98,7 @@ export default function EventCreate() {
               Create
             </Button>
           </FormLayout>
+          <BorderBeam size={300} duration={10} />
         </div>
       </div>
     </AppLayout>

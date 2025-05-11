@@ -1,10 +1,11 @@
 import { DataTableColumnHeader } from '@/components/data-table-header';
 import { DeleteModal } from '@/components/delete-modal';
-import { Button } from '@/components/ui/button';
+import { EditButton } from '@/components/edit-button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
 import { Course } from '@/types';
-import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
+import { ChartColumnDecreasing } from 'lucide-react';
 
 export const columns: ColumnDef<Course>[] = [
   {
@@ -30,6 +31,17 @@ export const columns: ColumnDef<Course>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: 'image',
+    header: 'Image',
+    cell: ({ row }) => (
+      <img
+        src={'/storage/' + row.getValue('image')}
+        alt={row.getValue('title')}
+        className="h-20 w-40"
+      />
+    ),
+  },
+  {
     accessorKey: 'title',
     header: ({ column }) => (
       <DataTableColumnHeader<Course, unknown> column={column} title="Title" />
@@ -44,7 +56,7 @@ export const columns: ColumnDef<Course>[] = [
       <DataTableColumnHeader<Course, unknown> column={column} title="Order" />
     ),
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('order')}</div>
+      <div className="capitalize">Lankah {row.getValue('order')}</div>
     ),
   },
   {
@@ -56,8 +68,25 @@ export const columns: ColumnDef<Course>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('difficulty')}</div>
+      <div className="flex items-center gap-2 capitalize">
+        <ChartColumnDecreasing
+          className={cn(
+            'h-4 w-4',
+            row.getValue('difficulty') == 'beginner' && 'text-cyan-400',
+            row.getValue('difficulty') == 'intermediate' && 'text-red-400',
+            row.getValue('difficulty') == 'advanced' && 'text-violet-400',
+          )}
+        />
+        {row.getValue('difficulty')}
+      </div>
     ),
+  },
+  {
+    accessorKey: 'type',
+    header: ({ column }) => (
+      <DataTableColumnHeader<Course, unknown> column={column} title="Type" />
+    ),
+    cell: ({ row }) => <div className="capitalize">{row.getValue('type')}</div>,
   },
   {
     id: 'actions',
@@ -67,18 +96,10 @@ export const columns: ColumnDef<Course>[] = [
 
       return (
         <div className="flex space-x-2">
-          <EditCourse course={course} />
+          <EditButton endpoint="course" id={String(course.id)} />
           <DeleteModal resourceName="course" id={course.id} />
         </div>
       );
     },
   },
 ];
-
-function EditCourse({ course }: { course: Course }) {
-  return (
-    <Button className="cursor-pointer" variant="secondary">
-      <Link href={route('courses.edit', course.id)}>Edit</Link>
-    </Button>
-  );
-}

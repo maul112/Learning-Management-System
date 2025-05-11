@@ -1,4 +1,5 @@
 import { DataTable } from '@/components/data-table';
+import { BorderBeam } from '@/components/ui/border-beam';
 import AppLayout from '@/layouts/app-layout';
 import { Academic, BreadcrumbItem, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
@@ -34,6 +35,7 @@ export default function Academics() {
             searchKey="title"
             create="academic"
           />
+          <BorderBeam size={300} duration={10} />
         </div>
       </div>
     </AppLayout>

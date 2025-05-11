@@ -2,6 +2,7 @@ import { ImagePreviewInput } from '@/components/form-field-file';
 import FormFieldInput from '@/components/form-field-input';
 import FormFieldMarkdown from '@/components/form-field-markdown';
 import FormFieldSelect from '@/components/form-field-select';
+import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import {
@@ -41,6 +42,7 @@ export default function CourseCreate() {
     order: 0,
     duration: 0,
     difficulty: '',
+    type: 'free',
     academic_id: 0,
   });
 
@@ -122,6 +124,21 @@ export default function CourseCreate() {
                 </SelectContent>
               </Select>
             </div>
+            <div className="grid gap-2">
+              <Label>Type</Label>
+              <Select
+                value={data.type}
+                onValueChange={(value) => setData('type', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="free">Free</SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <FormFieldSelect<Academic>
               data={academics.data}
               label="Academic"
@@ -146,6 +163,7 @@ export default function CourseCreate() {
               Create
             </Button>
           </FormLayout>
+          <BorderBeam size={300} duration={10} />
         </div>
       </div>
     </AppLayout>

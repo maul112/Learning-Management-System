@@ -1,7 +1,17 @@
 import { useAverage } from '@/hooks/use-average';
-import { Course } from '@/types';
+import { cn } from '@/lib/utils';
+import { Course, Module } from '@/types';
 import { Link } from '@inertiajs/react';
-import { ChartColumnDecreasingIcon, StarIcon, TimerIcon } from 'lucide-react';
+import {
+  Book,
+  ChartColumnDecreasingIcon,
+  CircleCheckBig,
+  CircleDollarSign,
+  StarIcon,
+  TimerIcon,
+  Users2,
+} from 'lucide-react';
+import { Badge } from './ui/badge';
 import {
   Card,
   CardContent,
@@ -23,21 +33,50 @@ export function CourseCard({ course }: { course: Course }) {
             <CardTitle>
               <Link href={`/academies/${course.id}`}>{course.title}</Link>
             </CardTitle>
-            <CardDescription className="mt-5 flex items-center gap-4">
-              <span className="flex items-center gap-2">
-                <TimerIcon className="h-4 w-4 text-blue-400" />
-                {course.duration} Jam
-              </span>
-              <span className="flex items-center gap-2">
-                <StarIcon
-                  className="h-4 w-4 text-amber-400"
-                  fill="currentColor"
-                />
-                {getAverage(course.ratings.map((rating) => rating.rating))}
-              </span>
+            <CardDescription className="mt-5 flex flex-col gap-4">
+              <div className="flex gap-4">
+                <span className="flex items-center gap-2">
+                  <TimerIcon className="h-4 w-4 text-blue-400" />
+                  {course.duration} Jam
+                </span>
+                <span className="flex items-center gap-2">
+                  <StarIcon
+                    className="h-4 w-4 text-amber-400"
+                    fill="currentColor"
+                  />
+                  {getAverage(course.ratings.map((rating) => rating.rating))}
+                </span>
+                <span className="flex items-center gap-2 capitalize">
+                  <ChartColumnDecreasingIcon className="h-4 w-4 text-violet-400" />
+                  {course.difficulty}
+                </span>
+              </div>
+              <div className="flex gap-4">
+                <span className="flex items-center gap-2 capitalize">
+                  {course.type == 'free' ? (
+                    <CircleCheckBig className="h-4 w-4 text-cyan-400" />
+                  ) : (
+                    <CircleDollarSign className="h-4 w-4 text-green-400" />
+                  )}
+                  <Badge
+                    variant="secondary"
+                    className={cn(
+                      course.type == 'free'
+                        ? 'text-cyan-400'
+                        : 'text-green-400',
+                    )}
+                  >
+                    {course.type}
+                  </Badge>
+                </span>
+                <span className="flex items-center gap-2 capitalize">
+                  <Book className="h-4 w-4 text-cyan-400" />
+                  {(course.modules as Module[]).length} Module
+                </span>
+              </div>
               <span className="flex items-center gap-2 capitalize">
-                <ChartColumnDecreasingIcon className="h-4 w-4 text-cyan-400" />
-                {course.difficulty}
+                <Users2 className="h-4 w-4 text-yellow-400" />
+                {course.students.length} Siswa Terdaftar
               </span>
             </CardDescription>
           </div>

@@ -74,9 +74,10 @@ export interface Course {
   order: number;
   duration: number;
   difficulty: string;
+  type: string;
   academic: Academic;
   modules: Module[];
-  users: User[];
+  students: User[];
   ratings: Rating[];
 }
 

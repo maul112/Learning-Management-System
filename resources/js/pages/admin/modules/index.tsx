@@ -6,6 +6,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { columns } from './columns';
+import { BorderBeam } from '@/components/ui/border-beam';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -35,6 +36,7 @@ export default function Modules() {
             data={modules.data}
             create="module"
           />
+          <BorderBeam size={300} duration={10} />
         </div>
       </div>
     </AppLayout>

@@ -21,6 +21,7 @@ class Course extends Model
         'order',
         'duration',
         'difficulty',
+        'type',
         'academic_id',
     ];
 

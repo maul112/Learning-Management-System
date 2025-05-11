@@ -1,12 +1,11 @@
 import { DataTableColumnHeader } from '@/components/data-table-header';
 import { DeleteModal } from '@/components/delete-modal';
+import { EditButton } from '@/components/edit-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useInitials } from '@/hooks/use-initials';
-import { cn } from '@/lib/utils';
 import { User } from '@/types';
-import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
 export const columns: ColumnDef<User, string>[] = [
@@ -66,24 +65,16 @@ export const columns: ColumnDef<User, string>[] = [
     cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
   },
   {
-    accessorKey: 'role',
-    header: 'Role',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('role')}</div>,
-  },
-  {
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => (
-      <div
-        className={cn(
-          'w-fit rounded-full p-1 capitalize',
-          row.getValue('status') === 'active'
-            ? 'text-green-600'
-            : 'text-red-600',
-        )}
+      <Badge
+        variant={
+          row.getValue('status') === 'active' ? 'default' : 'secondary'
+        }
       >
         {row.getValue('status')}
-      </div>
+      </Badge>
     ),
   },
   {
@@ -94,18 +85,10 @@ export const columns: ColumnDef<User, string>[] = [
 
       return (
         <div className="flex gap-5">
-          <EditUser user={user} />
+          <EditButton endpoint="user" id={String(user.id)} />
           <DeleteModal resourceName="user" id={user.id} />
         </div>
       );
     },
   },
 ];
-
-function EditUser({ user }: { user: User }) {
-  return (
-    <Button className="cursor-pointer" variant="secondary">
-      <Link href={route('users.edit', user.id)}>Edit</Link>
-    </Button>
-  );
-}

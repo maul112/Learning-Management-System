@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Academic;
 use App\Models\Course;
+use App\Models\CourseEnrollment;
 use App\Models\Rating;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -275,10 +276,16 @@ class DatabaseSeeder extends Seeder
                     'order' => $course['order'],
                     'duration' => $course['duration'],
                     'difficulty' => $course['difficulty'],
+                    'type' => $course['order'] > 1 ? 'paid' : 'free',
                     'academic_id' => $course['academic_id']
                 ]);
 
                 foreach ($students as $student) {
+                    CourseEnrollment::create([
+                        'student_id' => $student->id,
+                        'course_id' => $course->id
+                    ]);
+
                     Rating::create([
                         'student_id' => $student->id,
                         'course_id' => $course->id,

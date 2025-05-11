@@ -1,8 +1,12 @@
 import { useAverage } from '@/hooks/use-average';
+import { cn } from '@/lib/utils';
 import { Course } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
+    Book,
   ChartColumn,
+  CircleCheckBig,
+  CircleDollarSign,
   GitCommitHorizontal,
   StarIcon,
   TimerIcon,
@@ -10,6 +14,7 @@ import {
 } from 'lucide-react';
 import { CourseOptionCard } from './course-option-card';
 import { RootContent } from './root-content';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
 import {
@@ -111,10 +116,37 @@ export function CourseJumbotron({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Users2 className="w-4" />
-                  <span className="text-muted-foreground text-sm">
-                    100k Siswa Terdaftar
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="flex items-center gap-2 capitalize">
+                      {course.data.type == 'free' ? (
+                        <CircleCheckBig className="h-4 w-4 text-cyan-400" />
+                      ) : (
+                        <CircleDollarSign className="h-4 w-4 text-green-400" />
+                      )}
+                      <Badge
+                        variant="secondary"
+                        className={cn(
+                          course.data.type == 'free'
+                            ? 'text-cyan-400'
+                            : 'text-green-400',
+                        )}
+                      >
+                        {course.data.type}
+                      </Badge>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Book className="w-4 text-blue-400" />
+                    <span className="text-muted-foreground text-sm">
+                      {course.data.modules.length} Modul
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Users2 className="w-4 text-yellow-400" />
+                    <span className="text-muted-foreground text-sm">
+                      {course.data.students.length} Siswa Terdaftar
+                    </span>
+                  </div>
                 </div>
               </CardContent>
               <CardFooter>

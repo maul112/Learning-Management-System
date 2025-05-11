@@ -1,13 +1,17 @@
 import { useAverage } from '@/hooks/use-average';
+import { cn } from '@/lib/utils';
 import { Academic, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
   Book,
   ChartColumn,
+  CircleCheckBig,
+  CircleDollarSign,
   StarIcon,
   TimerIcon,
   Users2Icon,
 } from 'lucide-react';
+import { Badge } from './ui/badge';
 import { BorderBeam } from './ui/border-beam';
 import {
   Card,
@@ -61,12 +65,27 @@ export function LearningPathContent() {
           <CardFooter>
             <div className="flex items-center gap-6">
               <span className="text-muted-foreground flex items-center gap-1 text-xs capitalize md:text-sm">
-                <Book />
+                {course.type == 'free' ? (
+                  <CircleCheckBig className="text-cyan-400" />
+                ) : (
+                  <CircleDollarSign className="text-green-400" />
+                )}
+                <Badge
+                  variant="secondary"
+                  className={cn(
+                    course.type == 'free' ? 'text-cyan-400' : 'text-green-400',
+                  )}
+                >
+                  {course.type}
+                </Badge>
+              </span>
+              <span className="text-muted-foreground flex items-center gap-1 text-xs capitalize md:text-sm">
+                <Book className="text-blue-400" />
                 {course.modules.length} Modul
               </span>
               <span className="text-muted-foreground flex items-center gap-1 text-xs capitalize md:text-sm">
-                <Users2Icon />
-                100k Siswa Terdaftar
+                <Users2Icon className="text-yellow-400" />
+                {course.students.length} Siswa Terdaftar
               </span>
             </div>
           </CardFooter>

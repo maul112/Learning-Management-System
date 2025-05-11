@@ -35,8 +35,7 @@ const navListItems = [
 ];
 
 export function RootNav() {
-  const { props } = usePage<SharedData>();
-  const { auth } = usePage<SharedData>().props;
+  const { auth, courses } = usePage<SharedData>().props;
   const isMobile = useIsMobile();
   const [open, setOpen] = useState<boolean>(false);
   const [search, setSearch] = useState<string>('');
@@ -91,7 +90,7 @@ export function RootNav() {
 
   // Filter courses based on search
   const filteredCourses =
-    props.courses.data.filter((course: Course) =>
+    courses.data.filter((course: Course) =>
       course.title.toLowerCase().includes(search.toLowerCase()),
     ) || [];
 

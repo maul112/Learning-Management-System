@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('order');
             $table->integer('duration');
             $table->enum('difficulty', ['beginner', 'intermediate', 'advanced'])->default('beginner');
+            $table->enum('type', ['free', 'paid'])->default('free');
             $table->foreignId('academic_id')->constrained('academics', 'id')->onDelete('cascade');
             $table->timestamps();
         });

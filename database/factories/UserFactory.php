@@ -30,6 +30,7 @@ class UserFactory extends Factory
             'avatar' => $this->faker->imageUrl(),
             'role' => 'student',
             'status' => $this->faker->randomElement(['active', 'suspend']),
+            'created_at' => $this->faker->dateTimeBetween('-6 months', 'now'),
         ];
     }
 

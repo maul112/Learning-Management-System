@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center gap-2">
           {/* Create Button */}
           <Link href={route(`${create}s.create`)} prefetch>
-            <Button variant="outline">
+            <Button variant="outline" className="cursor-pointer">
               <span className="flex items-center gap-2">
                 Create {create}
                 <span className="sr-only">Create {create}</span>
@@ -130,7 +130,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-[30rem] text-center"
                 >
                   No results.
                 </TableCell>

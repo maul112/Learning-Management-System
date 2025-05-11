@@ -1,5 +1,6 @@
 import FormFieldInput from '@/components/form-field-input';
 import FormFieldSelect from '@/components/form-field-select';
+import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
@@ -95,6 +96,7 @@ export default function ModuleCreate() {
               Create
             </Button>
           </FormLayout>
+          <BorderBeam size={300} duration={10} />
         </div>
       </div>
     </AppLayout>

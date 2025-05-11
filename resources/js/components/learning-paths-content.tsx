@@ -21,9 +21,10 @@ export function LearningPathsContent() {
         (!difficultyFilter.length ||
           difficultyFilter.includes(course.difficulty)) &&
         (!academicFilter.length ||
-          academicFilter.includes(course.academic.title)),
+          academicFilter.includes(course.academic.title)) &&
+        (!classTypeFilter.length || classTypeFilter.includes(course.type)),
     );
-  }, [academicFilter, difficultyFilter, courses.data]);
+  }, [academicFilter, difficultyFilter, classTypeFilter, courses.data]);
 
   useEffect(() => {
     setCoursesFilter(filteredCourses);
@@ -60,21 +61,48 @@ export function LearningPathsContent() {
           <SelectFilter
             title="Tingkat"
             label="Tingkat Kesulitan"
-            items={['beginner', 'intermediate', 'advanced']}
+            items={[
+              {
+                label: 'Beginner',
+                value: 'beginner',
+              },
+              {
+                label: 'Intermediate',
+                value: 'intermediate',
+              },
+              {
+                label: 'Advanced',
+                value: 'advanced',
+              },
+            ]}
             stateFilter={difficultyFilter}
             setStateFilter={setDifficultyFilter}
           />
           <SelectFilter
             title="Topik"
             label="Topik"
-            items={academics?.data.map((item) => item.title) || []}
+            items={
+              academics?.data.map((item) => ({
+                label: item.title,
+                value: item.title,
+              })) || []
+            }
             stateFilter={academicFilter}
             setStateFilter={setAcademicFilter}
           />
           <SelectFilter
             title="Tipe Kelas"
             label="Tipe Kelas"
-            items={['Kelas Gratis', 'Kelas Berbayar']}
+            items={[
+              {
+                label: 'Kelas Gratis',
+                value: 'free',
+              },
+              {
+                label: 'Kelas Berbayar',
+                value: 'paid',
+              },
+            ]}
             stateFilter={classTypeFilter}
             setStateFilter={setClassTypeFilter}
           />

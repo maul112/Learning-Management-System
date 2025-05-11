@@ -1,4 +1,5 @@
 import { useForm } from '@inertiajs/react';
+import { Trash2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from './ui/button';
 import {
@@ -32,8 +33,8 @@ export function DeleteModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="cursor-pointer" variant="destructive">
-          Delete
+        <Button size="icon" className="cursor-pointer" variant="destructive">
+          <Trash2Icon className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent>

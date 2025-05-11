@@ -1,5 +1,6 @@
 import FormFieldInput from '@/components/form-field-input';
 import InputError from '@/components/input-error';
+import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import {
@@ -122,6 +123,7 @@ export default function UsersEdit() {
               Save
             </Button>
           </FormLayout>
+          <BorderBeam size={300} duration={10} />
         </div>
       </div>
     </AppLayout>

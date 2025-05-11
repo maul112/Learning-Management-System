@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Academic;
+use App\Models\Course;
 use App\Models\Module;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,17 +17,21 @@ class AdminDashboardController extends Controller
      */
     public function index()
     {
-        $instructors_count = User::where('role', 'instructor')->count();
+        $academics_count = Academic::count();
         $students_count = User::where('role', 'student')->count();
         $user_active_cound = User::where('status', 'active')
             ->where('role', '!=', 'admin')->count();
-        $module_count = Module::count();
+        $course_count = Course::count();
+        $chart_data_register = User::select(['id', 'created_at'])
+            ->where('role', 'student')
+            ->get();
 
         return Inertia::render('admin/dashboard', [
-            'instructorsCount' => $instructors_count,
+            'academicsCount' => $academics_count,
             'studentsCount' => $students_count,
             'userActiveCount' => $user_active_cound,
-            'moduleCount' => $module_count
+            'courseCount' => $course_count,
+            'chartDataRegister' => $chart_data_register,
         ]);
     }
 

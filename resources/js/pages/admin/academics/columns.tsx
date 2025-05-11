@@ -1,10 +1,10 @@
 import { DataTableColumnHeader } from '@/components/data-table-header';
 import { DeleteModal } from '@/components/delete-modal';
-import { Button } from '@/components/ui/button';
+import { EditButton } from '@/components/edit-button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Academic, Course } from '@/types';
-import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
+import { BookIcon } from 'lucide-react';
 
 export const columns: ColumnDef<Academic>[] = [
   {
@@ -30,26 +30,23 @@ export const columns: ColumnDef<Academic>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: 'image',
+    header: 'Image',
+    cell: ({ row }) => (
+      <img
+        src={'/storage/' + row.getValue('image')}
+        alt={row.getValue('title')}
+        className="w-40 h-20"
+      />
+    ),
+  },
+  {
     accessorKey: 'title',
     header: ({ column }) => (
       <DataTableColumnHeader<Academic, unknown> column={column} title="Title" />
     ),
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue('title')}</div>
-    ),
-  },
-  {
-    accessorKey: 'description',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Academic, unknown>
-        column={column}
-        title="Description"
-      />
-    ),
-    cell: ({ row }) => (
-      <div className="capitalize">
-        {(row.getValue('description') as string).slice(0, 50)}
-      </div>
     ),
   },
   {
@@ -61,7 +58,8 @@ export const columns: ColumnDef<Academic>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className="capitalize">
+      <div className="flex items-center gap-2 capitalize">
+        <BookIcon className="h-4 w-4 text-blue-500" />{' '}
         {(row.getValue('courses') as Course[]).length} Courses
       </div>
     ),
@@ -74,18 +72,10 @@ export const columns: ColumnDef<Academic>[] = [
 
       return (
         <div className="flex space-x-2">
-          <EditAcademic academic={academic} />
+          <EditButton endpoint="academic" id={String(academic.id)} />
           <DeleteModal resourceName="academic" id={academic.id} />
         </div>
       );
     },
   },
 ];
-
-function EditAcademic({ academic }: { academic: Academic }) {
-  return (
-    <Button className="cursor-pointer" variant="secondary">
-      <Link href={route('academics.edit', academic.id)}>Edit</Link>
-    </Button>
-  );
-}
