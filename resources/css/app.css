@@ -214,3 +214,18 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Ganti warna progress bar default dengan gradasi */
+#nprogress .bar {
+  background: linear-gradient(to right, #ffaa40, #9c40ff) !important;
+  height: 2px !important;
+}
+
+#nprogress .peg {
+  box-shadow: none !important;
+  opacity: 0 !important;
+}
+
+#nprogress .spinner {
+  display: none !important;
+}

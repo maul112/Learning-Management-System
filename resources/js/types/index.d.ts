@@ -100,6 +100,7 @@ export interface Lesson {
 export interface Rating {
   id: number;
   rating: number;
+  comment: string;
   course: Course;
   student: User;
 }

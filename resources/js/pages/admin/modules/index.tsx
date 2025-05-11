@@ -32,8 +32,8 @@ export default function Modules() {
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
           <DataTable<Module, string>
             columns={columns}
-            searchKey="title"
             data={modules.data}
+            searchKey="title"
             create="module"
           />
           <BorderBeam size={300} duration={10} />

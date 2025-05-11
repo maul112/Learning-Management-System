@@ -5,6 +5,7 @@ import { RootContent } from './root-content';
 import { Carousel } from './ui/apple-cards-carousel';
 import { BlurFade } from './ui/blur-fade';
 import { Card, CardContent, CardHeader } from './ui/card';
+import { ShineBorder } from './ui/shine-border';
 
 export function RootEvent() {
   const { events } = usePage<SharedData & { events: { data: Event[] } }>()
@@ -70,7 +71,7 @@ function CardDesktop({ card }: { card: Event }) {
       direction="up"
       duration={0.7}
       inView
-      className="bg-muted flex h-52 w-[40rem] snap-start items-center gap-7 rounded-xl p-4"
+      className="bg-muted flex h-52 w-[40rem] snap-start items-center gap-7 rounded-xl p-4 relative"
     >
       <div className="bg-accent-foreground h-full w-96 overflow-hidden rounded-xl">
         <img
@@ -84,13 +85,14 @@ function CardDesktop({ card }: { card: Event }) {
         <h3 className="mb-3 text-2xl font-semibold">{card.title}</h3>
         <p className="text-accent-foreground text-sm">{card.description}</p>
       </div>
+      <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} />
     </BlurFade>
   );
 }
 
 function CardMobile({ card }: { card: Event }) {
   return (
-    <Card className="w-xs">
+    <Card className="w-xs relative">
       <CardHeader>
         <div className="bg-muted-foreground h-60 w-full">
           <img
@@ -105,6 +107,7 @@ function CardMobile({ card }: { card: Event }) {
         <h3 className="mb-3 text-2xl font-semibold">{card.title}</h3>
         <p className="text-accent-foreground text-sm">{card.description}</p>
       </CardContent>
+      <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} />
     </Card>
   );
 }

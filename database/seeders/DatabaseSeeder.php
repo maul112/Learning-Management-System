@@ -5,9 +5,9 @@ namespace Database\Seeders;
 use App\Models\Academic;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
+use App\Models\Event;
 use App\Models\Rating;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
         // Buat 1 Admin
         User::factory()->admin()->mufid()->create();
 
+        Event::factory(5)->create();
+
         $data = [
             [
                 'title' => 'Android Developer',
@@ -30,7 +32,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Memulai Pemrograman dengan Kotlin',
                         'image' => '/courses/android.jpg',
                         'information' => 'Langkah pertama untuk menjadi seorang Android Developer dengan mempelajari bahasa yang direkomendasikan oleh Google.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 1,
                         'duration' => 50,
                         'difficulty' => 'beginner',
@@ -40,7 +42,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Membuat Aplikasi Android untuk Pemula',
                         'image' => '/courses/android.jpg',
                         'information' => 'Buat aplikasi pertamamu dengan memahami dasar-dasar membuat tampilan dan logika aplikasi.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 2,
                         'duration' => 60,
                         'difficulty' => 'beginner',
@@ -50,7 +52,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Fundamental Aplikasi Android',
                         'image' => '/courses/android.jpg',
                         'information' => 'Perdalam keahlianmu di dunia pemrograman Android dengan mempelajari cara membuat aplikasi yang dapat mengambil data dari server dan menyimpannya ke dalam database.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 3,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -60,7 +62,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Pengembangan Aplikasi Android Intermediate',
                         'image' => '/courses/android.jpg',
                         'information' => 'Perdalam keahlian untuk menjadi Associate Android Developer yang fokus pada pengalaman pengguna yang lebih baik.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 4,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -77,7 +79,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Membuat Aplikasi Back-End untuk Pemula',
                         'image' => '/courses/backend.jpg',
                         'information' => 'Buat aplikasi pertamamu dengan memahami dasar-dasar membuat tampilan dan logika aplikasi.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 1,
                         'duration' => 50,
                         'difficulty' => 'beginner',
@@ -87,7 +89,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Fundamental Aplikasi Back-End',
                         'image' => '/courses/backend.jpg',
                         'information' => 'Perdalam keahlianmu di dunia pemrograman Back-End dengan mempelajari cara membuat aplikasi yang dapat mengambil data dari server dan menyimpannya ke dalam database.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 2,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -97,7 +99,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Pengembangan Aplikasi Back-End Intermediate',
                         'image' => '/courses/backend.jpg',
                         'information' => 'Perdalam keahlian untuk menjadi Associate Back-End Developer yang fokus pada pengalaman pengguna yang lebih baik.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 3,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -107,7 +109,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Pengembangan Aplikasi Back-End Expert',
                         'image' => '/courses/backend.jpg',
                         'information' => 'Perdalam keahlian untuk menjadi Associate Back-End Developer yang fokus pada pengalaman pengguna yang lebih baik.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 4,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -124,7 +126,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Membuat Aplikasi Front-End untuk Pemula',
                         'image' => '/courses/frontend.jpg',
                         'information' => 'Buat aplikasi pertamamu dengan memahami dasar-dasar membuat tampilan dan logika aplikasi.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 1,
                         'duration' => 50,
                         'difficulty' => 'beginner',
@@ -134,7 +136,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Fundamental Aplikasi Front-End',
                         'image' => '/courses/frontend.jpg',
                         'information' => 'Perdalam keahlianmu di dunia pemrograman Front-End dengan mempelajari cara membuat aplikasi yang dapat mengambil data dari server dan menyimpannya ke dalam database.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 2,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -144,7 +146,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Pengembangan Aplikasi Front-End Intermediate',
                         'image' => '/courses/frontend.jpg',
                         'information' => 'Perdalam keahlian untuk menjadi Associate Front-End Developer yang fokus pada pengalaman pengguna yang lebih baik.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 3,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -154,7 +156,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Pengembangan Aplikasi Front-End Expert',
                         'image' => '/courses/frontend.jpg',
                         'information' => 'Perdalam keahlian untuk menjadi Associate Front-End Developer yang fokus pada pengalaman pengguna yang lebih baik.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 4,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -171,7 +173,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Membuat Aplikasi iOS untuk Pemula',
                         'image' => '/courses/ios.jpg',
                         'information' => 'Buat aplikasi pertamamu dengan memahami dasar-dasar membuat tampilan dan logika aplikasi.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 1,
                         'duration' => 50,
                         'difficulty' => 'beginner',
@@ -181,7 +183,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Fundamental Aplikasi iOS',
                         'image' => '/courses/ios.jpg',
                         'information' => 'Perdalam keahlianmu di dunia pemrograman iOS dengan mempelajari cara membuat aplikasi yang dapat mengambil data dari server dan menyimpannya ke dalam database.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 2,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -191,7 +193,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Pengembangan Aplikasi iOS Intermediate',
                         'image' => '/courses/ios.jpg',
                         'information' => 'Perdalam keahlian untuk menjadi Associate iOS Developer yang fokus pada pengalaman pengguna yang lebih baik.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 3,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -201,7 +203,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Pengembangan Aplikasi iOS Expert',
                         'image' => '/courses/ios.jpg',
                         'information' => 'Perdalam keahlian untuk menjadi Associate iOS Developer yang fokus pada pengalaman pengguna yang lebih baik.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 4,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -218,7 +220,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Membuat Aplikasi Machine Learning untuk Pemula',
                         'image' => '/courses/mc.jpg',
                         'information' => 'Buat aplikasi pertamamu dengan memahami dasar-dasar membuat tampilan dan logika aplikasi.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 1,
                         'duration' => 50,
                         'difficulty' => 'beginner',
@@ -228,7 +230,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Fundamental Aplikasi Machine Learning',
                         'image' => '/courses/mc.jpg',
                         'information' => 'Perdalam keahlianmu di dunia pemrograman Machine Learning dengan mempelajari cara membuat aplikasi yang dapat mengambil data dari server dan menyimpannya ke dalam database.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 2,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -238,7 +240,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Pengembangan Aplikasi Machine Learning Intermediate',
                         'image' => '/courses/mc.jpg',
                         'information' => 'Perdalam keahlian untuk menjadi Associate Machine Learning Engineer yang fokus pada pengalaman pengguna yang lebih baik.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 3,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -248,7 +250,7 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Belajar Pengembangan Aplikasi Machine Learning Expert',
                         'image' => '/courses/mc.jpg',
                         'information' => 'Perdalam keahlian untuk menjadi Associate Machine Learning Engineer yang fokus pada pengalaman pengguna yang lebih baik.',
-                        'description' => fake()->paragraph(),
+                        'description' => $this->generateMarkdownContent(),
                         'order' => 4,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
@@ -295,5 +297,17 @@ class DatabaseSeeder extends Seeder
                 }
             }
         }
+    }
+
+    public function generateMarkdownContent(): string
+    {
+        $heading = '# ' . fake()->sentence;
+        $subheading = '## ' . fake()->sentence;
+        $paragraph = fake()->paragraphs(3, true);
+        $list = collect(range(1, 5))
+            ->map(fn() => '- ' . fake()->sentence)
+            ->implode("\n");
+
+        return implode("\n\n", [$heading, $subheading, $paragraph, $list]);
     }
 }

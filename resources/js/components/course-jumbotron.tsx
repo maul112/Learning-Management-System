@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { Course } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
-    Book,
+  Book,
   ChartColumn,
   CircleCheckBig,
   CircleDollarSign,
@@ -15,6 +15,7 @@ import {
 import { CourseOptionCard } from './course-option-card';
 import { RootContent } from './root-content';
 import { Badge } from './ui/badge';
+import { BorderBeam } from './ui/border-beam';
 import { Button } from './ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
 import {
@@ -55,7 +56,13 @@ export function CourseJumbotron({
     <section className="overflow-hidden p-5 pt-32">
       <RootContent>
         <div className="flex flex-col gap-5 lg:flex-row">
-          <div className="bg-muted h-60 w-full lg:w-1/4"></div>
+          <div className="bg-muted h-52 w-full lg:w-1/4">
+            <img
+              className="h-full w-full object-cover"
+              src={`/storage/${course.data.image}`}
+              alt={course.data.title}
+            />
+          </div>
           <div className="w-full lg:w-2/4">
             <Card className="border-none">
               <CardHeader>
@@ -157,7 +164,7 @@ export function CourseJumbotron({
             </Card>
           </div>
           <div className="w-full lg:w-1/4">
-            <Card>
+            <Card className="relative">
               <CardHeader>
                 <Button>
                   <Link href="/">Belajar Sekarang</Link>
@@ -169,6 +176,7 @@ export function CourseJumbotron({
                   <Button variant="secondary">Lihat silabus</Button>
                 </div>
               </CardContent>
+              <BorderBeam size={70} />
             </Card>
           </div>
         </div>

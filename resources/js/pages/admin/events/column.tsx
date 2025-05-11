@@ -41,7 +41,11 @@ export const columns: ColumnDef<Event>[] = [
   {
     accessorKey: 'link',
     header: 'Link',
-    cell: ({ row }) => <Button variant="link">{row.getValue('link')}</Button>,
+    cell: ({ row }) => (
+      <Link href={row.getValue('link')} className="hover:underline">
+        View Event
+      </Link>
+    ),
   },
   {
     accessorKey: 'by',

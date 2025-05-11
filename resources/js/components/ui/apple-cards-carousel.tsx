@@ -116,26 +116,12 @@ export const Carousel = ({ items, initialScroll = 0, scrollLeftValue = -300, scr
             )}
           >
             {items.map((item, index) => (
-              <motion.div
-                initial={{
-                  opacity: 0,
-                  y: 20,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  y: 0,
-                  transition: {
-                    duration: 0.5,
-                    delay: 0.2 * index,
-                    ease: "easeOut",
-                    once: true,
-                  },
-                }}
+              <div
                 key={"card" + index}
                 className="rounded-3xl last:pr-[5%] md:last:pr-[33%]"
               >
                 {item}
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
