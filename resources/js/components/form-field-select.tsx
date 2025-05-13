@@ -17,6 +17,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
 interface FormFieldSelectProps<TData> {
   data: TData[];
@@ -44,21 +45,27 @@ export default function FormFieldSelect<TData>({
   const [open, setOpen] = useState<boolean>(false);
 
   return (
-    <div className="grid gap-2">
-      {label && <Label>{label}</Label>}
+    <Card className="grid gap-2">
+      <CardHeader>
+        <CardTitle className="text-xl">
+          {label && <Label className="text-xl">{label}</Label>}
+        </CardTitle>
+      </CardHeader>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="justify-between"
-          >
-            {displayValue || placeholder}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
+        <CardContent>
+          <PopoverTrigger asChild className="w-full">
+            <Button
+              type="button"
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className="justify-between"
+            >
+              {displayValue || placeholder}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+        </CardContent>
         <PopoverContent className="p-0">
           <Command>
             <CommandInput
@@ -96,6 +103,6 @@ export default function FormFieldSelect<TData>({
         </PopoverContent>
       </Popover>
       {message && <InputError message={message} />}
-    </div>
+    </Card>
   );
 }

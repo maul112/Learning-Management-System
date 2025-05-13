@@ -11,6 +11,7 @@ use App\Http\Resources\CourseResource;
 use App\Http\Resources\UserResource;
 use App\Models\Academic;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -20,9 +21,11 @@ class AdminCourseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::all();
+        $academic = $request->query('academic');
+
+        $courses = Course::where('academic_id', $academic)->with('academic')->get();
 
         return Inertia::render('admin/courses/index', [
             'courses' => CourseResource::collection($courses),
@@ -34,16 +37,17 @@ class AdminCourseController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Academic $academic)
     {
         $academics = Academic::all();
-        $instructors = User::where('role', 'instructor')->get();
+        $instructors = User::where('role', 'instructor')->with('instructor')->get();
 
         return Inertia::render('admin/courses/create', [
             'academics' => AcademicResource::collection($academics),
             'instructors' => UserResource::collection($instructors),
             'success' => session('success'),
             'error' => session('error'),
+            'academic' => new AcademicResource($academic),
         ]);
     }
 
@@ -60,13 +64,13 @@ class AdminCourseController extends Controller
                 $validated['image'] = $imageUrl;
             }
 
-            Course::create($validated);
+            $course = Course::create($validated);
 
-            return redirect()->route('courses.index')->with('success', 'Course created successfully.');
+            return redirect()->route('academics.edit', $course->academic_id)->with('success', 'Course created successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('error', 'Course created failed.');
         }
     }
 
@@ -83,11 +87,14 @@ class AdminCourseController extends Controller
      */
     public function edit(Course $course)
     {
+        $course->load('instructor');
         $academics = Academic::all();
+        $instructors = User::where('role', 'instructor')->with('instructor')->get();
 
         return Inertia::render('admin/courses/edit', [
             'academics' => AcademicResource::collection($academics),
             'course' => new CourseResource($course),
+            'instructors' => UserResource::collection($instructors),
             'success' => session('success'),
             'error' => session('error'),
         ]);
@@ -113,13 +120,36 @@ class AdminCourseController extends Controller
 
             $course->update($validated);
 
-            return redirect()->route('courses.index')->with('success', 'Course updated successfully.');
+            return redirect()->back()->with('success', 'Course updated successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    public function updateStatus(Request $request, Course $course)
+    {
+        $request->validate([
+            'status' => 'required|in:active,draft,published',
+        ]);
+
+        $course->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Status updated successfully.');
+    }
+
+    public function reorder(Request $request)
+    {
+        $ids = $request->input('ids'); // array of course IDs in new order
+
+        foreach ($ids as $index => $id) {
+            Course::where('id', $id)->update(['order' => $index + 1]);
+        }
+
+        return response()->json(['message' => 'Order updated successfully.']);
+    }
+
 
     /**
      * Remove the specified resource from storage.

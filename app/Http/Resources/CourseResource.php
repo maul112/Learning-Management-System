@@ -23,14 +23,22 @@ class CourseResource extends JsonResource
             'order' => $this->order,
             'duration' => $this->duration,
             'difficulty' => $this->difficulty,
-            'type' => $this->type,
+            'price' => $this->price,
+            'status' => $this->status,
             'academic' => [
                 'id' => $this->academic->id,
                 'title' => $this->academic->title,
             ],
-            'ratings' => RatingResource::collection($this->ratings),
+            'instructor' => [
+                'id' => $this->instructor->id,
+                'user' => [
+                    'id' => $this->instructor->user->id,
+                    'name' => $this->instructor->user->name
+                ]
+            ],
+            'students' => UserResource::collection($this->students),
             'modules' => ModuleResource::collection($this->modules),
-            'students' => UserResource::collection($this->students)
+            'ratings' => RatingResource::collection($this->ratings),
         ];
     }
 }

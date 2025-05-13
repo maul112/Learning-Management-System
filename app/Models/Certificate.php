@@ -24,7 +24,7 @@ class Certificate extends Model
     {
         return $this
             ->belongsTo(
-                User::class,
+                \App\Models\Student::class,
                 'student_id',
                 'id'
             );
@@ -38,7 +38,7 @@ class Certificate extends Model
     {
         return $this
             ->belongsTo(
-                Module::class,
+                \App\Models\Module::class,
                 'course_id',
                 'id'
             );

@@ -21,15 +21,17 @@ class Course extends Model
         'order',
         'duration',
         'difficulty',
-        'type',
+        'price',
+        'status',
         'academic_id',
+        'instructor_id',
     ];
 
     public function academic(): BelongsTo
     {
         return $this
             ->belongsTo(
-                Academic::class,
+                \App\Models\Academic::class,
                 'academic_id',
                 'id'
             );
@@ -43,8 +45,18 @@ class Course extends Model
     {
         return $this
             ->hasMany(
-                Module::class,
+                \App\Models\Module::class,
                 'course_id',
+                'id'
+            );
+    }
+
+    public function instructor(): BelongsTo
+    {
+        return $this
+            ->belongsTo(
+                \App\Models\Instructor::class,
+                'instructor_id',
                 'id'
             );
     }
@@ -53,7 +65,7 @@ class Course extends Model
     {
         return $this
             ->belongsToMany(
-                User::class,
+                \App\Models\Student::class,
                 'course_enrollments',
                 'course_id',
                 'student_id'
@@ -69,7 +81,7 @@ class Course extends Model
     {
         return $this
             ->belongsToMany(
-                User::class,
+                \App\Models\Student::class,
                 'certificates',
                 'course_id',
                 'student_id'
@@ -80,7 +92,7 @@ class Course extends Model
     {
         return $this
             ->hasMany(
-                Rating::class,
+                \App\Models\Rating::class,
                 'course_id',
                 'id'
             );

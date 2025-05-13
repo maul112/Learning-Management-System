@@ -9,9 +9,13 @@ import { columns } from './columns';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
+    title: 'Academics',
+    href: '/academics',
+  },
+  {
     title: 'Courses',
     href: '/courses',
-  },
+  }
 ];
 
 export default function Courses() {

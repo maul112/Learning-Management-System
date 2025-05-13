@@ -1,8 +1,16 @@
+'use client';
+
 import type React from 'react';
 
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { ImageIcon, X } from 'lucide-react';
+import { ImageIcon, Loader2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface ImagePreviewInputProps {
@@ -23,8 +31,12 @@ export function ImagePreviewInput({
   className,
 }: ImagePreviewInputProps) {
   const [preview, setPreview] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [, setUploadStatus] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   // Set initial preview if there's a current image
   useEffect(() => {
@@ -33,21 +45,40 @@ export function ImagePreviewInput({
     }
   }, [currentImageUrl]);
 
+  // Store reference to parent form
+  useEffect(() => {
+    if (fileInputRef.current) {
+      formRef.current = fileInputRef.current.closest('form');
+    }
+  }, []);
+
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-
     if (file) {
+      setFile(file);
+    } else {
+      setFile(null);
+    }
+  };
+
+  const handleUploadClick = (file: File) => {
+    if (!file) return;
+
+    setIsUploading(true);
+    setUploadStatus(true);
+
+    // Simulate upload with 3 second delay
+    setTimeout(() => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string);
+        onChange(file);
+        setIsUploading(false);
+        setUploadStatus(false);
       };
       reader.readAsDataURL(file);
-      onChange(file);
-    } else {
-      setPreview(currentImageUrl || null);
-      onChange(null);
-    }
+    }, 3000);
   };
 
   // Handle drag events
@@ -66,12 +97,9 @@ export function ImagePreviewInput({
 
     const file = e.dataTransfer.files?.[0] || null;
     if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-      onChange(file);
+      setFile(file);
+      // Don't immediately set preview or call onChange here
+      // Let the user click "Upload Image" first
 
       // Update the file input value for form submission
       if (fileInputRef.current) {
@@ -85,6 +113,8 @@ export function ImagePreviewInput({
   // Clear the selected image
   const clearImage = () => {
     setPreview(null);
+    setFile(null);
+    setUploadStatus(false);
     onChange(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -97,84 +127,133 @@ export function ImagePreviewInput({
   };
 
   return (
-    <div className={cn('space-y-2', className)}>
-      <label htmlFor={htmlFor} className="text-sm font-medium">
-        {label}
-      </label>
-
-      <div
-        className={cn(
-          'relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors',
-          isDragging ? 'border-primary bg-primary/5' : 'border-border',
-          error ? 'border-destructive' : '',
-        )}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        {preview ? (
-          <div className="relative w-full">
-            <div className="relative mx-auto max-h-64 max-w-full overflow-hidden rounded-md">
-              <img
-                src={preview || '/placeholder.svg'}
-                alt="Preview"
-                className="h-auto max-h-64 w-auto max-w-full object-contain"
-              />
-              <Button
-                type="button"
-                size="icon"
-                variant="destructive"
-                className="absolute top-2 right-2 h-6 w-6"
-                onClick={clearImage}
-              >
-                <X className="h-4 w-4" />
-              </Button>
+    <Card className={cn('space-y-2', className)}>
+      <CardHeader>
+        <CardTitle>
+          <label
+            htmlFor={htmlFor}
+            className="flex items-center gap-2 text-xl font-medium"
+          >
+            {label}
+          </label>
+        </CardTitle>
+        <CardDescription
+          className={cn(
+            'relative mt-3 flex flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors',
+            isDragging ? 'border-primary bg-primary/5' : 'border-border',
+            error ? 'border-destructive' : '',
+            '.upload-progress-bar { animation: progress 3s linear forwards; } @keyframes progress { 0% { width: 0%; } 100% { width: 100%; }',
+          )}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          {/* Preview image with delete button */}
+          {preview && (
+            <div className="relative w-full">
+              <div className="relative mx-auto max-h-64 max-w-full overflow-hidden rounded-md">
+                <img
+                  src={preview || '/placeholder.svg'}
+                  alt="Preview"
+                  className="w-full object-contain"
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="destructive"
+                  className="absolute top-2 right-2 h-6 w-6"
+                  onClick={clearImage}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-            <div className="mt-2 text-center">
+          )}
+
+          {/* Initial state - no image selected */}
+          {!preview && !file && (
+            <div className="flex flex-col items-center justify-center py-4">
+              <div className="bg-muted mb-3 rounded-full p-3">
+                <ImageIcon className="text-muted-foreground h-6 w-6" />
+              </div>
+              <p className="mb-1 text-sm font-medium">
+                Drag and drop your image here or click to browse
+              </p>
+              <p className="text-muted-foreground text-xs">
+                Supports JPG, PNG, GIF up to 5MB
+              </p>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
+                className="mt-4"
                 onClick={triggerFileInput}
               >
-                Change Image
+                Select Image
               </Button>
             </div>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-4">
-            <div className="bg-muted mb-3 rounded-full p-3">
-              <ImageIcon className="text-muted-foreground h-6 w-6" />
+          )}
+
+          {/* File selected but not yet uploaded */}
+          {!preview && file && !isUploading && (
+            <div className="flex flex-col items-center justify-center py-4">
+              <div className="bg-muted mb-3 rounded-full p-3">
+                <ImageIcon className="text-muted-foreground h-6 w-6" />
+              </div>
+              <p className="text-muted-foreground mt-1 flex text-xs">
+                Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)}{' '}
+                MB)
+              </p>
+              <div className="mt-4 flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => handleUploadClick(file)}
+                >
+                  Upload Image & Submit Form
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setFile(null);
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = '';
+                    }
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
-            <p className="mb-1 text-sm font-medium">
-              Drag and drop your image here or click to browse
-            </p>
-            <p className="text-muted-foreground text-xs">
-              Supports JPG, PNG, GIF up to 5MB
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="mt-4"
-              onClick={triggerFileInput}
-            >
-              Select Image
-            </Button>
-          </div>
-        )}
+          )}
 
-        <input
-          id={htmlFor}
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFileChange}
-        />
-      </div>
+          {/* Loading state with progress bar */}
+          {isUploading && (
+            <div className="flex w-full flex-col items-center justify-center py-8">
+              <div className="mb-4 flex items-center justify-center">
+                <Loader2 className="text-primary h-6 w-6 animate-spin" />
+              </div>
+              <p className="mb-2 text-sm font-medium">Uploading image...</p>
+              <div className="bg-muted relative h-2 w-3/4 overflow-hidden rounded-full">
+                <div className="upload-progress-bar bg-primary h-full"></div>
+              </div>
+            </div>
+          )}
 
-      {error && <p className="text-destructive text-xs">{error}</p>}
-    </div>
+          <input
+            id={htmlFor}
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+        </CardDescription>
+
+        {error && <p className="text-destructive text-xs">{error}</p>}
+      </CardHeader>
+    </Card>
   );
 }

@@ -33,7 +33,7 @@ export function DeleteModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="icon" className="cursor-pointer" variant="destructive">
+        <Button size="icon" className="cursor-pointer" variant="default">
           <Trash2Icon className="h-4 w-4" />
         </Button>
       </DialogTrigger>

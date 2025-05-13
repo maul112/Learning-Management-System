@@ -1,11 +1,9 @@
-import { DataTable } from '@/components/data-table';
-import { BorderBeam } from '@/components/ui/border-beam';
+import { AcademicCard } from '@/components/academic-card';
 import AppLayout from '@/layouts/app-layout';
 import { Academic, BreadcrumbItem, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
-import { columns } from './columns';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -27,16 +25,10 @@ export default function Academics() {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Academics" />
-      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-        <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-          <DataTable<Academic, string>
-            columns={columns}
-            data={academics.data}
-            searchKey="title"
-            create="academic"
-          />
-          <BorderBeam size={300} duration={10} />
-        </div>
+      <div className="grid grid-cols-3 gap-3 p-5">
+        {academics.data.map((academic) => (
+          <AcademicCard key={academic.id} academic={academic} />
+        ))}
       </div>
     </AppLayout>
   );

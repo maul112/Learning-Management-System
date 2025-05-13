@@ -7,6 +7,8 @@ use App\Models\Academic;
 use App\Http\Requests\StoreAcademicRequest;
 use App\Http\Requests\UpdateAcademicRequest;
 use App\Http\Resources\AcademicResource;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -48,9 +50,9 @@ class AdminAcademicController extends Controller
                 $validated['image'] = $imageUrl;
             }
 
-            Academic::create($validated);
+            $academic = Academic::create($validated);
 
-            return redirect()->route('academics.index')->with('success', 'Academic created successfully.');
+            return redirect()->route('academics.edit', $academic->id)->with('success', 'Academic created successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
@@ -96,13 +98,25 @@ class AdminAcademicController extends Controller
 
             $academic->update($validated);
 
-            return redirect()->route('academics.index')->with('success', 'Academic updated successfully.');
+            return redirect()->back()->with('success', 'Academic updated successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    public function updateStatus(Request $request, Academic $academic)
+    {
+        $request->validate([
+            'status' => 'required|in:active,draft,published',
+        ]);
+
+        $academic->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Status updated successfully.');
+    }
+
+
 
     /**
      * Remove the specified resource from storage.

@@ -19,6 +19,8 @@ class ModuleFactory extends Factory
     {
         return [
             'title' => fake()->sentence(),
+            'order' => fake()->numberBetween(1, 6),
+            'status' => fake()->randomElement(['published', 'draft']),
             'course_id' => Course::factory(),
         ];
     }

@@ -25,7 +25,7 @@ class StoreModuleRequest extends FormRequest
     {
         return [
             'title' => 'required|string',
-            'order' => 'required|integer',
+            'order' => 'nullable|integer',
             'course_id' => 'required|exists:courses,id',
         ];
     }

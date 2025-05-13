@@ -2,7 +2,20 @@ import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
 export interface Auth {
-  user: User;
+  user: User & {
+    admin?: {
+      id: number;
+      user_id: number;
+    };
+    instructor?: {
+      id: number;
+      user_id: number;
+    };
+    student?: {
+      id: number;
+      user_id: number;
+    };
+  };
 }
 
 export interface BreadcrumbItem {
@@ -54,6 +67,18 @@ export interface User {
   email_verified_at?: string | null;
   created_at?: string;
   updated_at?: string;
+  admin?: {
+    id: number;
+    user_id: number;
+  };
+  instructor?: {
+    id: number;
+    user_id: number;
+  };
+  student?: {
+    id: number;
+    user_id: number;
+  };
   [key: string]: unknown; // This allows for additional properties...
 }
 
@@ -62,6 +87,7 @@ export interface Academic {
   title: string;
   image: string;
   description: string;
+  status: string;
   courses: Course[];
 }
 
@@ -74,17 +100,23 @@ export interface Course {
   order: number;
   duration: number;
   difficulty: string;
-  type: string;
+  price: number;
+  status: string;
   academic: Academic;
   modules: Module[];
   students: User[];
   ratings: Rating[];
+  instructor: {
+    id: number;
+    user: User;
+  };
 }
 
 export interface Module {
   id: number;
   title: string;
   order: number;
+  status: string;
   course: Course;
   lessons: Lesson[];
 }
@@ -94,6 +126,8 @@ export interface Lesson {
   title: string;
   content: string;
   order: number;
+  video: string;
+  status: string;
   module: Module;
 }
 

@@ -19,6 +19,7 @@ class AcademicResource extends JsonResource
             'title' => $this->title,
             'image' => $this->image,
             'description' => $this->description,
+            'status' => $this->status,
             'courses' => CourseResource::collection($this->courses),
         ];
     }

@@ -14,6 +14,7 @@ class Academic extends Model
         'title',
         'image',
         'description',
+        'status',
     ];
 
     public function courses()

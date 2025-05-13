@@ -20,6 +20,7 @@ class AcademicFactory extends Factory
             'title' => fake()->sentence(),
             'image' => fake()->imageUrl(),
             'description' => fake()->paragraph(),
+            'status' => fake()->randomElement(['published', 'draft']),
         ];
     }
 

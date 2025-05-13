@@ -22,9 +22,9 @@ class UpdateAcademicRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5000',
-            'description' => 'nullable|string',
+            'title' => 'sometimes|nullable|string',
+            'image' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'description' => 'sometimes|nullable|string',
         ];
     }
 }

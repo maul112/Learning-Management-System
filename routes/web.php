@@ -48,6 +48,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('courses', AdminCourseController::class);
     Route::resource('modules', AdminModuleController::class);
     Route::resource('lessons', AdminLessonController::class);
+    Route::put('/academics/{academic}/status', [AdminAcademicController::class, 'updateStatus'])->name('academics.updateStatus');
+    Route::put('/courses/{course}/status', [AdminCourseController::class, 'updateStatus'])->name('courses.updateStatus');
+    Route::post('/courses/reorder', [AdminCourseController::class, 'reorder'])->name('courses.reorder');
     Route::prefix('student')->group(function () {
         Route::get('dashboard', [StudentController::class, 'index'])->name('student.dashboard');
         Route::get('academic', [StudentController::class, 'academic'])->name('student.academic');

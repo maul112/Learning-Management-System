@@ -56,6 +56,7 @@ export const columns: ColumnDef<User, string>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader<User, unknown> column={column} title="Name" />
     ),
+    cell: ({ row }) => <div className="capitalize">{row.getValue('name')}</div>,
   },
   {
     accessorKey: 'email',
@@ -69,9 +70,7 @@ export const columns: ColumnDef<User, string>[] = [
     header: 'Status',
     cell: ({ row }) => (
       <Badge
-        variant={
-          row.getValue('status') === 'active' ? 'default' : 'secondary'
-        }
+        variant={row.getValue('status') === 'active' ? 'default' : 'secondary'}
       >
         {row.getValue('status')}
       </Badge>

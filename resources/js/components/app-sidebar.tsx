@@ -12,7 +12,15 @@ import {
 } from '@/components/ui/sidebar';
 import { NavGroup, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Book, BookOpen, Calendar1, Folder, LayoutGrid, UsersRound } from 'lucide-react';
+import {
+  Book,
+  BookOpen,
+  BookOpenTextIcon,
+  Calendar1,
+  Folder,
+  LayoutGrid,
+  UsersRound,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -22,24 +30,23 @@ const mainNavItems: NavItem[] = [
     icon: LayoutGrid,
   },
   {
+    title: 'Users',
+    href: '/users',
+    icon: UsersRound,
+  },
+  {
     title: 'Events',
     href: '/events',
     icon: Calendar1,
+  },
+  {
+    title: 'Courses',
+    href: '/academics',
+    icon: BookOpenTextIcon,
   }
 ];
 
 const mainNavGroupItems: NavGroup[] = [
-  {
-    title: 'Users',
-    icon: UsersRound,
-    items: [
-      {
-        title: 'All Users',
-        href: '/users',
-        icon: UsersRound,
-      },
-    ],
-  },
   {
     title: 'Classes',
     icon: Book,

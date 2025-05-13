@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('modules', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->integer('order');
+            $table->integer('order')->nullable();
+            $table->enum('status', ['publish', 'draft'])->default('draft');
             $table->foreignId('course_id')->constrained('courses', 'id')->onDelete('cascade');
             $table->timestamps();
         });

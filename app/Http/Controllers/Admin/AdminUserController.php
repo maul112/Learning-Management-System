@@ -17,7 +17,7 @@ class AdminUserController extends Controller
      */
     public function index()
     {
-        $users = User::where('role', "!=", "admin")->get();
+        $users = User::where('role', '!=', 'admin')->get();
 
         return Inertia::render('admin/users/index', [
             'users' => UserResource::collection($users),

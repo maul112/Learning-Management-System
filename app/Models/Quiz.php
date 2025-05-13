@@ -25,6 +25,6 @@ class Quiz extends Model
      */
     public function studentSubmissions(): HasMany
     {
-        return $this->hasMany(Submission::class);
+        return $this->hasMany(\App\Models\Submission::class);
     }
 }

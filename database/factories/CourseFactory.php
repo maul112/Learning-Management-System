@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Academic;
+use App\Models\Instructor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -26,7 +28,10 @@ class CourseFactory extends Factory
             'duration' => 0,
             'difficulty' => fake()->randomElement(['beginner', 'intermediate', 'advanced']),
             'type' => fake()->randomElement(['free', 'paid']),
-            'academic_id' => 1,
+            'price' => fake()->randomFloat(2, 0, 100),
+            'status' => fake()->randomElement(['publish', 'draft']),
+            'academic_id' => Academic::factory(),
+            'instructor_id' => Instructor::factory(),
         ];
     }
 

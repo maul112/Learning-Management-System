@@ -4,11 +4,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -52,59 +50,18 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Get the user's courses as a student.
-     * @return BelongsToMany<Course, User, \Illuminate\Database\Eloquent\Relations\Pivot>
-     */
-    public function studentCourses(): BelongsToMany
+    public function admin(): hasOne
     {
-        return $this
-            ->belongsToMany(
-                Course::class,
-                'course_enrollments',
-                'student_id',
-                'course_id'
-            )
-            ->withPivot('progress', 'status')
-            ->withTimestamps();
+        return $this->hasOne(\App\Models\Admin::class);
     }
 
-    /**
-     * Get the user's quiz submissions as a student.
-     * @return HasMany<Submission, User>
-     */
-    public function studentQuizSubmissions(): HasMany
+    public function instructor(): HasOne
     {
-        return $this
-            ->hasMany(
-                Submission::class,
-                'student_id',
-                'id'
-            );
+        return $this->hasOne(\App\Models\Instructor::class);
     }
 
-    /**
-     * Get the user's certificates as a student.
-     * @return BelongsToMany<Course, User, \Illuminate\Database\Eloquent\Relations\Pivot>
-     */
-    public function studentCourseCertificates(): BelongsToMany
+    public function student(): hasOne
     {
-        return $this
-            ->belongsToMany(
-                Module::class,
-                'certificates',
-                'student_id',
-                'module_id'
-            );
-    }
-
-    public function studentRatings(): HasMany
-    {
-        return $this
-            ->hasMany(
-                Rating::class,
-                'student_id',
-                'id'
-            );
+        return $this->hasOne(\App\Models\Student::class);
     }
 }

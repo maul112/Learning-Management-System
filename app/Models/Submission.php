@@ -20,13 +20,13 @@ class Submission extends Model
 
     /**
      * Get the student that submitted the quiz.
-     * @return BelongsTo<User, Submission>
+     * @return BelongsTo<student, Submission>
      */
     public function student(): BelongsTo
     {
         return $this
             ->belongsTo(
-                User::class,
+                Student::class,
                 'student_id'
             );
     }

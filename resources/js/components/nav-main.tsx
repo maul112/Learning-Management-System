@@ -35,14 +35,14 @@ export function NavMain({
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
-        {groupItems.map((group) => (
+        {/* {groupItems.map((group) => (
           <NavGroup
             key={group.title}
             groupTitle={group.title}
             icon={group.icon}
             items={group.items}
           />
-        ))}
+        ))} */}
       </SidebarMenu>
     </SidebarGroup>
   );

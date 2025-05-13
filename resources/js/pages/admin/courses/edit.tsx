@@ -1,9 +1,21 @@
+import { DeleteModal } from '@/components/delete-modal';
+import { DraftAlert } from '@/components/draft-alert';
+import { DragableList } from '@/components/dragable-list';
 import { ImagePreviewInput } from '@/components/form-field-file';
+import { FormFieldHeader } from '@/components/form-field-header';
 import FormFieldInput from '@/components/form-field-input';
-import FormFieldMarkdown from '@/components/form-field-markdown';
 import FormFieldSelect from '@/components/form-field-select';
+import FormFieldTextarea from '@/components/form-field-textarea';
 import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -11,11 +23,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useRequiredFieldNumber } from '@/hooks/use-required-field-number';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { Academic, BreadcrumbItem, Course, SharedData } from '@/types';
-import { Head, useForm, usePage } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
+import { Academic, BreadcrumbItem, Course, SharedData, User } from '@/types';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import {
+  Book,
+  BookOpenTextIcon,
+  CircleDollarSign,
+  GraduationCap,
+  LoaderCircle,
+  PlusIcon,
+} from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -31,25 +51,55 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function CourseEdit() {
-  const { course, academics, success, error } = usePage<
-    SharedData & { course: { data: Course }; academics: { data: Academic[] } }
+  const { course, instructors, success, error } = usePage<
+    SharedData & {
+      course: { data: Course };
+      academics: { data: Academic[] };
+      instructors: { data: User[] };
+    }
   >().props;
   const { data, setData, put, processing, errors } = useForm({
     title: course.data.title,
-    image: null as File | null,
+    image: course.data.image as File | string,
+    information: course.data.information,
     description: course.data.description,
     order: course.data.order,
     duration: course.data.duration,
     difficulty: course.data.difficulty,
-    type: course.data.type,
-    academic_id: course.data.academic.id,
+    price: course.data.price,
+    instructor_id: course.data.instructor.id,
   });
+
+
+  const {
+    data: courseStatus,
+    setData: setCourseStatus,
+    put: putStatus,
+  } = useForm({
+    status: course.data.status,
+  });
+
+  const [requiredFieldsNumber, setRequiredFieldsNumber] =
+    useRequiredFieldNumber(data);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     put(route('courses.update', course.data.id), {
       forceFormData: true,
       onError: (e) => console.log(e),
+    });
+  };
+
+  const handleChangeStatus = () => {
+    setCourseStatus(
+      'status',
+      courseStatus.status == 'published' ? 'draft' : 'published',
+    );
+    putStatus(route('courses.updateStatus', course.data.id), {
+      onError: (e) => console.log(e),
+      onSuccess: () => {
+        toast.success('Course status updated successfully');
+      },
     });
   };
 
@@ -61,94 +111,247 @@ export default function CourseEdit() {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Create Course" />
+      <DraftAlert status={course.data.status} />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+        <div className="flex items-center justify-between pl-4">
+          <div>
+            <h1 className="text-2xl font-bold">Course setup</h1>
+            <p className="text-muted-foreground text-sm">
+              Complete all fields ({requiredFieldsNumber}/7)
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant={
+                course.data.status == 'published' ? 'secondary' : 'default'
+              }
+              className="cursor-pointer"
+              onClick={handleChangeStatus}
+              disabled={requiredFieldsNumber < 7}
+            >
+              {course.data.status == 'published' ? 'Unpublish' : 'Publish'}
+            </Button>
+            <DeleteModal resourceName="course" id={course.data.id} />
+          </div>
+        </div>
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
           <FormLayout onSubmit={handleSubmit}>
-            <FormFieldInput
-              htmlFor="title"
-              label="Title"
-              type="text"
-              id="title"
-              name="title"
-              placeholder="Javascript"
-              value={data.title}
-              onChange={(e) => setData('title', e.target.value)}
-              message={errors.title || ''}
-            />
-            <ImagePreviewInput
-              htmlFor="image"
-              label="Image"
-              currentImageUrl={`/storage/${course.data.image}`}
-              onChange={(file) => setData('image', file)}
-            />
-            <FormFieldMarkdown
-              htmlFor="description"
-              label="Description"
-              value={data.description}
-              onChange={(value) => setData('description', value || '')}
-              message={errors.description || ''}
-            />
-            <FormFieldInput
-              htmlFor="order"
-              label="Order"
-              type="number"
-              id="order"
-              name="order"
-              value={data.order}
-              onChange={(e) => setData('order', Number(e.target.value))}
-              message={errors.order || ''}
-            />
-            <FormFieldInput
-              htmlFor="duration"
-              label="Duration"
-              type="number"
-              id="duration"
-              name="duration"
-              value={data.duration}
-              onChange={(e) => setData('duration', Number(e.target.value))}
-              message={errors.duration || ''}
-            />
-            <Select
-              defaultValue={data.difficulty}
-              value={data.difficulty}
-              onValueChange={(value) => setData('difficulty', value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select difficulty" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="beginner">Beginner</SelectItem>
-                <SelectItem value="intermediate">Intermediate</SelectItem>
-                <SelectItem value="advanced">Advanced</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
-              defaultValue={data.type}
-              value={data.type}
-              onValueChange={(value) => setData('type', value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="free">Free</SelectItem>
-                <SelectItem value="paid">Paid</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormFieldSelect<Academic>
-              data={academics.data}
-              label="Academic"
-              value={data.academic_id}
-              displayValue={
-                academics.data.find(
-                  (academic) => academic.id === data.academic_id,
-                )?.title || ''
-              }
-              onChange={(value) => setData('academic_id', Number(value))}
-              getOptionLabel={(academic) => academic.title}
-              getOptionValue={(academic) => academic.id}
-              message={errors.academic_id || ''}
-            />
+            <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+              <div className="grid gap-5">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <FormFieldHeader
+                        title="Customize your course"
+                        icon={BookOpenTextIcon}
+                      />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-4">
+                    <FormFieldInput
+                      htmlFor="title"
+                      label="Course title"
+                      type="text"
+                      id="title"
+                      name="title"
+                      placeholder="Javascript"
+                      value={data.title}
+                      onChange={(e) => {
+                        if (e.target.value.length > 0) {
+                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
+                        }
+                        setData('title', e.target.value);
+                      }}
+                      message={errors.title || ''}
+                    />
+                    <FormFieldTextarea
+                      htmlFor="information"
+                      label="Course information"
+                      value={data.information}
+                      onChange={(e) => {
+                        if (e.target.value.length > 0) {
+                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
+                        }
+                        setData('information', e.target.value || '');
+                      }}
+                      message={errors.information || ''}
+                    />
+                    <FormFieldTextarea
+                      htmlFor="description"
+                      label="Course description"
+                      value={data.description}
+                      onChange={(e) => {
+                        if (e.target.value.length > 0) {
+                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
+                        }
+                        setData('description', e.target.value || '');
+                      }}
+                      message={errors.description || ''}
+                    />
+                    <FormFieldInput
+                      htmlFor="order"
+                      label="Course chapter"
+                      type="number"
+                      id="order"
+                      name="order"
+                      value={String(data.order)}
+                      onChange={(e) => {
+                        if (e.target.value.length > 0) {
+                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
+                        }
+                        setData('order', Number(e.target.value));
+                      }}
+                      message={errors.order || ''}
+                    />
+                    <FormFieldInput
+                      htmlFor="duration"
+                      label="Course duration"
+                      type="number"
+                      id="duration"
+                      name="duration"
+                      value={String(data.duration)}
+                      onChange={(e) => {
+                        if (e.target.value.length > 0) {
+                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
+                        }
+                        setData('duration', Number(e.target.value));
+                      }}
+                      message={errors.duration || ''}
+                    />
+                    <Card className="grid gap-2">
+                      <CardHeader>
+                        <CardTitle>
+                          <Label className="text-xl">Course difficulty</Label>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <Select
+                          value={data.difficulty}
+                          onValueChange={(value) =>
+                            setData('difficulty', value)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a difficulty" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="beginner">Beginner</SelectItem>
+                            <SelectItem value="intermediate">
+                              Intermediate
+                            </SelectItem>
+                            <SelectItem value="advanced">Advanced</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </CardContent>
+                    </Card>
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="grid gap-5">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <FormFieldHeader title="Module chapters" icon={Book} />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Card>
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <CardTitle>
+                            <h2 className="text-xl font-bold">
+                              Modules chapters
+                            </h2>
+                          </CardTitle>
+                          <Button className="cursor-pointer" asChild>
+                            <Link href={route('modules.create')}>
+                              <PlusIcon />
+                            </Link>
+                          </Button>
+                        </div>
+                        <CardDescription className="text-muted-foreground text-sm">
+                          {course.data.modules.length > 0 ? (
+                            <>Total modules: {course.data.modules.length}</>
+                          ) : (
+                            <>No modules found</>
+                          )}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <DragableList
+                          data={course.data.modules.map((module) => ({
+                            id: String(module.id),
+                            title: module.title,
+                            order: module.order,
+                            status: module.status,
+                          }))}
+                          endpoint="course"
+                        />
+                      </CardContent>
+                    </Card>
+                  </CardContent>
+                </Card>
+                <ImagePreviewInput
+                  htmlFor="image"
+                  label="Course image"
+                  currentImageUrl={`/storage/${course.data.image}`}
+                  onChange={(file) => setData('image', file as File)}
+                />
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <FormFieldHeader
+                        title="Sell your course"
+                        icon={CircleDollarSign}
+                      />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <FormFieldInput
+                      htmlFor="price"
+                      label="Course price"
+                      type="number"
+                      id="price"
+                      name="price"
+                      value={String(data.price)}
+                      onChange={(e) => setData('price', Number(e.target.value))}
+                      message={errors.price || ''}
+                    />
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <FormFieldHeader
+                        title="Instructor"
+                        icon={GraduationCap}
+                      />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <FormFieldSelect<User>
+                      label="Instructor course"
+                      placeholder={course.data.instructor.user.name}
+                      data={instructors.data}
+                      value={data.instructor_id!}
+                      displayValue={
+                        instructors.data.find(
+                          (instructor) =>
+                            instructor.instructor?.id == data.instructor_id,
+                        )?.name || ''
+                      }
+                      onChange={(value) =>
+                        setData('instructor_id', Number(value))
+                      }
+                      getOptionLabel={(instructor: User) => instructor.name}
+                      getOptionValue={(instructor: User) =>
+                        String(instructor.instructor?.id)
+                      }
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
             <Button
               type="submit"
               className="mt-4 w-full"

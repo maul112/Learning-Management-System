@@ -67,7 +67,7 @@ export default function ModuleEdit() {
               id="order"
               name="order"
               placeholder="Module order"
-              value={data.order || ''}
+              value={String(data.order) || ''}
               onChange={(e) => setData('order', Number(e.target.value))}
               message={errors.order || ''}
             />

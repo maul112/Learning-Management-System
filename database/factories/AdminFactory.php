@@ -2,14 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Module;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ModuleEnrollment>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Admin>
  */
-class ModuleEnrollmentFactory extends Factory
+class AdminFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,8 +18,7 @@ class ModuleEnrollmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'student_id' => User::factory()->student(),
-            'module_id' => Module::factory(),
+            'user_id' => User::factory()->admin()->mufid(),
         ];
     }
 }

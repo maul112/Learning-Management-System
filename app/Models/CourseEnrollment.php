@@ -24,7 +24,7 @@ class CourseEnrollment extends Model
     {
         return $this
             ->belongsTo(
-                Course::class,
+                \App\Models\Course::class,
                 'course_id',
             );
     }
@@ -37,7 +37,7 @@ class CourseEnrollment extends Model
     {
         return $this
             ->belongsTo(
-                User::class,
+                \App\Models\Student::class,
                 'student_id'
             );
     }

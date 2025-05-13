@@ -3,10 +3,13 @@
 namespace Database\Seeders;
 
 use App\Models\Academic;
+use App\Models\Admin;
 use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\Models\Event;
+use App\Models\Instructor;
 use App\Models\Rating;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -18,9 +21,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Buat 1 Admin
-        User::factory()->admin()->mufid()->create();
+        Admin::factory()->create();
 
         Event::factory(5)->create();
+        $instructors = Instructor::factory(5)->create();
 
         $data = [
             [
@@ -36,7 +40,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 1,
                         'duration' => 50,
                         'difficulty' => 'beginner',
-                        'academic_id' => 1
+                        'academic_id' => 1,
+                        'instructor_id' => $instructors[0]->id
                     ],
                     [
                         'title' => 'Belajar Membuat Aplikasi Android untuk Pemula',
@@ -46,7 +51,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 2,
                         'duration' => 60,
                         'difficulty' => 'beginner',
-                        'academic_id' => 1
+                        'academic_id' => 1,
+                        'instructor_id' => $instructors[0]->id
                     ],
                     [
                         'title' => 'Belajar Fundamental Aplikasi Android',
@@ -56,7 +62,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 3,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 1
+                        'academic_id' => 1,
+                        'instructor_id' => $instructors[0]->id
                     ],
                     [
                         'title' => 'Belajar Pengembangan Aplikasi Android Intermediate',
@@ -66,7 +73,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 4,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 1
+                        'academic_id' => 1,
+                        'instructor_id' => $instructors[0]->id
                     ]
                 ]
             ],
@@ -83,7 +91,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 1,
                         'duration' => 50,
                         'difficulty' => 'beginner',
-                        'academic_id' => 2
+                        'academic_id' => 2,
+                        'instructor_id' => $instructors[1]->id
                     ],
                     [
                         'title' => 'Belajar Fundamental Aplikasi Back-End',
@@ -93,7 +102,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 2,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 2
+                        'academic_id' => 2,
+                        'instructor_id' => $instructors[1]->id
                     ],
                     [
                         'title' => 'Belajar Pengembangan Aplikasi Back-End Intermediate',
@@ -103,7 +113,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 3,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 2
+                        'academic_id' => 2,
+                        'instructor_id' => $instructors[1]->id
                     ],
                     [
                         'title' => 'Belajar Pengembangan Aplikasi Back-End Expert',
@@ -113,7 +124,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 4,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 2
+                        'academic_id' => 2,
+                        'instructor_id' => $instructors[1]->id
                     ]
                 ]
             ],
@@ -130,7 +142,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 1,
                         'duration' => 50,
                         'difficulty' => 'beginner',
-                        'academic_id' => 3
+                        'academic_id' => 3,
+                        'instructor_id' => $instructors[2]->id
                     ],
                     [
                         'title' => 'Belajar Fundamental Aplikasi Front-End',
@@ -140,7 +153,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 2,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 3
+                        'academic_id' => 3,
+                        'instructor_id' => $instructors[2]->id
                     ],
                     [
                         'title' => 'Belajar Pengembangan Aplikasi Front-End Intermediate',
@@ -150,7 +164,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 3,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 3
+                        'academic_id' => 3,
+                        'instructor_id' => $instructors[2]->id
                     ],
                     [
                         'title' => 'Belajar Pengembangan Aplikasi Front-End Expert',
@@ -160,7 +175,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 4,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 3
+                        'academic_id' => 3,
+                        'instructor_id' => $instructors[2]->id
                     ]
                 ]
             ],
@@ -177,7 +193,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 1,
                         'duration' => 50,
                         'difficulty' => 'beginner',
-                        'academic_id' => 4
+                        'academic_id' => 4,
+                        'instructor_id' => $instructors[3]->id
                     ],
                     [
                         'title' => 'Belajar Fundamental Aplikasi iOS',
@@ -187,7 +204,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 2,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 4
+                        'academic_id' => 4,
+                        'instructor_id' => $instructors[3]->id
                     ],
                     [
                         'title' => 'Belajar Pengembangan Aplikasi iOS Intermediate',
@@ -197,7 +215,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 3,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 4
+                        'academic_id' => 4,
+                        'instructor_id' => $instructors[3]->id
                     ],
                     [
                         'title' => 'Belajar Pengembangan Aplikasi iOS Expert',
@@ -207,7 +226,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 4,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 4
+                        'academic_id' => 4,
+                        'instructor_id' => $instructors[3]->id
                     ]
                 ]
             ],
@@ -224,7 +244,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 1,
                         'duration' => 50,
                         'difficulty' => 'beginner',
-                        'academic_id' => 5
+                        'academic_id' => 5,
+                        'instructor_id' => $instructors[4]->id
                     ],
                     [
                         'title' => 'Belajar Fundamental Aplikasi Machine Learning',
@@ -234,7 +255,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 2,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 5
+                        'academic_id' => 5,
+                        'instructor_id' => $instructors[4]->id
                     ],
                     [
                         'title' => 'Belajar Pengembangan Aplikasi Machine Learning Intermediate',
@@ -244,7 +266,8 @@ class DatabaseSeeder extends Seeder
                         'order' => 3,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 5
+                        'academic_id' => 5,
+                        'instructor_id' => $instructors[4]->id
                     ],
                     [
                         'title' => 'Belajar Pengembangan Aplikasi Machine Learning Expert',
@@ -254,13 +277,14 @@ class DatabaseSeeder extends Seeder
                         'order' => 4,
                         'duration' => 150,
                         'difficulty' => 'intermediate',
-                        'academic_id' => 5
+                        'academic_id' => 5,
+                        'instructor_id' => $instructors[4]->id
                     ]
                 ]
             ]
         ];
 
-        $students = User::factory(50)->create();
+        $students = Student::factory(50)->create();
 
         foreach ($data as $item) {
             Academic::create([
@@ -278,8 +302,9 @@ class DatabaseSeeder extends Seeder
                     'order' => $course['order'],
                     'duration' => $course['duration'],
                     'difficulty' => $course['difficulty'],
-                    'type' => $course['order'] > 1 ? 'paid' : 'free',
-                    'academic_id' => $course['academic_id']
+                    'price' => $course['order'] > 1 ? fake()->randomFloat(2, 0, 100) : 0,
+                    'academic_id' => $course['academic_id'],
+                    'instructor_id' => $course['instructor_id']
                 ]);
 
                 foreach ($students as $student) {

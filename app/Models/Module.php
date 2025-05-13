@@ -16,6 +16,7 @@ class Module extends Model
     protected $fillable = [
         'title',
         'order',
+        'status',
         'course_id'
     ];
 
@@ -27,7 +28,7 @@ class Module extends Model
     {
         return $this
             ->belongsTo(
-                Course::class,
+                \App\Models\Course::class,
                 'course_id',
                 'id'
             );
@@ -37,7 +38,7 @@ class Module extends Model
     {
         return $this
             ->hasMany(
-                Lesson::class,
+                \App\Models\Lesson::class,
                 'module_id',
                 'id'
             );
@@ -47,7 +48,7 @@ class Module extends Model
     {
         return $this
             ->belongsToMany(
-                User::class,
+                \App\Models\User::class,
                 'certificates',
                 'module_id',
                 'student_id'

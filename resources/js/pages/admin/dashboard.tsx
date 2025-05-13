@@ -141,7 +141,7 @@ export default function Dashboard() {
                   axisLine={false}
                   tickFormatter={(value) => value.slice(0, 3)}
                 />
-                <ChartTooltip content={<ChartTooltipContent indicator='dot' />} />
+                <ChartTooltip content={<ChartTooltipContent />} />
                 <ChartLegend content={<ChartLegendContent />} />
                 <Bar dataKey="users" fill="url(#usersGradient)" radius={4} />
               </BarChart>
