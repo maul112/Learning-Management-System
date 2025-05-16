@@ -24,7 +24,6 @@ class Course extends Model
         'price',
         'status',
         'academic_id',
-        'instructor_id',
     ];
 
     public function academic(): BelongsTo
@@ -47,16 +46,6 @@ class Course extends Model
             ->hasMany(
                 \App\Models\Module::class,
                 'course_id',
-                'id'
-            );
-    }
-
-    public function instructor(): BelongsTo
-    {
-        return $this
-            ->belongsTo(
-                \App\Models\Instructor::class,
-                'instructor_id',
                 'id'
             );
     }

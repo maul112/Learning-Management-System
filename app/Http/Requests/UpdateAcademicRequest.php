@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request as HttpRequest;
 
 class UpdateAcademicRequest extends FormRequest
 {
@@ -23,7 +24,7 @@ class UpdateAcademicRequest extends FormRequest
     {
         return [
             'title' => 'sometimes|nullable|string',
-            'image' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => $this->hasFile('image') ? 'image|mimes:jpeg,png,jpg,gif|max:5000' : 'nullable',
             'description' => 'sometimes|nullable|string',
         ];
     }

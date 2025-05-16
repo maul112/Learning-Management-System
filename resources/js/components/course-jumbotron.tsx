@@ -125,7 +125,7 @@ export function CourseJumbotron({
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-2">
                     <span className="flex items-center gap-2 capitalize">
-                      {course.data.type == 'free' ? (
+                      {course.data.price > 0 ? (
                         <CircleCheckBig className="h-4 w-4 text-cyan-400" />
                       ) : (
                         <CircleDollarSign className="h-4 w-4 text-green-400" />
@@ -133,12 +133,12 @@ export function CourseJumbotron({
                       <Badge
                         variant="secondary"
                         className={cn(
-                          course.data.type == 'free'
+                          course.data.price > 0
                             ? 'text-cyan-400'
                             : 'text-green-400',
                         )}
                       >
-                        {course.data.type}
+                        {course.data.price > 0 ? 'Berbayar' : 'Gratis'}
                       </Badge>
                     </span>
                   </div>

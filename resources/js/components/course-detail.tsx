@@ -36,6 +36,7 @@ const tabTriggers = [
 ];
 
 export function CourseDetail() {
+
   const getInitials = useInitials();
   const { course } = usePage<SharedData & { course: { data: Course } }>().props;
   const [activeTab, setActiveTab] = useState<string>('testimoni');
@@ -89,17 +90,17 @@ export function CourseDetail() {
                       <Avatar className="h-16 w-16">
                         <AvatarImage
                           src={
-                            '/storage/' + courseFilteredRatings[i].student.image
+                            '/storage/' + courseFilteredRatings[i].student.user.avatar
                           }
-                          alt={courseFilteredRatings[i].student.name}
+                          alt={courseFilteredRatings[i].student.user.name}
                         />
                         <AvatarFallback>
-                          {getInitials(courseFilteredRatings[i].student.name)}
+                          {getInitials(courseFilteredRatings[i].student.user.name)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <CardTitle className="mt-2">
-                          {courseFilteredRatings[i].student.name}
+                          {courseFilteredRatings[i].student.user.name}
                         </CardTitle>
                         <CardDescription className="mt-2">
                           <span className="text-muted-foreground flex gap-2">

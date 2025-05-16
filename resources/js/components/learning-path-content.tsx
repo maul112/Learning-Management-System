@@ -65,7 +65,7 @@ export function LearningPathContent() {
           <CardFooter>
             <div className="flex items-center gap-6">
               <span className="text-muted-foreground flex items-center gap-1 text-xs capitalize md:text-sm">
-                {course.type == 'free' ? (
+                {course.price == 0 ? (
                   <CircleCheckBig className="text-cyan-400" />
                 ) : (
                   <CircleDollarSign className="text-green-400" />
@@ -73,10 +73,10 @@ export function LearningPathContent() {
                 <Badge
                   variant="secondary"
                   className={cn(
-                    course.type == 'free' ? 'text-cyan-400' : 'text-green-400',
+                    course.price == 0 ? 'text-cyan-400' : 'text-green-400',
                   )}
                 >
-                  {course.type}
+                  {course.price == 0 ? 'Gratis' : '$ ' + course.price}
                 </Badge>
               </span>
               <span className="text-muted-foreground flex items-center gap-1 text-xs capitalize md:text-sm">
@@ -89,7 +89,7 @@ export function LearningPathContent() {
               </span>
             </div>
           </CardFooter>
-          <BorderBeam duration={8} size={100} />
+          <BorderBeam duration={8} size={200} />
         </Card>
       ),
     }),

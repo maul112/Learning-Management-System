@@ -26,7 +26,9 @@ class LearningPathController extends Controller
     public function show(Academic $academic)
     {
         $academics = Academic::all();
-        $academic->with('courses');
+        $academic->load(['courses' => function ($query) {
+            $query->orderBy('order');
+        }]);
 
         return Inertia::render('learning-paths/show', [
             'academic_id' => $academic->id,

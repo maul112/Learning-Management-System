@@ -53,7 +53,7 @@ export function CourseCard({ course }: { course: Course }) {
               </div>
               <div className="flex gap-4">
                 <span className="flex items-center gap-2 capitalize">
-                  {course.type == 'free' ? (
+                  {course.price > 0 ? (
                     <CircleCheckBig className="h-4 w-4 text-cyan-400" />
                   ) : (
                     <CircleDollarSign className="h-4 w-4 text-green-400" />
@@ -61,12 +61,12 @@ export function CourseCard({ course }: { course: Course }) {
                   <Badge
                     variant="secondary"
                     className={cn(
-                      course.type == 'free'
+                      course.price > 0
                         ? 'text-cyan-400'
                         : 'text-green-400',
                     )}
                   >
-                    {course.type}
+                    {course.price > 0 ? 'Gratis' : 'Berbayar'}
                   </Badge>
                 </span>
                 <span className="flex items-center gap-2 capitalize">

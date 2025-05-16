@@ -8,7 +8,6 @@ use App\Http\Requests\StoreAcademicRequest;
 use App\Http\Requests\UpdateAcademicRequest;
 use App\Http\Resources\AcademicResource;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -73,8 +72,14 @@ class AdminAcademicController extends Controller
      */
     public function edit(Academic $academic)
     {
+        $academic->load(['courses' => function ($query) {
+            $query->orderBy('order');
+        }]);
+
         return Inertia::render('admin/academics/edit', [
-            'academic' => new AcademicResource($academic)
+            'academic' => new AcademicResource($academic),
+            'success' => session('success'),
+            'error' => session('error'),
         ]);
     }
 
@@ -101,7 +106,7 @@ class AdminAcademicController extends Controller
             return redirect()->back()->with('success', 'Academic updated successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update academic.');
         }
     }
 

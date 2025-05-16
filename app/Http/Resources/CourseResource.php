@@ -29,13 +29,6 @@ class CourseResource extends JsonResource
                 'id' => $this->academic->id,
                 'title' => $this->academic->title,
             ],
-            'instructor' => [
-                'id' => $this->instructor->id,
-                'user' => [
-                    'id' => $this->instructor->user->id,
-                    'name' => $this->instructor->user->name
-                ]
-            ],
             'students' => UserResource::collection($this->students),
             'modules' => ModuleResource::collection($this->modules),
             'ratings' => RatingResource::collection($this->ratings),

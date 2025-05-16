@@ -4,7 +4,6 @@ import { DragableList } from '@/components/dragable-list';
 import { ImagePreviewInput } from '@/components/form-field-file';
 import { FormFieldHeader } from '@/components/form-field-header';
 import FormFieldInput from '@/components/form-field-input';
-import FormFieldSelect from '@/components/form-field-select';
 import FormFieldTextarea from '@/components/form-field-textarea';
 import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
@@ -26,13 +25,12 @@ import {
 import { useRequiredFieldNumber } from '@/hooks/use-required-field-number';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { Academic, BreadcrumbItem, Course, SharedData, User } from '@/types';
+import { Academic, BreadcrumbItem, Course, SharedData } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import {
   Book,
   BookOpenTextIcon,
   CircleDollarSign,
-  GraduationCap,
   LoaderCircle,
   PlusIcon,
 } from 'lucide-react';
@@ -40,6 +38,10 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Academics',
+    href: '/academics',
+  },
   {
     title: 'Courses',
     href: '/courses',
@@ -51,11 +53,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function CourseEdit() {
-  const { course, instructors, success, error } = usePage<
+  const { course, success, error } = usePage<
     SharedData & {
       course: { data: Course };
       academics: { data: Academic[] };
-      instructors: { data: User[] };
     }
   >().props;
   const { data, setData, put, processing, errors } = useForm({
@@ -67,9 +68,9 @@ export default function CourseEdit() {
     duration: course.data.duration,
     difficulty: course.data.difficulty,
     price: course.data.price,
-    instructor_id: course.data.instructor.id,
   });
 
+  //   console.log(course.data);
 
   const {
     data: courseStatus,
@@ -111,13 +112,13 @@ export default function CourseEdit() {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Create Course" />
-      <DraftAlert status={course.data.status} />
+      <DraftAlert status={course.data.status} title="Course" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="flex items-center justify-between pl-4">
           <div>
             <h1 className="text-2xl font-bold">Course setup</h1>
             <p className="text-muted-foreground text-sm">
-              Complete all fields ({requiredFieldsNumber}/7)
+              Complete all fields ({requiredFieldsNumber}/8)
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -127,7 +128,7 @@ export default function CourseEdit() {
               }
               className="cursor-pointer"
               onClick={handleChangeStatus}
-              disabled={requiredFieldsNumber < 7}
+              disabled={requiredFieldsNumber < 8}
             >
               {course.data.status == 'published' ? 'Unpublish' : 'Publish'}
             </Button>
@@ -316,37 +317,6 @@ export default function CourseEdit() {
                       value={String(data.price)}
                       onChange={(e) => setData('price', Number(e.target.value))}
                       message={errors.price || ''}
-                    />
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>
-                      <FormFieldHeader
-                        title="Instructor"
-                        icon={GraduationCap}
-                      />
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <FormFieldSelect<User>
-                      label="Instructor course"
-                      placeholder={course.data.instructor.user.name}
-                      data={instructors.data}
-                      value={data.instructor_id!}
-                      displayValue={
-                        instructors.data.find(
-                          (instructor) =>
-                            instructor.instructor?.id == data.instructor_id,
-                        )?.name || ''
-                      }
-                      onChange={(value) =>
-                        setData('instructor_id', Number(value))
-                      }
-                      getOptionLabel={(instructor: User) => instructor.name}
-                      getOptionValue={(instructor: User) =>
-                        String(instructor.instructor?.id)
-                      }
                     />
                   </CardContent>
                 </Card>

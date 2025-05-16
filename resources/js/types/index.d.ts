@@ -7,10 +7,6 @@ export interface Auth {
       id: number;
       user_id: number;
     };
-    instructor?: {
-      id: number;
-      user_id: number;
-    };
     student?: {
       id: number;
       user_id: number;
@@ -71,10 +67,6 @@ export interface User {
     id: number;
     user_id: number;
   };
-  instructor?: {
-    id: number;
-    user_id: number;
-  };
   student?: {
     id: number;
     user_id: number;
@@ -106,10 +98,6 @@ export interface Course {
   modules: Module[];
   students: User[];
   ratings: Rating[];
-  instructor: {
-    id: number;
-    user: User;
-  };
 }
 
 export interface Module {
@@ -136,7 +124,10 @@ export interface Rating {
   rating: number;
   comment: string;
   course: Course;
-  student: User;
+  student: {
+    id: number;
+    user: User;
+  };
 }
 
 export type DataContextType = {

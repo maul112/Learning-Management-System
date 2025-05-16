@@ -43,10 +43,11 @@ export default function AcademicEdit() {
   const { academic, success, error } = usePage<
     SharedData & { academic: { data: Academic } }
   >().props;
-  const { data, setData, put, errors, processing } = useForm({
+  const { data, setData, post, errors, processing } = useForm({
     title: academic.data.title,
     image: academic.data.image as File | string | null,
     description: academic.data.description,
+    _method: 'put',
   });
   const {
     data: academicStatus,
@@ -60,13 +61,12 @@ export default function AcademicEdit() {
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    if (data.image == academic.data.image) {
-      setData('image', null);
-    }
-    put(route('academics.update', academic.data.id), {
+    post(route('academics.update', academic.data.id), {
+      forceFormData: true,
+      preserveScroll: true,
+      method: 'put',
       onError: (e) => {
         console.log(e);
-        toast.error('Failed to add academic');
       },
     });
   };
@@ -90,6 +90,8 @@ export default function AcademicEdit() {
     });
   };
 
+  //   console.log(academic.data.courses);
+
   useEffect(() => {
     if (success) toast.success(success as string);
     if (error) toast.error(error as string);
@@ -98,13 +100,13 @@ export default function AcademicEdit() {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Edit Academic" />
-      <DraftAlert status={academic.data.status} />
+      <DraftAlert status={academic.data.status} title="Academic" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="flex items-center justify-between pl-4">
           <div>
             <h1 className="text-2xl font-bold">Academic setup</h1>
             <p className="text-muted-foreground text-sm">
-              Complete all fields ({requiredFieldsNumber}/3)
+              Complete all fields ({requiredFieldsNumber - 1}/3)
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -124,7 +126,7 @@ export default function AcademicEdit() {
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
           <FormLayout onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
-              <div className="flex flex-col gap-5">
+              <div className="grid gap-5">
                 <Card>
                   <CardHeader>
                     <CardTitle>
@@ -134,7 +136,7 @@ export default function AcademicEdit() {
                       />
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="grid gap-5">
                     <FormFieldInput
                       htmlFor="title"
                       label="Academic title"

@@ -31,7 +31,6 @@ class CourseFactory extends Factory
             'price' => fake()->randomFloat(2, 0, 100),
             'status' => fake()->randomElement(['publish', 'draft']),
             'academic_id' => Academic::factory(),
-            'instructor_id' => Instructor::factory(),
         ];
     }
 

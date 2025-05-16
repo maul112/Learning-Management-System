@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 import { ImageIcon, Loader2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -151,7 +152,7 @@ export function ImagePreviewInput({
           {/* Preview image with delete button */}
           {preview && (
             <div className="relative w-full">
-              <div className="relative mx-auto max-h-64 max-w-full overflow-hidden rounded-md">
+              <div className="relative mx-auto h-auto max-w-full overflow-hidden rounded-md">
                 <img
                   src={preview || '/placeholder.svg'}
                   alt="Preview"
@@ -210,7 +211,7 @@ export function ImagePreviewInput({
                   size="sm"
                   onClick={() => handleUploadClick(file)}
                 >
-                  Upload Image & Submit Form
+                  Upload Image
                 </Button>
                 <Button
                   type="button"
@@ -237,7 +238,11 @@ export function ImagePreviewInput({
               </div>
               <p className="mb-2 text-sm font-medium">Uploading image...</p>
               <div className="bg-muted relative h-2 w-3/4 overflow-hidden rounded-full">
-                <div className="upload-progress-bar bg-primary h-full"></div>
+                <motion.div
+                  initial={{ width: '0%' }}
+                  animate={{ width: '100%' }}
+                  className="h-full bg-gradient-to-l from-[#9c40ff] to-[#ffaa40]"
+                />
               </div>
             </div>
           )}

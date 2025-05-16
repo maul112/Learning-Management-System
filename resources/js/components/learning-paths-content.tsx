@@ -22,7 +22,8 @@ export function LearningPathsContent() {
           difficultyFilter.includes(course.difficulty)) &&
         (!academicFilter.length ||
           academicFilter.includes(course.academic.title)) &&
-        (!classTypeFilter.length || classTypeFilter.includes(course.type)),
+        (!classTypeFilter.length ||
+          classTypeFilter.includes(course.price > 0 ? 'Gratis' : 'Berbayar')),
     );
   }, [academicFilter, difficultyFilter, classTypeFilter, courses.data]);
 
@@ -96,11 +97,11 @@ export function LearningPathsContent() {
             items={[
               {
                 label: 'Kelas Gratis',
-                value: 'free',
+                value: 'Gratis',
               },
               {
                 label: 'Kelas Berbayar',
-                value: 'paid',
+                value: 'Berbayar',
               },
             ]}
             stateFilter={classTypeFilter}

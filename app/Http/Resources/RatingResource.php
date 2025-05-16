@@ -26,7 +26,10 @@ class RatingResource extends JsonResource
             ],
             'student' => [
                 'id' => $this->student->id,
-                'name' => $this->student->name
+                'user' => [
+                    'id' => $this->student->user->id,
+                    'name' => $this->student->user->name
+                ]
             ]
         ];
     }

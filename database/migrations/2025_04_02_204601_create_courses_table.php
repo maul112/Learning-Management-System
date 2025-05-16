@@ -23,7 +23,6 @@ return new class extends Migration
             $table->integer('price')->default(0);
             $table->enum('status', ['published', 'draft'])->default('draft');
             $table->foreignId('academic_id')->constrained('academics', 'id')->onDelete('cascade');
-            $table->foreignId('instructor_id')->constrained('instructors', 'id')->onDelete('cascade');
             $table->timestamps();
         });
     }
