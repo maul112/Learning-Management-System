@@ -1,6 +1,7 @@
 import { ImagePreviewInput } from '@/components/form-field-file';
 import { FormFieldHeader } from '@/components/form-field-header';
 import FormFieldInput from '@/components/form-field-input';
+import FormFieldMarkdown from '@/components/form-field-markdown';
 import FormFieldTextarea from '@/components/form-field-textarea';
 import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
@@ -16,37 +17,43 @@ import {
 import { useRequiredFieldNumber } from '@/hooks/use-required-field-number';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
+import { cn } from '@/lib/utils';
 import { Academic, BreadcrumbItem, SharedData } from '@/types';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { BookOpenText, CircleDollarSign, LoaderCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Courses',
-    href: '/courses',
-  },
-  {
-    title: 'Create',
-    href: '/courses/create',
-  },
-];
-
 export default function CourseCreate() {
-  const { success, error } = usePage<
+  const { academic, success, error } = usePage<
     SharedData & { academic: { data: Academic } }
   >().props;
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Academics',
+      href: '/academics',
+    },
+    {
+      title: 'Courses',
+      href: `/academics/${academic.data.id}/edit`,
+    },
+    {
+      title: 'Create',
+      href: '/courses/create',
+    },
+  ];
+
   const { data, setData, post, processing, errors } = useForm({
     title: '',
     image: null as File | null,
     information: '',
     description: '',
-    order: 0,
-    duration: 0,
+    order: academic.data.courses.length + 1,
+    duration: '',
     difficulty: '',
-    price: 0,
-    academic_id: 1,
+    price: '',
+    academic_id: academic.data.id,
   });
 
   const [requiredFieldsNumber, setRequiredFieldsNumber] =
@@ -54,6 +61,7 @@ export default function CourseCreate() {
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    if (requiredFieldsNumber < 7) toast.error('Complete all fields');
     post(route('courses.store'), {
       onError: (e) => console.log(e),
     });
@@ -71,7 +79,7 @@ export default function CourseCreate() {
         <div className="pl-4">
           <h1 className="text-2xl font-bold">Course setup</h1>
           <p className="text-muted-foreground text-sm">
-            Complete all fields ({requiredFieldsNumber}/7)
+            Complete all fields ({requiredFieldsNumber - 2}/7)
           </p>
         </div>
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
@@ -95,56 +103,32 @@ export default function CourseCreate() {
                     name="title"
                     placeholder="Javascript"
                     value={data.title}
-                    onChange={(e) => {
-                      if (e.target.value.length > 0) {
-                        setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                      }
-
-                      setData('title', e.target.value);
-                    }}
+                    setValue={(value) => setData('title', value)}
+                    onFilled={() =>
+                      setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                    }
                     message={errors.title || ''}
                   />
                   <FormFieldTextarea
                     htmlFor="information"
                     label="Course information"
                     value={data.information}
-                    onChange={(e) => {
-                      if (e.target.value.length > 0) {
-                        setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                      }
-
-                      setData('information', e.target.value);
-                    }}
+                    setValue={(value) => setData('information', value)}
+                    onFilled={() =>
+                      setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                    }
                     message={errors.information || ''}
                   />
-                  <FormFieldTextarea
+                  <FormFieldMarkdown
                     htmlFor="description"
                     label="Course description"
                     value={data.description}
-                    onChange={(e) => {
-                      if (e.target.value.length > 0) {
-                        setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                      }
-
-                      setData('description', e.target.value);
-                    }}
+                    setValue={(value) => setData('description', value)}
+                    onFilled={() =>
+                      setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                    }
+                    onChange={(value) => setData('description', String(value))}
                     message={errors.description || ''}
-                  />
-                  <FormFieldInput
-                    htmlFor="order"
-                    label="Course chapter"
-                    type="number"
-                    id="order"
-                    name="order"
-                    value={String(data.order)}
-                    onChange={(e) => {
-                      if (e.target.value.length > 0) {
-                        setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                      }
-
-                      setData('order', Number(e.target.value));
-                    }}
-                    message={errors.order || ''}
                   />
                   <FormFieldInput
                     htmlFor="duration"
@@ -152,54 +136,19 @@ export default function CourseCreate() {
                     type="number"
                     id="duration"
                     name="duration"
-                    value={String(data.duration)}
-                    onChange={(e) => {
-                      if (e.target.value.length > 0) {
-                        setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                      }
-                      setData('duration', Number(e.target.value));
-                    }}
+                    value={data.duration}
+                    setValue={(value) => setData('duration', value)}
+                    onFilled={() =>
+                      setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                    }
                     message={errors.duration || ''}
                   />
-                </CardContent>
-              </Card>
-              <Card className="flex flex-col gap-5">
-                <CardHeader>
-                  <CardTitle>
-                    <FormFieldHeader
-                      title="Sell your course"
-                      icon={CircleDollarSign}
-                    />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-1 gap-4">
-                  <FormFieldInput
-                    htmlFor="price"
-                    label="Course price"
-                    type="number"
-                    id="price"
-                    name="price"
-                    value={String(data.price)}
-                    onChange={(e) => {
-                      if (e.target.value.length > 0) {
-                        setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                      }
-                      setData('price', Number(e.target.value));
-                    }}
-                    message={errors.price || ''}
-                  />
-                  <ImagePreviewInput
-                    htmlFor="image"
-                    label="Course image"
-                    onChange={(file) => {
-                      if (file) {
-                        setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                      }
-                      setData('image', file);
-                    }}
-                    error={errors.image}
-                  />
-                  <Card className="grid gap-2">
+                  <Card
+                    className={cn(
+                      'grid gap-2',
+                      errors.difficulty && 'border-red-500',
+                    )}
+                  >
                     <CardHeader>
                       <CardTitle>
                         <Label className="text-xl">Course difficulty</Label>
@@ -223,11 +172,41 @@ export default function CourseCreate() {
                       </Select>
                     </CardContent>
                   </Card>
-                  <input
-                    type="hidden"
-                    name="academic_id"
-                    id="academic_id"
-                    value={data.academic_id}
+                </CardContent>
+              </Card>
+              <Card className="flex flex-col gap-5">
+                <CardHeader>
+                  <CardTitle>
+                    <FormFieldHeader
+                      title="Sell your course"
+                      icon={CircleDollarSign}
+                    />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 gap-4">
+                  <FormFieldInput
+                    htmlFor="price"
+                    label="Course price"
+                    type="number"
+                    id="price"
+                    name="price"
+                    value={data.price}
+                    setValue={(value) => setData('price', value)}
+                    onFilled={() =>
+                      setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                    }
+                    message={errors.price || ''}
+                  />
+                  <ImagePreviewInput
+                    htmlFor="image"
+                    label="Course image"
+                    onChange={(file) => {
+                      if (file) {
+                        setRequiredFieldsNumber(requiredFieldsNumber + 1);
+                      }
+                      setData('image', file);
+                    }}
+                    error={errors.image}
                   />
                 </CardContent>
               </Card>

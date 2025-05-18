@@ -32,7 +32,6 @@ class StoreCourseRequest extends FormRequest
             'price' => 'required|integer',
             'status' => 'nullable|in:published,draft',
             'academic_id' => 'required|exists:academics,id',
-            'instructor_id' => 'required|exists:instructors,id',
         ];
     }
 }

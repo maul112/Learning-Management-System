@@ -127,7 +127,7 @@ export function CourseDetail() {
             </div>
             <div className="mt-5 flex items-center justify-end">
               <Button variant="link" className="group cursor-pointer">
-                <Link href={`/learning-paths/${course.data.academic.id}`}>
+                <Link href={`/ratings`}>
                   Lihat semua testimoni
                 </Link>
                 <ArrowUpRight className="transition-all duration-100 group-hover:translate-x-[2px] group-hover:-translate-y-[2px]" />

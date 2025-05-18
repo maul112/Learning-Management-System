@@ -37,21 +37,6 @@ import {
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Academics',
-    href: '/academics',
-  },
-  {
-    title: 'Courses',
-    href: '/courses',
-  },
-  {
-    title: 'Edit',
-    href: '/courses/edit',
-  },
-];
-
 export default function CourseEdit() {
   const { course, success, error } = usePage<
     SharedData & {
@@ -59,15 +44,31 @@ export default function CourseEdit() {
       academics: { data: Academic[] };
     }
   >().props;
-  const { data, setData, put, processing, errors } = useForm({
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Academics',
+      href: '/academics',
+    },
+    {
+      title: 'Courses',
+      href: `/academics/${course.data.academic.id}/edit`,
+    },
+    {
+      title: 'Edit',
+      href: '/courses/edit',
+    },
+  ];
+
+  const { data, setData, post, processing, errors } = useForm({
     title: course.data.title,
     image: course.data.image as File | string,
     information: course.data.information,
     description: course.data.description,
-    order: course.data.order,
     duration: course.data.duration,
     difficulty: course.data.difficulty,
     price: course.data.price,
+    _method: 'put',
   });
 
   //   console.log(course.data);
@@ -85,8 +86,10 @@ export default function CourseEdit() {
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    put(route('courses.update', course.data.id), {
+    post(route('courses.update', course.data.id), {
       forceFormData: true,
+      preserveScroll: true,
+      method: 'put',
       onError: (e) => console.log(e),
     });
   };
@@ -118,7 +121,7 @@ export default function CourseEdit() {
           <div>
             <h1 className="text-2xl font-bold">Course setup</h1>
             <p className="text-muted-foreground text-sm">
-              Complete all fields ({requiredFieldsNumber}/8)
+              Complete all fields ({requiredFieldsNumber - 1}/7)
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -128,7 +131,12 @@ export default function CourseEdit() {
               }
               className="cursor-pointer"
               onClick={handleChangeStatus}
-              disabled={requiredFieldsNumber < 8}
+              disabled={
+                requiredFieldsNumber < 7 ||
+                course.data.modules.filter(
+                  (module) => module.status === 'published',
+                ).length === 0
+              }
             >
               {course.data.status == 'published' ? 'Unpublish' : 'Publish'}
             </Button>
@@ -157,52 +165,31 @@ export default function CourseEdit() {
                       name="title"
                       placeholder="Javascript"
                       value={data.title}
-                      onChange={(e) => {
-                        if (e.target.value.length > 0) {
-                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                        }
-                        setData('title', e.target.value);
-                      }}
+                      setValue={(value) => setData('title', value)}
+                      onFilled={() =>
+                        setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                      }
                       message={errors.title || ''}
                     />
                     <FormFieldTextarea
                       htmlFor="information"
                       label="Course information"
                       value={data.information}
-                      onChange={(e) => {
-                        if (e.target.value.length > 0) {
-                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                        }
-                        setData('information', e.target.value || '');
-                      }}
+                      setValue={(value) => setData('information', value)}
+                      onFilled={() =>
+                        setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                      }
                       message={errors.information || ''}
                     />
                     <FormFieldTextarea
                       htmlFor="description"
                       label="Course description"
                       value={data.description}
-                      onChange={(e) => {
-                        if (e.target.value.length > 0) {
-                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                        }
-                        setData('description', e.target.value || '');
-                      }}
+                      setValue={(value) => setData('description', value)}
+                      onFilled={() =>
+                        setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                      }
                       message={errors.description || ''}
-                    />
-                    <FormFieldInput
-                      htmlFor="order"
-                      label="Course chapter"
-                      type="number"
-                      id="order"
-                      name="order"
-                      value={String(data.order)}
-                      onChange={(e) => {
-                        if (e.target.value.length > 0) {
-                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                        }
-                        setData('order', Number(e.target.value));
-                      }}
-                      message={errors.order || ''}
                     />
                     <FormFieldInput
                       htmlFor="duration"
@@ -211,12 +198,10 @@ export default function CourseEdit() {
                       id="duration"
                       name="duration"
                       value={String(data.duration)}
-                      onChange={(e) => {
-                        if (e.target.value.length > 0) {
-                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                        }
-                        setData('duration', Number(e.target.value));
-                      }}
+                      setValue={(value) => setData('duration', Number(value))}
+                      onFilled={() =>
+                        setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                      }
                       message={errors.duration || ''}
                     />
                     <Card className="grid gap-2">
@@ -292,12 +277,6 @@ export default function CourseEdit() {
                     </Card>
                   </CardContent>
                 </Card>
-                <ImagePreviewInput
-                  htmlFor="image"
-                  label="Course image"
-                  currentImageUrl={`/storage/${course.data.image}`}
-                  onChange={(file) => setData('image', file as File)}
-                />
                 <Card>
                   <CardHeader>
                     <CardTitle>
@@ -315,11 +294,20 @@ export default function CourseEdit() {
                       id="price"
                       name="price"
                       value={String(data.price)}
-                      onChange={(e) => setData('price', Number(e.target.value))}
+                      setValue={(value) => setData('price', Number(value))}
+                      onFilled={() =>
+                        setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                      }
                       message={errors.price || ''}
                     />
                   </CardContent>
                 </Card>
+                <ImagePreviewInput
+                  htmlFor="image"
+                  label="Course image"
+                  currentImageUrl={`/storage/${course.data.image}`}
+                  onChange={(file) => setData('image', file as File)}
+                />
               </div>
             </div>
             <Button

@@ -37,14 +37,13 @@ class AdminCourseController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Academic $academic)
+    public function create(Request $request)
     {
-        $academics = Academic::all();
-        $instructors = User::where('role', 'instructor')->with('instructor')->get();
+        $query = $request->query('academic');
+
+        $academic = Academic::find($query);
 
         return Inertia::render('admin/courses/create', [
-            'academics' => AcademicResource::collection($academics),
-            'instructors' => UserResource::collection($instructors),
             'success' => session('success'),
             'error' => session('error'),
             'academic' => new AcademicResource($academic),
@@ -87,14 +86,11 @@ class AdminCourseController extends Controller
      */
     public function edit(Course $course)
     {
-        $course->load('instructor');
         $academics = Academic::all();
-        $instructors = User::where('role', 'instructor')->with('instructor')->get();
 
         return Inertia::render('admin/courses/edit', [
             'academics' => AcademicResource::collection($academics),
             'course' => new CourseResource($course),
-            'instructors' => UserResource::collection($instructors),
             'success' => session('success'),
             'error' => session('error'),
         ]);

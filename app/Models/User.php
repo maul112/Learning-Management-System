@@ -55,11 +55,6 @@ class User extends Authenticatable
         return $this->hasOne(\App\Models\Admin::class);
     }
 
-    public function instructor(): HasOne
-    {
-        return $this->hasOne(\App\Models\Instructor::class);
-    }
-
     public function student(): hasOne
     {
         return $this->hasOne(\App\Models\Student::class);

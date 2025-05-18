@@ -1,10 +1,8 @@
 import { Academic } from '@/types';
-import { Link } from '@inertiajs/react';
-import { ArrowUpRightFromSquareIcon, Book } from 'lucide-react';
+import { Book } from 'lucide-react';
 import { DeleteModal } from './delete-modal';
 import { EditButton } from './edit-button';
 import { Badge } from './ui/badge';
-import { Button } from './ui/button';
 import {
   Card,
   CardDescription,
@@ -30,7 +28,7 @@ export function AcademicCard({ academic }: { academic: Academic }) {
             src={`/storage/${academic.image}`}
             alt={academic.title}
           />
-          <Badge className='absolute top-2 right-2'>{academic.status}</Badge>
+          <Badge className="absolute top-2 right-2">{academic.status}</Badge>
         </div>
         <CardTitle className="mt-2 text-xl">{academic.title}</CardTitle>
         <CardDescription className="text-muted-foreground line-clamp-2 text-sm">
@@ -64,23 +62,6 @@ export function AcademicCard({ academic }: { academic: Academic }) {
               </TooltipTrigger>
               <TooltipContent>
                 <p>Delete</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="icon" asChild>
-                  <Link
-                    href={route('courses.index', { academic: academic.id })}
-                    className="flex items-center gap-2"
-                  >
-                    <ArrowUpRightFromSquareIcon />
-                  </Link>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Show Detail</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

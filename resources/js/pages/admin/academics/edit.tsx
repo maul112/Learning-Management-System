@@ -11,6 +11,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -43,12 +44,14 @@ export default function AcademicEdit() {
   const { academic, success, error } = usePage<
     SharedData & { academic: { data: Academic } }
   >().props;
+
   const { data, setData, post, errors, processing } = useForm({
     title: academic.data.title,
     image: academic.data.image as File | string | null,
     description: academic.data.description,
     _method: 'put',
   });
+
   const {
     data: academicStatus,
     setData: setAcademicStatus,
@@ -56,6 +59,7 @@ export default function AcademicEdit() {
   } = useForm({
     status: academic.data.status,
   });
+
   const [requiredFieldsNumber, setRequiredFieldsNumber] =
     useRequiredFieldNumber(data);
 
@@ -65,9 +69,7 @@ export default function AcademicEdit() {
       forceFormData: true,
       preserveScroll: true,
       method: 'put',
-      onError: (e) => {
-        console.log(e);
-      },
+      onError: (e) => console.log(e),
     });
   };
 
@@ -142,12 +144,10 @@ export default function AcademicEdit() {
                       label="Academic title"
                       type="text"
                       value={data.title}
-                      onChange={(e) => {
-                        if (e.target.value.length > 0) {
-                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                        }
-                        setData('title', e.target.value);
-                      }}
+                      setValue={(value) => setData('title', value)}
+                      onFilled={() =>
+                        setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                      }
                       message={errors.title || ''}
                     />
                     <ImagePreviewInput
@@ -166,12 +166,10 @@ export default function AcademicEdit() {
                       htmlFor="description"
                       label="Academic description"
                       value={data.description}
-                      onChange={(e) => {
-                        if (e.target.value.length > 0) {
-                          setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                        }
-                        setData('description', e.target.value || '');
-                      }}
+                      setValue={(value) => setData('description', value)}
+                      onFilled={() =>
+                        setRequiredFieldsNumber(requiredFieldsNumber + 1)
+                      }
                       message={errors.description || ''}
                     />
                   </CardContent>
@@ -197,7 +195,11 @@ export default function AcademicEdit() {
                             </h2>
                           </CardTitle>
                           <Button className="cursor-pointer" asChild>
-                            <Link href={route('courses.create')}>
+                            <Link
+                              href={route('courses.create', {
+                                academic: academic.data.id,
+                              })}
+                            >
                               <PlusIcon />
                             </Link>
                           </Button>
@@ -225,6 +227,11 @@ export default function AcademicEdit() {
                           endpoint="course"
                         />
                       </CardContent>
+                      <CardFooter>
+                        <p className="text-muted-foreground text-sm">
+                          Drag and drop to reorder chapters
+                        </p>
+                      </CardFooter>
                     </Card>
                   </CardContent>
                 </Card>

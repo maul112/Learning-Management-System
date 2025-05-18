@@ -23,7 +23,7 @@ class UpdateCourseRequest extends FormRequest
     {
         return [
             'title' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => $this->hasFile('image') ? 'image|mimes:jpeg,png,jpg,gif|max:5000' : 'nullable',
             'information' => 'nullable|string',
             'description' => 'nullable|string',
             'order' => 'nullable|integer',
@@ -32,7 +32,6 @@ class UpdateCourseRequest extends FormRequest
             'price' => 'nullable|integer',
             'status' => 'nullable|in:published,draft',
             'academic_id' => 'nullable|exists:academics,id',
-            'instructor_id' => 'nullable|exists:instructors,id',
         ];
     }
 }

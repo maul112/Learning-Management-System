@@ -1,8 +1,8 @@
 import InputError from '@/components/input-error';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { EditIcon, X } from 'lucide-react';
-import { useState } from 'react';
+import { EditIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Textarea } from './ui/textarea';
@@ -13,6 +13,8 @@ type FormFieldPropsInput = {
   message: string;
   className?: string;
   value: string;
+  setValue: (value: string) => void;
+  onFilled?: () => void;
 } & React.ComponentProps<'textarea'>;
 
 export default function FormFieldTextarea({
@@ -21,12 +23,36 @@ export default function FormFieldTextarea({
   message,
   className,
   value,
+  setValue,
+  onFilled,
   ...props
 }: FormFieldPropsInput) {
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState(value);
+  const [wasEmpty, setWasEmpty] = useState(value.trim() === '');
+
+  useEffect(() => {
+    if (editMode) {
+      setInputValue(value);
+      setWasEmpty(value.trim() === '');
+    }
+  }, [editMode, value]);
+
+  const handleSave = () => {
+    setEditMode(false);
+    setValue(inputValue);
+    if (wasEmpty && inputValue.trim() !== '') {
+      onFilled?.();
+    }
+  };
+
+  const handleCancel = () => {
+    setEditMode(false);
+    setInputValue(value);
+  };
 
   return (
-    <Card className={cn('grid gap-2', className)}>
+    <Card className={cn('grid gap-2', message && 'border-red-500', className)}>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <Label htmlFor={htmlFor} className="text-xl">
@@ -35,11 +61,12 @@ export default function FormFieldTextarea({
           {editMode ? (
             <Button
               type="button"
-              onClick={() => setEditMode(false)}
+              onClick={handleCancel}
               className="cursor-pointer"
               size="sm"
+              variant="link"
             >
-              <X className="h-4 w-4" />
+              Cancel
             </Button>
           ) : (
             <Button
@@ -47,19 +74,27 @@ export default function FormFieldTextarea({
               onClick={() => setEditMode(true)}
               className="cursor-pointer"
               size="sm"
+              variant="link"
             >
               <EditIcon className="h-4 w-4" />
+              Edit {label}
             </Button>
           )}
         </CardTitle>
         <CardDescription>
           {editMode ? (
             <div className="flex flex-col gap-2">
-              <Textarea {...props}>{value}</Textarea>
+              <Textarea
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                {...props}
+              >
+                {value}
+              </Textarea>
               <InputError message={message} />
               <Button
                 type="button"
-                onClick={() => setEditMode(false)}
+                onClick={handleSave}
                 className="w-16 cursor-pointer"
                 size="sm"
               >
@@ -67,7 +102,7 @@ export default function FormFieldTextarea({
               </Button>
             </div>
           ) : (
-            <p>{value}</p>
+            <p>{value || `No ${label}`}</p>
           )}
         </CardDescription>
       </CardHeader>

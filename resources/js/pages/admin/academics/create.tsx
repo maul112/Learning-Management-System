@@ -64,12 +64,8 @@ export default function AcademicCreate() {
               label="Title"
               type="text"
               value={data.title}
-              onChange={(e) => {
-                if (e.target.value.length > 0) {
-                  setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                }
-                setData('title', e.target.value);
-              }}
+              setValue={(value) => setData('title', value)}
+              onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
               message={errors.title || ''}
             />
             <ImagePreviewInput
@@ -87,12 +83,8 @@ export default function AcademicCreate() {
               htmlFor="description"
               label="Description"
               value={data.description}
-              onChange={(e) => {
-                if (e.target.value.length > 0) {
-                  setRequiredFieldsNumber(requiredFieldsNumber + 1);
-                }
-                setData('description', e.target.value);
-              }}
+              setValue={(value) => setData('description', value)}
+              onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
               message={errors.description || ''}
             />
             <Button

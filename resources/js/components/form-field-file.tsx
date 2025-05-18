@@ -128,7 +128,7 @@ export function ImagePreviewInput({
   };
 
   return (
-    <Card className={cn('space-y-2', className)}>
+    <Card className={cn('space-y-2', error && 'border-red-500', className)}>
       <CardHeader>
         <CardTitle>
           <label
@@ -142,7 +142,6 @@ export function ImagePreviewInput({
           className={cn(
             'relative mt-3 flex flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors',
             isDragging ? 'border-primary bg-primary/5' : 'border-border',
-            error ? 'border-destructive' : '',
             '.upload-progress-bar { animation: progress 3s linear forwards; } @keyframes progress { 0% { width: 0%; } 100% { width: 100%; }',
           )}
           onDragOver={handleDragOver}

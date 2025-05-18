@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AdminLessonController;
 use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\LearningPathController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\StudentController;
 use App\Http\Resources\AcademicResource;
 use App\Http\Resources\CourseResource;
@@ -38,6 +39,10 @@ Route::controller(LearningPathController::class)->group(function () {
 Route::controller(AcademicController::class)->group(function () {
     Route::get('/academies/{course}', 'index')->name('academics.index');
     Route::get('/academies/{course}/tutorials/{module}', 'show')->name('academics.show');
+});
+
+Route::controller(RatingController::class)->group(function () {
+    Route::get('/ratings', 'index')->name('ratings.index');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

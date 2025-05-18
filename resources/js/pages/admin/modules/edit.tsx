@@ -27,7 +27,6 @@ export default function ModuleEdit() {
   >().props;
   const { data, setData, put, processing, errors } = useForm({
     title: module.data.title,
-    order: module.data.order,
     course_id: module.data.course.id,
   });
 
@@ -57,19 +56,8 @@ export default function ModuleEdit() {
               name="title"
               placeholder="Module title"
               value={data.title || ''}
-              onChange={(e) => setData('title', e.target.value)}
+              setValue={(value) => setData('title', value)}
               message={errors.title || ''}
-            />
-            <FormFieldInput
-              htmlFor="order"
-              label="Order"
-              type="number"
-              id="order"
-              name="order"
-              placeholder="Module order"
-              value={String(data.order) || ''}
-              onChange={(e) => setData('order', Number(e.target.value))}
-              message={errors.order || ''}
             />
             <FormFieldSelect<Course>
               data={courses.data}
