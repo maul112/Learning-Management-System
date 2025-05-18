@@ -30,7 +30,7 @@ const navListItems = [
     href: '/student/dashboard',
   },
   {
-    name: 'Profile',
+    name: 'Profile Saya',
     href: '/student/profile',
   },
   {

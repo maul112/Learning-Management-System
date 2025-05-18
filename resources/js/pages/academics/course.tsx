@@ -1,6 +1,7 @@
 import { CourseDetail } from '@/components/course-detail';
 import { CourseGetIn } from '@/components/course-get-in';
 import { CourseJumbotron } from '@/components/course-jumbotron';
+import { CourseSyllabus } from '@/components/course-syllabus';
 import { RootFooter } from '@/components/root-footer';
 import { DataProvider } from '@/contexts/DataContext';
 import RootLayout from '@/layouts/root-layout';
@@ -25,6 +26,7 @@ export default function Course({
         <CourseJumbotron course={course} />
         <CourseGetIn />
         <CourseDetail />
+        <CourseSyllabus />
         <RootFooter />
       </RootLayout>
     </DataProvider>

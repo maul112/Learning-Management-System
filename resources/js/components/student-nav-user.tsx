@@ -62,16 +62,19 @@ export function StudentNavUser({
               </Avatar>
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              {items.map((item) => (
-                <NavigationMenuLink key={item.name} asChild>
-                  <Link
-                    method={item.href === '/logout' ? 'post' : 'get'}
-                    href={item.href}
-                  >
-                    {item.name}
-                  </Link>
-                </NavigationMenuLink>
-              ))}
+              <ul className="w-[150px]">
+                {items.map((item) => (
+                  <NavigationMenuLink key={item.name} asChild>
+                    <Link
+                      className="w-full cursor-pointer text-start"
+                      method={item.href === '/logout' ? 'post' : 'get'}
+                      href={item.href}
+                    >
+                      {item.name}
+                    </Link>
+                  </NavigationMenuLink>
+                ))}
+              </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>

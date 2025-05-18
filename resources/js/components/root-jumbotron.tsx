@@ -16,7 +16,7 @@ export function RootJumbotron() {
                 Bangun Karirmu Sebagai
               </BlurFade>
             </h2>
-            <h2 className="text-2xl font-semibold md:text-4xl">
+            <h2 className="text-2xl font-semibold md:text-5xl">
               <BlurFade
                 className="flex items-center gap-3"
                 direction="right"

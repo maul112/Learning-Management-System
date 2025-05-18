@@ -8,6 +8,8 @@ use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\Models\Event;
 use App\Models\Instructor;
+use App\Models\Lesson;
+use App\Models\Module;
 use App\Models\Rating;
 use App\Models\Student;
 use App\Models\User;
@@ -284,6 +286,26 @@ class DatabaseSeeder extends Seeder
                     'price' => $course['order'] > 1 ? fake()->randomFloat(2, 0, 100) : 0,
                     'academic_id' => $course['academic_id'],
                 ]);
+
+                for($i = 0; $i < fake()->numberBetween(1, 3); $i++) {
+                    $module = Module::create([
+                        'title' => fake()->sentence(),
+                        'order' => fake()->numberBetween(1, 6),
+                        'status' => fake()->randomElement(['publish', 'draft']),
+                        'course_id' => $course->id
+                    ]);
+
+                    for($j = 0; $j < fake()->numberBetween(1, 3); $j++) {
+                        Lesson::create([
+                            'title' => fake()->sentence(),
+                            'content' => $this->generateMarkdownContent(),
+                            'video' => fake()->imageUrl(),
+                            'order' => fake()->numberBetween(1, 6),
+                            'status' => fake()->randomElement(['publish', 'draft']),
+                            'module_id' => $module->id
+                        ]);
+                    }
+                }
 
                 foreach ($students as $student) {
                     CourseEnrollment::create([
