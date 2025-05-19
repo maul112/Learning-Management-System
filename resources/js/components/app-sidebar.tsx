@@ -16,9 +16,9 @@ import {
   Book,
   BookOpen,
   BookOpenTextIcon,
-  Calendar1,
   Folder,
   LayoutGrid,
+  MessageSquareCode,
   UsersRound,
 } from 'lucide-react';
 import AppLogo from './app-logo';
@@ -35,14 +35,14 @@ const mainNavItems: NavItem[] = [
     icon: UsersRound,
   },
   {
-    title: 'Events',
-    href: '/events',
-    icon: Calendar1,
-  },
-  {
     title: 'Courses',
     href: '/academics',
     icon: BookOpenTextIcon,
+  },
+  {
+    title: 'Discussions',
+    href: '/discussions',
+    icon: MessageSquareCode,
   }
 ];
 

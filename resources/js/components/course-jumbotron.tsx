@@ -1,7 +1,7 @@
 import { useAverage } from '@/hooks/use-average';
 import { cn } from '@/lib/utils';
-import { Course } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Course, SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import {
   Book,
   ChartColumn,
@@ -44,12 +44,13 @@ const difficultyText: Record<string, string> = {
 };
 
 export function CourseJumbotron({
-  course,
+  informationRef,
+  syllabusRef,
 }: {
-  course: {
-    data: Course;
-  };
+  informationRef: React.RefObject<HTMLDivElement | null>;
+  syllabusRef: React.RefObject<HTMLDivElement | null>;
 }) {
+  const { course } = usePage<SharedData & { course: { data: Course } }>().props;
   const getAverage = useAverage();
 
   return (
@@ -126,16 +127,16 @@ export function CourseJumbotron({
                   <div className="flex items-center gap-2">
                     <span className="flex items-center gap-2 capitalize">
                       {course.data.price > 0 ? (
-                        <CircleCheckBig className="h-4 w-4 text-cyan-400" />
-                      ) : (
                         <CircleDollarSign className="h-4 w-4 text-green-400" />
+                      ) : (
+                        <CircleCheckBig className="h-4 w-4 text-cyan-400" />
                       )}
                       <Badge
                         variant="secondary"
                         className={cn(
                           course.data.price > 0
-                            ? 'text-cyan-400'
-                            : 'text-green-400',
+                            ? 'text-green-400'
+                            : 'text-cyan-400',
                         )}
                       >
                         {course.data.price > 0 ? 'Berbayar' : 'Gratis'}
@@ -167,13 +168,39 @@ export function CourseJumbotron({
             <Card className="relative">
               <CardHeader>
                 <Button>
-                  <Link href="/">Belajar Sekarang</Link>
+                  <Link
+                    href={`/academies/${course.data.id}/tutorials/${course.data.modules[0].id}`}
+                  >
+                    Belajar Sekarang
+                  </Link>
                 </Button>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col gap-3">
-                  <Button variant="secondary">Informasi kelas</Button>
-                  <Button variant="secondary">Lihat silabus</Button>
+                  <Button
+                    className="cursor-pointer"
+                    variant="secondary"
+                    onClick={() =>
+                      informationRef.current?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                      })
+                    }
+                  >
+                    Informasi kelas
+                  </Button>
+                  <Button
+                    className="cursor-pointer"
+                    variant="secondary"
+                    onClick={() =>
+                      syllabusRef.current?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                      })
+                    }
+                  >
+                    Lihat silabus
+                  </Button>
                 </div>
               </CardContent>
               <BorderBeam size={70} />

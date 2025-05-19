@@ -23,9 +23,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Buat 1 Admin
-        Admin::factory()->create();
-
-        Event::factory(5)->create();
+        $user = User::factory()->admin()->mufid()->create();
+        Admin::factory()->create([
+            'user_id' => $user->id
+        ]);
 
         $data = [
             [
@@ -287,20 +288,20 @@ class DatabaseSeeder extends Seeder
                     'academic_id' => $course['academic_id'],
                 ]);
 
-                for($i = 0; $i < fake()->numberBetween(1, 3); $i++) {
+                for ($i = 0; $i < fake()->numberBetween(1, 3); $i++) {
                     $module = Module::create([
-                        'title' => fake()->sentence(),
-                        'order' => fake()->numberBetween(1, 6),
+                        'title' => fake()->sentence(1),
+                        'order' => $i + 1,
                         'status' => fake()->randomElement(['publish', 'draft']),
                         'course_id' => $course->id
                     ]);
 
-                    for($j = 0; $j < fake()->numberBetween(1, 3); $j++) {
+                    for ($j = 0; $j < fake()->numberBetween(1, 3); $j++) {
                         Lesson::create([
-                            'title' => fake()->sentence(),
+                            'title' => fake()->sentence(2),
                             'content' => $this->generateMarkdownContent(),
                             'video' => fake()->imageUrl(),
-                            'order' => fake()->numberBetween(1, 6),
+                            'order' => $j + 1,
                             'status' => fake()->randomElement(['publish', 'draft']),
                             'module_id' => $module->id
                         ]);

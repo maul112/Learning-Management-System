@@ -1,5 +1,4 @@
 import { RootAbout } from '@/components/root-about';
-import { RootEvent } from '@/components/root-event';
 import { RootFooter } from '@/components/root-footer';
 import { RootJoin } from '@/components/root-join';
 import { RootJumbotron } from '@/components/root-jumbotron';
@@ -16,7 +15,6 @@ export default function Welcome() {
       <Head title="Welcome" />
       <RootJumbotron />
       <RootPartner />
-      <RootEvent />
       <RootAbout />
       <RootLearningPath />
       <RootStandartGlobal />

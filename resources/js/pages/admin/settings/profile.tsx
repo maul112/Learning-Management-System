@@ -25,7 +25,6 @@ type ProfileForm = {
   avatar: File | null;
   name: string;
   email: string;
-  _method: string;
 };
 
 export default function Profile({
@@ -44,16 +43,13 @@ export default function Profile({
       avatar: null,
       name: auth.user.name,
       email: auth.user.email,
-      _method: 'patch',
     });
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
     patch(route('profile.update'), {
-      forceFormData: true,
       preserveScroll: true,
-      method: 'patch',
       onError: (e) => console.log(e),
     });
   };
