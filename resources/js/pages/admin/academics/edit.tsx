@@ -118,7 +118,12 @@ export default function AcademicEdit() {
               }
               className="cursor-pointer"
               onClick={handleChangeStatus}
-              disabled={requiredFieldsNumber < 3}
+              disabled={
+                requiredFieldsNumber < 3 &&
+                academic.data.courses.filter(
+                  (course) => course.status == 'published',
+                ).length === 0
+              }
             >
               {academic.data.status == 'published' ? 'Unpublish' : 'Publish'}
             </Button>

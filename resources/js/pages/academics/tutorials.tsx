@@ -1,9 +1,10 @@
 'use client';
 
 import MarkdownViewer from '@/components/markdown-viewer';
+import { Button } from '@/components/ui/button';
 import RootSidebarLayout from '@/layouts/root-sidebar-layout';
 import type { Course, Lesson, Module, SharedData } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 export default function Tutorials() {
@@ -19,28 +20,35 @@ export default function Tutorials() {
   }, [module]);
 
   return (
-    <RootSidebarLayout activeLesson={activeLesson} setActiveLesson={setActiveLesson}>
+    <RootSidebarLayout
+      activeLesson={activeLesson}
+      setActiveLesson={setActiveLesson}
+    >
+      <Head title="Tutorials" />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-4xl p-6">
-            {activeLesson?.video && (
-              <div className="mb-8 aspect-video overflow-hidden rounded-lg bg-black shadow-md">
-                <iframe
-                  src={activeLesson.video}
-                  className="h-full w-full"
-                  allowFullScreen
-                  title={activeLesson.title}
-                ></iframe>
-              </div>
-            )}
-
-            <div className="prose prose-lg dark:prose-invert max-w-none">
-              {activeLesson?.content ? (
-                <MarkdownViewer content={activeLesson.content} />
-              ) : (
-                <p>Select a lesson to view its content.</p>
-              )}
+        <div className="flex-1 overflow-y-auto p-6">
+          {activeLesson?.video && (
+            <div className="mb-8 aspect-video overflow-hidden rounded-lg bg-black shadow-md">
+              <iframe
+                src={activeLesson.video}
+                className="h-full w-full"
+                allowFullScreen
+                title={activeLesson.title}
+              ></iframe>
             </div>
+          )}
+
+          <div className="prose prose-lg dark:prose-invert max-w-none">
+            {activeLesson?.content ? (
+              <MarkdownViewer content={activeLesson.content} />
+            ) : (
+              <p>Select a lesson to view its content.</p>
+            )}
+          </div>
+
+          <div className="mt-10 flex h-10 w-full items-center justify-between">
+            <Button>Previous</Button>
+            <Button>Next</Button>
           </div>
         </div>
       </div>

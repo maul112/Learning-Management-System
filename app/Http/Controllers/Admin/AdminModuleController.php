@@ -9,8 +9,8 @@ use App\Http\Requests\UpdateModuleRequest;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\ModuleResource;
 use App\Models\Course;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class AdminModuleController extends Controller
@@ -32,12 +32,16 @@ class AdminModuleController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        $courses = Course::all();
+        $query = $request->query('course');
+
+        $course = Course::find($query);
 
         return Inertia::render('admin/modules/create', [
-            'courses' => CourseResource::collection($courses),
+            'success' => session('success'),
+            'error' => session('error'),
+            'course' => new CourseResource($course),
         ]);
     }
 
@@ -51,7 +55,7 @@ class AdminModuleController extends Controller
 
             Module::create($validated);
 
-            return redirect()->route('modules.index')->with('success', 'Module created successfully.');
+            return redirect()->route('courses.edit', $validated['course_id'])->with('success', 'Module created successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 

@@ -1,13 +1,18 @@
+'use client';
+
+import type React from 'react';
+
 import InputError from '@/components/input-error';
 import MarkdownEditor from '@/components/markdown-editor';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { EditIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import MarkdownViewer from './markdown-viewer';
 import { Button } from './ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from './ui/card';
 
-type FormFieldMarkdown = {
+type FormFieldMarkdownProps = {
   htmlFor: string;
   label: string;
   message: string;
@@ -32,18 +37,23 @@ export default function FormFieldMarkdown({
   onChange,
   className,
   ...props
-}: FormFieldMarkdown) {
+}: FormFieldMarkdownProps) {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState(value);
   const [wasEmpty, setWasEmpty] = useState(value.trim() === '');
 
-  useEffect(() => {
-    if (editMode) {
-      setInputValue(value);
-      setWasEmpty(value.trim() === '');
-    }
-  }, [editMode, value]);
+  // Store the original value when entering edit mode
+  const [originalValue, setOriginalValue] = useState(value);
 
+  // When entering edit mode, store the original value and set input value
+  const handleEditMode = () => {
+    setOriginalValue(value);
+    setInputValue(value);
+    setWasEmpty(value.trim() === '');
+    setEditMode(true);
+  };
+
+  // When saving, update the actual value and exit edit mode
   const handleSave = () => {
     setEditMode(false);
     setValue(inputValue);
@@ -52,9 +62,21 @@ export default function FormFieldMarkdown({
     }
   };
 
+  // When canceling, revert to the original value and exit edit mode
   const handleCancel = () => {
     setEditMode(false);
-    setInputValue(value);
+    setInputValue(originalValue); // Revert to original value
+    // Don't call setValue here to avoid saving changes
+  };
+
+  // Handle markdown editor changes
+  const handleEditorChange = (
+    newValue?: string,
+    event?: React.ChangeEvent<HTMLTextAreaElement>,
+    state?: unknown,
+  ) => {
+    setInputValue(newValue || '');
+    // Don't call onChange here to avoid updating parent state during editing
   };
 
   return (
@@ -77,7 +99,7 @@ export default function FormFieldMarkdown({
           ) : (
             <Button
               type="button"
-              onClick={() => setEditMode(true)}
+              onClick={handleEditMode}
               className="cursor-pointer"
               size="sm"
               variant="link"
@@ -92,7 +114,7 @@ export default function FormFieldMarkdown({
             <div className="flex flex-col gap-2">
               <MarkdownEditor
                 value={inputValue}
-                onChange={onChange}
+                onChange={handleEditorChange}
                 {...props}
               />
               <InputError message={message} />
@@ -106,7 +128,9 @@ export default function FormFieldMarkdown({
               </Button>
             </div>
           ) : (
-            <p>{value || `No ${label}`}</p>
+            <div className="prose">
+              <MarkdownViewer content={value ? value : `No ${label}`} />
+            </div>
           )}
         </CardDescription>
       </CardHeader>

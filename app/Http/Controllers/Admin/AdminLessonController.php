@@ -11,6 +11,7 @@ use App\Http\Resources\LessonResource;
 use App\Http\Resources\ModuleResource;
 use App\Models\Course;
 use App\Models\Module;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
@@ -33,14 +34,13 @@ class AdminLessonController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        $courses = Course::all();
-        $modules = Module::all();
+        $query = $request->query('module');
+        $module = Module::find($query);
 
         return Inertia::render('admin/lessons/create', [
-            'courses' => CourseResource::collection($courses),
-            'modules' => ModuleResource::collection($modules),
+            'module' => new ModuleResource($module),
         ]);
     }
 

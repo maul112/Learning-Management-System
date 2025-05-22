@@ -47,7 +47,7 @@ export function AcademicCard({ academic }: { academic: Academic }) {
         <div className="flex items-center gap-2">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <EditButton endpoint="academic" id={String(academic.id)} />
               </TooltipTrigger>
               <TooltipContent>
@@ -57,7 +57,7 @@ export function AcademicCard({ academic }: { academic: Academic }) {
           </TooltipProvider>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <DeleteModal resourceName="academic" id={academic.id} />
               </TooltipTrigger>
               <TooltipContent>

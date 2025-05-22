@@ -21,7 +21,11 @@ class ModuleResource extends JsonResource
             'status' => $this->status,
             'course' => [
                 'id' => $this->course->id,
-                'title' => $this->course->title
+                'title' => $this->course->title,
+                'academic' => [
+                    'id' => $this->course->academic->id,
+                    'title' => $this->course->academic->title
+                ]
             ],
             'lessons' => LessonResource::collection($this->lessons),
         ];

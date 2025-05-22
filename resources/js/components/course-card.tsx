@@ -28,7 +28,13 @@ export function CourseCard({ course }: { course: Course }) {
     <Card className="relative">
       <CardHeader>
         <div className="flex gap-5">
-          <div className="h-32 w-60 bg-slate-200"></div>
+          <div className="h-32 w-60">
+            <img
+              className="h-full w-full object-cover"
+              src={`/storage/${course.image}`}
+              alt={course.title}
+            />
+          </div>
           <div className="flex w-full flex-col">
             <CardTitle>
               <Link href={`/academies/${course.id}`}>{course.title}</Link>
@@ -61,9 +67,7 @@ export function CourseCard({ course }: { course: Course }) {
                   <Badge
                     variant="secondary"
                     className={cn(
-                      course.price > 0
-                        ? 'text-cyan-400'
-                        : 'text-green-400',
+                      course.price > 0 ? 'text-cyan-400' : 'text-green-400',
                     )}
                   >
                     {course.price > 0 ? 'Gratis' : 'Berbayar'}
@@ -82,7 +86,9 @@ export function CourseCard({ course }: { course: Course }) {
           </div>
         </div>
       </CardHeader>
-      <CardContent>{course.information}</CardContent>
+      <CardContent className="text-muted-foreground text-sm">
+        {course.information}
+      </CardContent>
       <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} />
     </Card>
   );

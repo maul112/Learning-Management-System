@@ -11,7 +11,7 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'avatar' => $this->hasFile('avatar') ? 'image|mimes:jpeg,png,jpg,gif' : 'nullable',
+            'name' => ['string', 'max:255'],
+            'email' => ['email', 'max:255'],
         ];
     }
 }

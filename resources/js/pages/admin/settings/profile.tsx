@@ -25,6 +25,7 @@ type ProfileForm = {
   avatar: File | null;
   name: string;
   email: string;
+  _method: string;
 };
 
 export default function Profile({
@@ -38,18 +39,21 @@ export default function Profile({
   const initials = useInitials();
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
 
-  const { data, setData, patch, errors, processing, recentlySuccessful } =
+  const { data, setData, post, errors, processing, recentlySuccessful } =
     useForm<Required<ProfileForm>>({
       avatar: null,
       name: auth.user.name,
       email: auth.user.email,
+      _method: 'patch',
     });
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    patch(route('profile.update'), {
+    post(route('profile.update'), {
       preserveScroll: true,
+      forceFormData: true,
+      method: 'patch',
       onError: (e) => console.log(e),
     });
   };

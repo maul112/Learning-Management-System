@@ -1,40 +1,55 @@
 import FormFieldInput from '@/components/form-field-input';
 import FormFieldMarkdown from '@/components/form-field-markdown';
-import FormFieldSelect from '@/components/form-field-select';
+import { VideoPreviewInput } from '@/components/form-field-video';
 import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
+import { useRequiredFieldNumber } from '@/hooks/use-required-field-number';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
-import { BreadcrumbItem, Course, Module, SharedData } from '@/types';
+import { BreadcrumbItem, Module, SharedData } from '@/types';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Lessons',
-    href: '/lessons',
-  },
-  {
-    title: 'Create',
-    href: '/lessons/create',
-  },
-];
-
 export default function LessonsCreate() {
-  const { courses, modules, success, error } = usePage<
-    SharedData & { courses: { data: Course[] }; modules: { data: Module[] } }
+  const { module, success, error } = usePage<
+    SharedData & { module: { data: Module } }
   >().props;
+
   const { data, setData, post, processing, errors } = useForm({
     title: '',
     content: '',
-    order: 0,
-    course_id: 0,
-    module_id: 0,
+    video: null as File | null,
+    order: module.data.lessons.length + 1,
+    module_id: module.data.id,
   });
 
-  const [moduleValues, setModuleValues] = useState<Module[]>([]);
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Academics',
+      href: '/academics',
+    },
+    {
+      title: 'Courses',
+      href: `/academics/${module.data.course.academic.id}/edit`,
+    },
+    {
+      title: 'Modules',
+      href: `/courses/${module.data.course.id}/edit`,
+    },
+    {
+      title: 'Lessons',
+      href: `/modules/${module.data.id}/edit`,
+    },
+    {
+      title: 'Create',
+      href: '/lessons/create',
+    },
+  ];
+
+  const [requiredFieldsNumber, setRequiredFieldsNumber] =
+    useRequiredFieldNumber(data);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -42,18 +57,6 @@ export default function LessonsCreate() {
       onError: (e) => console.log(e),
     });
   };
-
-  const selectedCourseTitle = useMemo(() => {
-    return (
-      courses.data.find((course) => course.id === data.course_id)?.title || ''
-    );
-  }, [courses.data, data.course_id]);
-
-  const selectedModuleTitle = useMemo(() => {
-    return (
-      moduleValues.find((module) => module.id === data.module_id)?.title || ''
-    );
-  }, [moduleValues, data.module_id]);
 
   useEffect(() => {
     if (success) toast.success(success as string);
@@ -64,6 +67,12 @@ export default function LessonsCreate() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Create Lesson" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+        <div className="pl-4">
+          <h1 className="text-2xl font-bold">Lesson setup</h1>
+          <p className="text-muted-foreground text-sm">
+            Complete all fields ({requiredFieldsNumber - 1}/4)
+          </p>
+        </div>
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
           <FormLayout onSubmit={handleSubmit}>
             <FormFieldInput
@@ -74,14 +83,29 @@ export default function LessonsCreate() {
               name="title"
               placeholder="Enter lesson title"
               value={data.title}
-              onChange={(e) => setData('title', e.target.value)}
+              setValue={(value) => setData('title', value)}
+              onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
               message={errors.title || ''}
+            />
+            <VideoPreviewInput
+              htmlFor="video"
+              label="Video"
+              currentVideoUrl={`/storage/${data.video}`}
+              onChange={(file) => {
+                if (file) {
+                  setData('video', file);
+                  setRequiredFieldsNumber(requiredFieldsNumber + 1);
+                }
+              }}
+              error={errors.video}
             />
             <FormFieldMarkdown
               htmlFor="content"
               label="Content"
               value={data.content}
+              setValue={(value) => setData('content', value)}
               onChange={(value) => setData('content', value || '')}
+              onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
               message={errors.content || ''}
             />
             <FormFieldInput
@@ -91,36 +115,10 @@ export default function LessonsCreate() {
               id="order"
               name="order"
               placeholder="Enter lesson order"
-              value={data.order}
-              onChange={(e) => setData('order', Number(e.target.value))}
+              value={String(data.order)}
+              setValue={(value) => setData('order', Number(value))}
+              onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
               message={errors.order || ''}
-            />
-            <FormFieldSelect<Course>
-              data={courses.data}
-              label="Course"
-              value={data.course_id}
-              displayValue={selectedCourseTitle}
-              onChange={(value) => {
-                setData('course_id', Number(value));
-                setModuleValues(
-                  modules.data.filter(
-                    (module) => module.course.id === Number(value),
-                  ),
-                );
-              }}
-              getOptionLabel={(course) => course.title}
-              getOptionValue={(course) => course.id}
-              message={errors.course_id || ''}
-            />
-            <FormFieldSelect<Module>
-              data={moduleValues}
-              label="Module"
-              value={data.module_id}
-              displayValue={selectedModuleTitle}
-              onChange={(value) => setData('module_id', Number(value))}
-              getOptionLabel={(module) => module.title}
-              getOptionValue={(module) => module.id}
-              message={errors.module_id || ''}
             />
             <Button
               type="submit"

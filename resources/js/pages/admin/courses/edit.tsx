@@ -250,7 +250,11 @@ export default function CourseEdit() {
                             </h2>
                           </CardTitle>
                           <Button className="cursor-pointer" asChild>
-                            <Link href={route('modules.create')}>
+                            <Link
+                              href={route('modules.create', {
+                                course: course.data.id,
+                              })}
+                            >
                               <PlusIcon />
                             </Link>
                           </Button>
@@ -271,7 +275,7 @@ export default function CourseEdit() {
                             order: module.order,
                             status: module.status,
                           }))}
-                          endpoint="course"
+                          endpoint="module"
                         />
                       </CardContent>
                     </Card>
