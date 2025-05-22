@@ -2,6 +2,7 @@
 
 import MarkdownViewer from '@/components/markdown-viewer';
 import { Button } from '@/components/ui/button';
+import VideoPlayer from '@/components/video-player';
 import RootSidebarLayout from '@/layouts/root-sidebar-layout';
 import type { Course, Lesson, Module, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
@@ -28,14 +29,7 @@ export default function Tutorials() {
       <div className="flex flex-1 flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto p-6">
           {activeLesson?.video && (
-            <div className="mb-8 aspect-video overflow-hidden rounded-lg bg-black shadow-md">
-              <iframe
-                src={activeLesson.video}
-                className="h-full w-full"
-                allowFullScreen
-                title={activeLesson.title}
-              ></iframe>
-            </div>
+            <VideoPlayer url={activeLesson.video} width="100%" />
           )}
 
           <div className="prose prose-lg dark:prose-invert max-w-none">

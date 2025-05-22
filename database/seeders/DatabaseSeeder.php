@@ -272,7 +272,8 @@ class DatabaseSeeder extends Seeder
             Academic::create([
                 'title' => $item['title'],
                 'image' => $item['image'],
-                'description' => $item['description']
+                'description' => $item['description'],
+                'status' => 'published',
             ]);
 
             foreach ($item['courses'] as $course) {
@@ -285,6 +286,7 @@ class DatabaseSeeder extends Seeder
                     'duration' => $course['duration'],
                     'difficulty' => $course['difficulty'],
                     'price' => $course['order'] > 1 ? fake()->randomFloat(2, 0, 100) : 0,
+                    'status' => 'published',
                     'academic_id' => $course['academic_id'],
                 ]);
 
@@ -292,7 +294,7 @@ class DatabaseSeeder extends Seeder
                     $module = Module::create([
                         'title' => fake()->sentence(1),
                         'order' => $i + 1,
-                        'status' => fake()->randomElement(['publish', 'draft']),
+                        'status' => fake()->randomElement(['published', 'draft']),
                         'course_id' => $course->id
                     ]);
 
@@ -302,7 +304,7 @@ class DatabaseSeeder extends Seeder
                             'content' => $this->generateMarkdownContent(),
                             'video' => fake()->imageUrl(),
                             'order' => $j + 1,
-                            'status' => fake()->randomElement(['publish', 'draft']),
+                            'status' => fake()->randomElement(['published', 'draft']),
                             'module_id' => $module->id
                         ]);
                     }
@@ -333,7 +335,10 @@ class DatabaseSeeder extends Seeder
         $list = collect(range(1, 5))
             ->map(fn() => '- ' . fake()->sentence)
             ->implode("\n");
+        $code = '```javascript
+        console.log("Hello, world!");
+        ```';
 
-        return implode("\n\n", [$heading, $subheading, $paragraph, $list]);
+        return implode("\n\n", [$heading, $subheading, $paragraph, $list, $code]);
     }
 }
