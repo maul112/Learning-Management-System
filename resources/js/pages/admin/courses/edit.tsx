@@ -100,7 +100,10 @@ export default function CourseEdit() {
       courseStatus.status == 'published' ? 'draft' : 'published',
     );
     putStatus(route('courses.updateStatus', course.data.id), {
-      onError: (e) => console.log(e),
+      onError: (e) => {
+        console.log(e);
+        toast.error('Failed to update course status');
+      },
       onSuccess: () => {
         toast.success('Course status updated successfully');
       },

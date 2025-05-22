@@ -118,7 +118,7 @@ class AdminCourseController extends Controller
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update course.');
         }
     }
 

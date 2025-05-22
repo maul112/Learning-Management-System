@@ -96,12 +96,34 @@ class AdminModuleController extends Controller
 
             $module->update($validated);
 
-            return redirect()->route('modules.index')->with('success', 'Module updated successfully.');
+            return redirect()->route('courses.edit', $module->course_id)->with('success', 'Module updated successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
             return redirect()->back()->with('error', 'Failed to update module.');
         }
+    }
+
+    public function updateStatus(Request $request, Module $module)
+    {
+        $request->validate([
+            'status' => 'required|in:active,draft,published',
+        ]);
+
+        $module->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Status updated successfully.');
+    }
+
+    public function reorder(Request $request)
+    {
+        $ids = $request->input('ids'); // array of course IDs in new order
+
+        foreach ($ids as $index => $id) {
+            Module::where('id', $id)->update(['order' => $index + 1]);
+        }
+
+        return redirect()->back()->with('success', 'Order updated successfully.');
     }
 
     /**

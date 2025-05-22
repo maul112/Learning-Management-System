@@ -26,7 +26,11 @@ class LessonResource extends JsonResource
                 'title' => $this->module->title,
                 'course' => [
                     'id' => $this->module->course->id,
-                    'title' => $this->module->course->title
+                    'title' => $this->module->course->title,
+                    'academic' => [
+                        'id' => $this->module->course->academic->id,
+                        'title' => $this->module->course->academic->title
+                    ]
                 ]
             ],
         ];

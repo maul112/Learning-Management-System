@@ -50,6 +50,10 @@ export default function ModuleEdit() {
     title: module.data.title,
   });
 
+  const { data: moduleStatus, setData: setModuleStatus, put: putModuleStatus } = useForm({
+    status: module.data.status
+  })
+
   const [requiredFieldsNumber, setRequiredFieldsNumber] =
     useRequiredFieldNumber(data);
 
@@ -64,7 +68,11 @@ export default function ModuleEdit() {
     e,
   ) => {
     e.preventDefault();
-    put(route('modules.updateStatus', module.data.id), {
+    setModuleStatus(
+      'status',
+      moduleStatus.status == 'published' ? 'draft' : 'published',
+    )
+    putModuleStatus(route('modules.updateStatus', module.data.id), {
       onError: (e) => {
         console.log(e);
         toast.error('Failed to update module status');
@@ -100,7 +108,7 @@ export default function ModuleEdit() {
               className="cursor-pointer"
               onClick={handleChangeStatus}
               disabled={
-                requiredFieldsNumber < 7 ||
+                requiredFieldsNumber < 1 ||
                 module.data.lessons.filter(
                   (lesson) => lesson.status === 'published',
                 ).length === 0

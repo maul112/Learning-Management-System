@@ -62,6 +62,14 @@ Route::middleware(['auth', 'verified', IsAdmin::class])->group(function () {
         ->name('courses.updateStatus');
     Route::post('/courses/reorder', [AdminCourseController::class, 'reorder'])
         ->name('courses.reorder');
+    Route::put('/modules/{module}/status', [AdminModuleController::class, 'updateStatus'])
+        ->name('modules.updateStatus');
+    Route::post('/modules/reorder', [AdminModuleController::class, 'reorder'])
+        ->name('modules.reorder');
+    Route::put('/lessons/{lesson}/status', [AdminLessonController::class, 'updateStatus'])
+        ->name('lessons.updateStatus');
+    Route::post('/lessons/reorder', [AdminLessonController::class, 'reorder'])
+        ->name('lessons.reorder');
 });
 
 Route::middleware(['auth', 'verified', IsStudent::class])->prefix('student')->group(function () {
@@ -72,6 +80,10 @@ Route::middleware(['auth', 'verified', IsStudent::class])->prefix('student')->gr
     Route::get('courses', [StudentController::class, 'courses'])
         ->name('student.courses');
 });
+
+Route::get('/disscussion', function () {
+    return Inertia::render('academics/discussion');
+})->name('disscussion');
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

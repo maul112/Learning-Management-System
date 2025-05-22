@@ -11,6 +11,7 @@ import {
   TimerResetIcon as ResetIcon,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { Textarea } from './ui/textarea';
 
 interface InteractiveCodeBlockProps {
   code: string;
@@ -166,8 +167,8 @@ export default function InteractiveCodeBlock({
         </div>
       </div>
 
-      <div className="relative">
-        <textarea
+      <div className="relative mx-5">
+        <Textarea
           ref={editorRef}
           value={code}
           onChange={(e) => setCode(e.target.value)}

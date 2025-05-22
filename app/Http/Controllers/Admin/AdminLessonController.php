@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Lesson;
 use App\Http\Requests\StoreLessonRequest;
 use App\Http\Requests\UpdateLessonRequest;
-use App\Http\Resources\CourseResource;
 use App\Http\Resources\LessonResource;
 use App\Http\Resources\ModuleResource;
-use App\Models\Course;
 use App\Models\Module;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -75,13 +73,14 @@ class AdminLessonController extends Controller
      */
     public function edit(Lesson $lesson)
     {
-        $courses = Course::all();
-        $modules = Module::all();
+        $lesson->load(['module' => function ($query) {
+            $query->with(['course' => function ($query) {
+                $query->with('academic');
+            }]);
+        }]);
 
         return Inertia::render('admin/lessons/edit', [
             'lesson' => new LessonResource($lesson),
-            'courses' => CourseResource::collection($courses),
-            'modules' => ModuleResource::collection($modules),
             'success' => session('success'),
             'error' => session('error')
         ]);
@@ -97,12 +96,34 @@ class AdminLessonController extends Controller
 
             $lesson->update($validated);
 
-            return redirect()->route('lessons.index')->with('success', 'Lesson updated successfully.');
+            return redirect()->route('modules.edit', $lesson->module_id)->with('success', 'Lesson updated successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
             return redirect()->back()->with('error', 'Failed to update lesson.');
         }
+    }
+
+    public function updateStatus(Request $request, Lesson $lesson)
+    {
+        $request->validate([
+            'status' => 'required|in:active,draft,published',
+        ]);
+
+        $lesson->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Status updated successfully.');
+    }
+
+    public function reorder(Request $request)
+    {
+        $ids = $request->input('ids'); // array of course IDs in new order
+
+        foreach ($ids as $index => $id) {
+            Lesson::where('id', $id)->update(['order' => $index + 1]);
+        }
+
+        return redirect()->back()->with('success', 'Order updated successfully.');
     }
 
     /**
