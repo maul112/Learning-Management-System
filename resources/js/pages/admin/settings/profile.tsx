@@ -39,7 +39,7 @@ export default function Profile({
   const initials = useInitials();
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
 
-  const { data, setData, patch, errors, processing, recentlySuccessful } =
+  const { data, setData, post, errors, processing, recentlySuccessful } =
     useForm<Required<ProfileForm>>({
       avatar: null,
       name: auth.user.name,
@@ -50,9 +50,9 @@ export default function Profile({
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    patch(route('profile.update'), {
-      forceFormData: true,
+    post(route('profile.update'), {
       preserveScroll: true,
+      forceFormData: true,
       method: 'patch',
       onError: (e) => console.log(e),
     });

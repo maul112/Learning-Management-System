@@ -35,8 +35,11 @@ const tabTriggers = [
   },
 ];
 
-export function CourseDetail() {
-
+export function CourseDetail({
+  informationRef,
+}: {
+  informationRef: React.RefObject<HTMLDivElement | null>;
+}) {
   const getInitials = useInitials();
   const { course } = usePage<SharedData & { course: { data: Course } }>().props;
   const [activeTab, setActiveTab] = useState<string>('testimoni');
@@ -46,7 +49,7 @@ export function CourseDetail() {
 
   return (
     <nav className="mt-10">
-      <RootContent>
+      <RootContent ref={informationRef}>
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
@@ -90,12 +93,15 @@ export function CourseDetail() {
                       <Avatar className="h-16 w-16">
                         <AvatarImage
                           src={
-                            '/storage/' + courseFilteredRatings[i].student.user.avatar
+                            '/storage/' +
+                            courseFilteredRatings[i].student.user.avatar
                           }
                           alt={courseFilteredRatings[i].student.user.name}
                         />
                         <AvatarFallback>
-                          {getInitials(courseFilteredRatings[i].student.user.name)}
+                          {getInitials(
+                            courseFilteredRatings[i].student.user.name,
+                          )}
                         </AvatarFallback>
                       </Avatar>
                       <div>
@@ -127,9 +133,7 @@ export function CourseDetail() {
             </div>
             <div className="mt-5 flex items-center justify-end">
               <Button variant="link" className="group cursor-pointer">
-                <Link href={`/ratings`}>
-                  Lihat semua testimoni
-                </Link>
+                <Link href={`/ratings`}>Lihat semua testimoni</Link>
                 <ArrowUpRight className="transition-all duration-100 group-hover:translate-x-[2px] group-hover:-translate-y-[2px]" />
               </Button>
             </div>

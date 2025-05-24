@@ -25,6 +25,7 @@ class UpdateLessonRequest extends FormRequest
             'title' => 'nullable|string',
             'content' => 'nullable|string',
             'order' => 'nullable|integer',
+            'video' => $this->hasFile('video') ? 'mimes:mp4,mov,ogg,qt,wmv' : 'nullable',
             'module_id' => 'nullable|exists:modules,id',
         ];
     }

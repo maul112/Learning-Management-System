@@ -1,7 +1,7 @@
 import FormFieldInput from '@/components/form-field-input';
-import FormFieldSelect from '@/components/form-field-select';
 import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
+import { useRequiredFieldNumber } from '@/hooks/use-required-field-number';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
 import { BreadcrumbItem, Course, SharedData } from '@/types';
@@ -10,26 +10,37 @@ import { LoaderCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Modules',
-    href: '/modules',
-  },
-  {
-    title: 'Create',
-    href: '/modules/create',
-  },
-];
-
 export default function ModuleCreate() {
-  const { courses, sucess, error } = usePage<
-    SharedData & { courses: { data: Course[] } }
+  const { sucess, error, course } = usePage<
+    SharedData & { course: { data: Course } }
   >().props;
   const { data, setData, post, processing, errors } = useForm({
     title: '',
-    order: 0,
-    course_id: 0,
+    order: course.data.modules.length + 1,
+    course_id: course.data.id,
   });
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Academics',
+      href: '/academics',
+    },
+    {
+      title: 'Courses',
+      href: `/courses/${course.data.academic.id}/edit`,
+    },
+    {
+      title: 'Modules',
+      href: `/courses/${course.data.id}/edit`,
+    },
+    {
+      title: 'Create',
+      href: '/modules/create',
+    },
+  ];
+
+  const [requiredFieldsNumber, setRequiredFieldsNumber] =
+    useRequiredFieldNumber(data);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -47,6 +58,12 @@ export default function ModuleCreate() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Create Module" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+        <div className="pl-4">
+          <h1 className="text-2xl font-bold">Module setup</h1>
+          <p className="text-muted-foreground text-sm">
+            Complete all fields ({requiredFieldsNumber - 1}/2)
+          </p>
+        </div>
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
           <FormLayout onSubmit={handleSubmit}>
             <FormFieldInput
@@ -57,7 +74,8 @@ export default function ModuleCreate() {
               name="title"
               placeholder="Module title"
               value={data.title || ''}
-              onChange={(e) => setData('title', e.target.value)}
+              setValue={(value) => setData('title', value)}
+              onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
               message={errors.title || ''}
             />
             <FormFieldInput
@@ -67,28 +85,16 @@ export default function ModuleCreate() {
               id="order"
               name="order"
               placeholder="Module order"
-              value={data.order || ''}
-              onChange={(e) => setData('order', Number(e.target.value))}
+              value={String(data.order)}
+              setValue={(value) => setData('order', Number(value))}
+              onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
               message={errors.order || ''}
-            />
-            <FormFieldSelect<Course>
-              data={courses.data}
-              label="Course"
-              value={data.course_id}
-              displayValue={
-                courses.data.find((course) => course.id === data.course_id)
-                  ?.title || ''
-              }
-              onChange={(value) => setData('course_id', Number(value))}
-              getOptionLabel={(course) => course.title}
-              getOptionValue={(course) => course.id}
-              message={errors.course_id || ''}
             />
             <Button
               type="submit"
               className="mt-4 w-full"
               tabIndex={4}
-              disabled={processing}
+              disabled={processing ? processing : requiredFieldsNumber < 2}
             >
               {processing && (
                 <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />

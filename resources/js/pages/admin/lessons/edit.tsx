@@ -1,61 +1,92 @@
+import { DeleteModal } from '@/components/delete-modal';
+import { DraftAlert } from '@/components/draft-alert';
 import FormFieldInput from '@/components/form-field-input';
-import FormFieldSelect from '@/components/form-field-select';
+import FormFieldMarkdown from '@/components/form-field-markdown';
+import { VideoPreviewInput } from '@/components/form-field-video';
 import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
+import { useRequiredFieldNumber } from '@/hooks/use-required-field-number';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
 import { BreadcrumbItem, Course, Lesson, Module, SharedData } from '@/types';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Lessons',
-    href: '/lessons',
-  },
-  {
-    title: 'Edit',
-    href: '/lessons/edit',
-  },
-];
-
 export default function LessonsEdit() {
-  const { lesson, courses, modules, success, error } = usePage<
+  const { lesson, success, error } = usePage<
     SharedData & {
       lesson: { data: Lesson };
       courses: { data: Course[] };
       modules: { data: Module[] };
     }
   >().props;
-  const { data, setData, put, processing, errors } = useForm({
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    {
+      title: 'Academics',
+      href: '/academics',
+    },
+    {
+      title: 'Courses',
+      href: `/academics/${lesson.data.module.course.academic.id}/edit`,
+    },
+    {
+      title: 'Modules',
+      href: `/courses/${lesson.data.module.course.id}/edit`,
+    },
+    {
+      title: 'Lessons',
+      href: `/modules/${lesson.data.module.id}/edit`,
+    },
+    {
+      title: 'Edit',
+      href: '/lessons/edit',
+    },
+  ];
+
+  const { data, setData, post, processing, errors } = useForm({
     title: lesson.data.title,
     order: lesson.data.order,
-    course_id: lesson.data.module.course.id,
-    module_id: lesson.data.module.id,
+    content: lesson.data.content,
+    video: lesson.data.video as File | string,
+    _method: 'put',
   });
 
-  const [moduleValues, setModuleValues] = useState<Module[]>([]);
+  const {
+    data: lessonStatus,
+    setData: setLessonStatus,
+    put: putLessonStatus,
+  } = useForm({
+    status: lesson.data.status,
+  });
+
+  const [requiredFieldsNumber, setRequiredFieldsNumber] =
+    useRequiredFieldNumber(data);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    put(route('lessons.update', lesson.data.id), {
+    post(route('lessons.update', lesson.data.id), {
+      forceFormData: true,
+      preserveScroll: true,
+      method: 'put',
       onError: (e) => console.log(e),
     });
   };
 
-  const selectedCourseTitle = useMemo(() => {
-    return (
-      courses.data.find((course) => course.id === data.course_id)?.title || ''
+  const handleChangeStatus: React.MouseEventHandler<HTMLButtonElement> = (
+    e,
+  ) => {
+    e.preventDefault();
+    setLessonStatus(
+      'status',
+      lessonStatus.status == 'published' ? 'draft' : 'published',
     );
-  }, [courses.data, data.course_id]);
-
-  const selectedModuleTitle = useMemo(() => {
-    return (
-      moduleValues.find((module) => module.id === data.module_id)?.title || ''
-    );
-  }, [moduleValues, data.module_id]);
+    putLessonStatus(route('lessons.updateStatus', lesson.data.id), {
+      onError: (e) => console.log(e),
+    });
+  };
 
   useEffect(() => {
     if (success) toast.success(success as string);
@@ -64,8 +95,30 @@ export default function LessonsEdit() {
 
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Edit Lesson" />
+      <Head title="Create Lesson" />
+      <DraftAlert status={lesson.data.status} title="Lesson" />
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+        <div className="flex items-center justify-between pl-4">
+          <div>
+            <h1 className="text-2xl font-bold">Lesson setup</h1>
+            <p className="text-muted-foreground text-sm">
+              Complete all fields ({requiredFieldsNumber - 2}/3)
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant={
+                lesson.data.status == 'published' ? 'secondary' : 'default'
+              }
+              className="cursor-pointer"
+              onClick={handleChangeStatus}
+              disabled={requiredFieldsNumber < 3}
+            >
+              {lessonStatus.status == 'published' ? 'Unpublish' : 'Publish'}
+            </Button>
+            <DeleteModal resourceName="lesson" id={lesson.data.id} />
+          </div>
+        </div>
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
           <FormLayout onSubmit={handleSubmit}>
             <FormFieldInput
@@ -76,8 +129,30 @@ export default function LessonsEdit() {
               name="title"
               placeholder="Enter lesson title"
               value={data.title}
-              onChange={(e) => setData('title', e.target.value)}
+              setValue={(value) => setData('title', value)}
+              onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
               message={errors.title || ''}
+            />
+            <VideoPreviewInput
+              htmlFor="video"
+              label="Video"
+              currentVideoUrl={`/storage/${data.video}`}
+              onChange={(file) => {
+                if (file) {
+                  setData('video', file);
+                  setRequiredFieldsNumber(requiredFieldsNumber + 1);
+                }
+              }}
+              error={errors.video}
+            />
+            <FormFieldMarkdown
+              htmlFor="content"
+              label="Content"
+              value={data.content}
+              setValue={(value) => setData('content', value)}
+              onChange={(value) => setData('content', value || '')}
+              onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
+              message={errors.content || ''}
             />
             <FormFieldInput
               htmlFor="order"
@@ -86,36 +161,10 @@ export default function LessonsEdit() {
               id="order"
               name="order"
               placeholder="Enter lesson order"
-              value={data.order}
-              onChange={(e) => setData('order', Number(e.target.value))}
+              value={String(data.order)}
+              setValue={(value) => setData('order', Number(value))}
+              onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
               message={errors.order || ''}
-            />
-            <FormFieldSelect<Course>
-              data={courses.data}
-              label="Course"
-              value={data.course_id}
-              displayValue={selectedCourseTitle}
-              onChange={(value) => {
-                setData('course_id', Number(value));
-                setModuleValues(
-                  modules.data.filter(
-                    (module) => module.course.id === Number(value),
-                  ),
-                );
-              }}
-              getOptionLabel={(course) => course.title}
-              getOptionValue={(course) => course.id}
-              message={errors.course_id || ''}
-            />
-            <FormFieldSelect<Module>
-              data={moduleValues}
-              label="Module"
-              value={data.module_id}
-              displayValue={selectedModuleTitle}
-              onChange={(value) => setData('module_id', Number(value))}
-              getOptionLabel={(module) => module.title}
-              getOptionValue={(module) => module.id}
-              message={errors.module_id || ''}
             />
             <Button
               type="submit"

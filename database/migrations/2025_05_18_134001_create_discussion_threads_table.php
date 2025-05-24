@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('discussion_threads', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->longText('description');
-            $table->string('image')->nullable();
-            $table->string('link');
-            $table->string('by');
+            $table->longText('content');
+            $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
+            $table->foreignid('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');
+        Schema::dropIfExists('discussion_threads');
     }
 };

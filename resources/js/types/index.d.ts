@@ -147,3 +147,30 @@ export type DataContextType = {
     data: Course;
   };
 };
+
+
+export interface Reply {
+  id: string;
+  content: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  likes: number;
+}
+
+export interface Discussion {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  user: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+  replies: Reply[];
+  likes: number;
+  isSolved: boolean;
+}

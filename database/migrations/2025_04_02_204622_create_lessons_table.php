@@ -17,7 +17,7 @@ return new class extends Migration
             $table->longText('content');
             $table->integer('order')->default(1);
             $table->string('video')->nullable();
-            $table->enum('status', ['publish', 'draft'])->default('draft');
+            $table->enum('status', ['published', 'draft'])->default('draft');
             $table->foreignId('module_id')->constrained('modules', 'id')->onDelete('cascade');
             $table->timestamps();
         });

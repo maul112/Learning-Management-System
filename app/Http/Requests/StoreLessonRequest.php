@@ -25,6 +25,7 @@ class StoreLessonRequest extends FormRequest
             'title' => 'required|string',
             'content' => 'required|string',
             'order' => 'required|integer',
+            'video' => $this->hasFile('video') ? 'mimes:mp4,mov,ogg,qt,wmv' : 'nullable',
             'module_id' => 'required|exists:modules,id',
         ];
     }

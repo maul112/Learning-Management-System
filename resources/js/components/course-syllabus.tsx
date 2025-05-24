@@ -13,13 +13,15 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Separator } from './ui/separator';
 
-export function CourseSyllabus() {
+export function CourseSyllabus({
+  syllabusRef,
+}: {
+  syllabusRef: React.RefObject<HTMLDivElement | null>;
+}) {
   const { course } = usePage<SharedData & { course: { data: Course } }>().props;
 
-  console.log(course);
-
   return (
-    <RootContent className="my-10">
+    <RootContent ref={syllabusRef} className="my-10">
       <div className="mb-8 flex flex-col items-center justify-center">
         <h3 className="text-2xl font-semibold">Silabus</h3>
         <p className="text-muted-foreground mt-1 text-center">
@@ -52,7 +54,7 @@ export function CourseSyllabus() {
                   </div>
                 </CardContent>
                 <AccordionContent className="pt-2">
-                  <Separator className='mb-2' />
+                  <Separator className="mb-2" />
                   <div className="flex flex-col space-y-2">
                     {module.lessons.map((lesson) => (
                       <Button

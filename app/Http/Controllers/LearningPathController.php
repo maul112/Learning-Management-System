@@ -12,7 +12,7 @@ class LearningPathController extends Controller
     public function index(Request $request)
     {
         $redirect = $request->get('redirect');
-        $academics = Academic::all();
+        $academics = Academic::where('status', 'published')->get();
 
         if ($redirect) {
             return redirect()->route('learning-path.show', $academics[0]->id);
@@ -25,9 +25,9 @@ class LearningPathController extends Controller
 
     public function show(Academic $academic)
     {
-        $academics = Academic::all();
+        $academics = Academic::where('status', 'published')->get();
         $academic->load(['courses' => function ($query) {
-            $query->orderBy('order');
+            $query->where('status', 'published')->orderBy('order');
         }]);
 
         return Inertia::render('learning-paths/show', [

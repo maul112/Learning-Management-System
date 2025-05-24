@@ -16,9 +16,10 @@ import {
   Book,
   BookOpen,
   BookOpenTextIcon,
-  Calendar1,
   Folder,
   LayoutGrid,
+  MessageSquareCode,
+  Star,
   UsersRound,
 } from 'lucide-react';
 import AppLogo from './app-logo';
@@ -35,14 +36,19 @@ const mainNavItems: NavItem[] = [
     icon: UsersRound,
   },
   {
-    title: 'Events',
-    href: '/events',
-    icon: Calendar1,
-  },
-  {
     title: 'Courses',
     href: '/academics',
     icon: BookOpenTextIcon,
+  },
+  {
+    title: 'Discussions',
+    href: '/discussions',
+    icon: MessageSquareCode,
+  },
+  {
+    title: 'Ratings',
+    href: '/ratings',
+    icon: Star,
   }
 ];
 
@@ -74,7 +80,7 @@ const mainNavGroupItems: NavGroup[] = [
 const footerNavItems: NavItem[] = [
   {
     title: 'Repository',
-    href: 'https://github.com/laravel/react-starter-kit',
+    href: 'https://github.com/Mufid-031/Learning-Management-System',
     icon: Folder,
   },
   {

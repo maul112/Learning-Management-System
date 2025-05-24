@@ -23,9 +23,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Buat 1 Admin
-        Admin::factory()->create();
-
-        Event::factory(5)->create();
+        $user = User::factory()->admin()->mufid()->create();
+        Admin::factory()->create([
+            'user_id' => $user->id
+        ]);
 
         $data = [
             [
@@ -271,7 +272,8 @@ class DatabaseSeeder extends Seeder
             Academic::create([
                 'title' => $item['title'],
                 'image' => $item['image'],
-                'description' => $item['description']
+                'description' => $item['description'],
+                'status' => 'published',
             ]);
 
             foreach ($item['courses'] as $course) {
@@ -284,24 +286,25 @@ class DatabaseSeeder extends Seeder
                     'duration' => $course['duration'],
                     'difficulty' => $course['difficulty'],
                     'price' => $course['order'] > 1 ? fake()->randomFloat(2, 0, 100) : 0,
+                    'status' => 'published',
                     'academic_id' => $course['academic_id'],
                 ]);
 
-                for($i = 0; $i < fake()->numberBetween(1, 3); $i++) {
+                for ($i = 0; $i < fake()->numberBetween(1, 3); $i++) {
                     $module = Module::create([
-                        'title' => fake()->sentence(),
-                        'order' => fake()->numberBetween(1, 6),
-                        'status' => fake()->randomElement(['publish', 'draft']),
+                        'title' => fake()->sentence(1),
+                        'order' => $i + 1,
+                        'status' => fake()->randomElement(['published', 'draft']),
                         'course_id' => $course->id
                     ]);
 
-                    for($j = 0; $j < fake()->numberBetween(1, 3); $j++) {
+                    for ($j = 0; $j < fake()->numberBetween(1, 3); $j++) {
                         Lesson::create([
-                            'title' => fake()->sentence(),
+                            'title' => fake()->sentence(2),
                             'content' => $this->generateMarkdownContent(),
                             'video' => fake()->imageUrl(),
-                            'order' => fake()->numberBetween(1, 6),
-                            'status' => fake()->randomElement(['publish', 'draft']),
+                            'order' => $j + 1,
+                            'status' => fake()->randomElement(['published', 'draft']),
                             'module_id' => $module->id
                         ]);
                     }
@@ -332,7 +335,10 @@ class DatabaseSeeder extends Seeder
         $list = collect(range(1, 5))
             ->map(fn() => '- ' . fake()->sentence)
             ->implode("\n");
+        $code = '```javascript
+        console.log("Hello, world!");
+        ```';
 
-        return implode("\n\n", [$heading, $subheading, $paragraph, $list]);
+        return implode("\n\n", [$heading, $subheading, $paragraph, $list, $code]);
     }
 }
