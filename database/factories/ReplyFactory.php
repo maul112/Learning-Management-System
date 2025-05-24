@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\DiscussionThread;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,9 @@ class ReplyFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'content' => $this->faker->paragraph(),
+            'discussion_thread_id' => DiscussionThread::factory(),
+            'user_id' => User::factory(),
         ];
     }
 }

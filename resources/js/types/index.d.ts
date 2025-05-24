@@ -150,27 +150,46 @@ export type DataContextType = {
 
 
 export interface Reply {
-  id: string;
+  id: number;
   content: string;
   userId: string;
+  user: User;
   createdAt: string;
   updatedAt: string;
   likes: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Discussion {
-  id: string;
+  id: number;
   title: string;
   content: string;
   category: string;
-  user: {
-    id: string;
-    name: string;
-    avatar: string;
-  };
-  createdAt: string;
-  updatedAt: string;
+  user: User;
+  created_at: string;
+  updated_at: string;
   replies: Reply[];
   likes: number;
-  isSolved: boolean;
+  resolved: boolean;
+}
+
+export interface PaginatedData<T> {
+  current_page: number
+  data: T[]
+  first_page_url: string
+  from: number
+  last_page: number
+  last_page_url: string
+  links: Array<{
+    url: string | null
+    label: string
+    active: boolean
+  }>
+  next_page_url: string | null
+  path: string
+  per_page: number
+  prev_page_url: string | null
+  to: number
+  total: number
 }

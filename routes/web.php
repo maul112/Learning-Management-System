@@ -7,8 +7,10 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminLessonController;
 use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\LearningPathController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\StudentController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsStudent;
@@ -81,9 +83,12 @@ Route::middleware(['auth', 'verified', IsStudent::class])->prefix('student')->gr
         ->name('student.courses');
 });
 
-Route::get('/disscussion', function () {
-    return Inertia::render('academics/discussion');
-})->name('disscussion');
+Route::middleware(['auth'])->group(function () {
+    Route::resource('discussions', DiscussionController::class);
+    Route::post('discussions/{discussion}/like', [DiscussionController::class, 'like'])->name('discussions.like');
+    Route::resource('replies', ReplyController::class);
+    Route::post('replies/{reply}/like', [ReplyController::class, 'like'])->name('replies.like');
+});
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

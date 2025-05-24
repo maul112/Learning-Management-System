@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->longText('content');
-            $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
+            $table->enum('category', ['general', 'question', 'resource'])->default('general');
+            $table->boolean('resolved')->default(false);
             $table->foreignid('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

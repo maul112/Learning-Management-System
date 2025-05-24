@@ -1,21 +1,18 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import type { User } from '@/types';
 
-interface ForumUserAvatarProps {
-  user: {
-    id: string;
-    name: string;
-    avatar: string;
-  };
+interface UserAvatarProps {
+  user: User;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
-export default function ForumUserAvatar({
+export default function UserAvatar({
   user,
   size = 'md',
   className,
-}: ForumUserAvatarProps) {
+}: UserAvatarProps) {
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -33,7 +30,7 @@ export default function ForumUserAvatar({
 
   return (
     <Avatar className={cn(sizeClasses[size], className)}>
-      <AvatarImage src={user.avatar || '/placeholder.svg'} alt={user.name} />
+      <AvatarImage src={`/storage/${user.avatar}`} alt={user.name} />
       <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
     </Avatar>
   );
