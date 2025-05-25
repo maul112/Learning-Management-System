@@ -40,7 +40,7 @@ Route::controller(LearningPathController::class)->group(function () {
 Route::controller(AcademicController::class)->group(function () {
     Route::get('/academies/{course}', 'index')
         ->name('academics.index');
-    Route::get('/academies/{course}/tutorials/{module}', 'show')
+    Route::get('/academies/{course}/tutorials/{lesson}', 'show')
         ->name('academics.show')
         ->middleware(['auth', IsStudent::class]);
 });
@@ -85,7 +85,7 @@ Route::middleware(['auth', 'verified', IsStudent::class])->prefix('student')->gr
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('discussions', DiscussionController::class);
-    Route::post('discussions/{discussion}/like', [DiscussionController::class, 'like'])->name('discussions.like');
+    Route::post('discussions/{discussionthread}/like', [DiscussionController::class, 'like'])->name('discussions.like');
     Route::resource('replies', ReplyController::class);
     Route::post('replies/{reply}/like', [ReplyController::class, 'like'])->name('replies.like');
 });

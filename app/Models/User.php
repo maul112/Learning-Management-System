@@ -70,4 +70,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(DiscussionThread::class);
     }
+
+    public function replies(): HasMany
+    {
+        return $this->hasMany(Reply::class);
+    }
 }

@@ -14,7 +14,7 @@ class Reply extends Model
     protected $fillable = [
         'content',
         'likes',
-        'disscussion_thread_id',
+        'discussion_thread_id',
         'user_id',
     ];
 

@@ -21,6 +21,7 @@ class DiscussionThreadFactory extends Factory
             'title' => $this->faker->sentence(),
             'content' => $this->faker->paragraph(),
             'category' => $this->faker->randomElement(['general', 'question', 'announcement']),
+            'likes' => $this->faker->numberBetween(0, 100),
             'resolved' => $this->faker->boolean(),
             'user_id' => User::factory(),
         ];

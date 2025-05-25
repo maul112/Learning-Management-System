@@ -16,6 +16,7 @@ class DiscussionThread extends Model
         'title',
         'content',
         'category',
+        'likes',
         'resolved',
         'user_id',
     ];

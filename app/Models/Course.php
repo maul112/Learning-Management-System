@@ -86,4 +86,14 @@ class Course extends Model
                 'id'
             );
     }
+
+    public function payments(): HasMany
+    {
+        return $this
+            ->hasMany(
+                \App\Models\Payment::class,
+                'course_id',
+                'id'
+            );
+    }
 }

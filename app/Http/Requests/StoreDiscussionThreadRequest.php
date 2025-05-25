@@ -11,7 +11,7 @@ class StoreDiscussionThreadRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreDiscussionThreadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'category' => 'required|string|in:general,question,resource',
         ];
     }
 }

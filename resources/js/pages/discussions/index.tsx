@@ -9,12 +9,13 @@ import RootLayout from '@/layouts/root-layout';
 import type { Discussion, PaginatedData, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { PlusIcon } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 const ITEMS_PER_PAGE = 10;
 
 export default function ForumPage() {
-  const { discussions, auth } = usePage<
+  const { discussions, auth, success, error } = usePage<
     SharedData & { discussions: PaginatedData<Discussion> }
   >().props;
 
@@ -34,13 +35,18 @@ export default function ForumPage() {
         searchQuery === '' ||
         discussion.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         discussion.content.toLowerCase().includes(searchQuery.toLowerCase());
+      let matchesCategory;
 
-      const matchesCategory =
-        activeCategory === 'all' || discussion.category === activeCategory;
+      if (activeCategory === 'my') {
+        matchesCategory = discussion.user.id === auth.user?.id;
+      } else {
+        matchesCategory =
+          activeCategory === 'all' || discussion.category === activeCategory;
+      }
 
       return matchesSearch && matchesCategory;
     });
-  }, [allDiscussions, searchQuery, activeCategory]);
+  }, [allDiscussions, searchQuery, activeCategory, auth.user?.id]);
 
   // Calculate pagination for filtered results
   const totalPages = Math.ceil(filteredDiscussions.length / ITEMS_PER_PAGE);
@@ -52,6 +58,11 @@ export default function ForumPage() {
   const selectedDiscussion = selectedDiscussionId
     ? discussions.data.find((d) => d.id === selectedDiscussionId)
     : null;
+
+  useEffect(() => {
+    if (success) toast.success(success as string);
+    if (error) toast.error(error as string);
+  }, [success, error]);
 
   // Handle discussion selection
   const handleSelectDiscussion = (id: number) => {
@@ -119,11 +130,12 @@ export default function ForumPage() {
               className="mb-6"
               onValueChange={handleCategoryChange}
             >
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="question">Q&A</TabsTrigger>
                 <TabsTrigger value="resource">Resources</TabsTrigger>
+                <TabsTrigger value="my">My</TabsTrigger>
               </TabsList>
             </Tabs>
 

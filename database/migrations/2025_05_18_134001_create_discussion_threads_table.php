@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->longText('content');
             $table->enum('category', ['general', 'question', 'resource'])->default('general');
+            $table->integer('likes')->default(0);
             $table->boolean('resolved')->default(false);
             $table->foreignid('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();

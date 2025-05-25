@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CourseResource;
-use App\Http\Resources\ModuleResource;
+use App\Http\Resources\LessonResource;
 use App\Models\Course;
-use App\Models\Module;
-use Illuminate\Http\Request;
+use App\Models\Lesson;
 use Inertia\Inertia;
 
 class AcademicController extends Controller
@@ -20,13 +19,13 @@ class AcademicController extends Controller
         ]);
     }
 
-    public function show(Course $course, Module $module)
+    public function show(Course $course, Lesson $lesson)
     {
-        $module->load('lessons');
+        $lesson->load('module');
 
         return Inertia::render('academics/tutorials', [
             'course' => new CourseResource($course),
-            'module' => new ModuleResource($module),
+            'lesson' => new LessonResource($lesson),
         ]);
     }
 }

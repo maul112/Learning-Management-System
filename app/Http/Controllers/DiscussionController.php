@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\DisscussionThreadResource;
+use App\Http\Requests\StoreDiscussionThreadRequest;
+use App\Http\Requests\UpdateDiscussionThreadRequest;
+use App\Http\Resources\DiscussionThreadResource;
 use App\Models\DiscussionThread;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class DiscussionController extends Controller
@@ -37,30 +40,34 @@ class DiscussionController extends Controller
 
         return Inertia::render('discussions/index', [
             'discussions' => $paginatedData,
+            'success' => session('success'),
+            'error' => session('error'),
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreDiscussionThreadRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'category' => 'required|string|in:general,question,resource',
-        ]);
+        try {
+            $validated = $request->validated();
 
-        $discussion = DiscussionThread::create([
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'category' => $validated['category'],
-            'user_id' => $request->user()->id,
-            'resolved' => false,
-            'likes' => 0,
-        ]);
+            DiscussionThread::create([
+                'title' => $validated['title'],
+                'content' => $validated['content'],
+                'category' => $validated['category'],
+                'user_id' => $request->user()->id,
+                'resolved' => false,
+                'likes' => 0,
+            ]);
 
-        return redirect()->route('discussions.index');
+            return redirect()->route('discussions.index')->with('success', 'Discussion created successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to create discussion.');
+        }
     }
 
     /**
@@ -71,30 +78,31 @@ class DiscussionController extends Controller
         $discussion->load(['user', 'replies.user']);
 
         return Inertia::render('discussions/show', [
-            'discussion' => new DisscussionThreadResource($discussion),
+            'discussion' => new DiscussionThreadResource($discussion),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DiscussionThread $discussion)
+    public function update(UpdateDiscussionThreadRequest $request, DiscussionThread $discussion)
     {
-        // Check if user is authorized to update this discussion
-        if ($request->user()->id !== $discussion->user_id && !$request->user()->admin->exists()) {
-            abort(403);
+        try {
+            // Check if user is authorized to update this discussion
+            if ($request->user()->id !== $discussion->user_id && !$request->user()->admin->exists()) {
+                abort(403);
+            }
+
+            $validated = $request->validated();;
+
+            $discussion->update($validated);
+
+            return redirect()->back()->with('success', 'Discussion updated successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to update discussion.');
         }
-
-        $validated = $request->validate([
-            'title' => 'sometimes|string|max:255',
-            'content' => 'sometimes|string',
-            'category' => 'sometimes|string|in:general,question,resource',
-            'resolved' => 'sometimes|boolean',
-        ]);
-
-        $discussion->update($validated);
-
-        return redirect()->back();
     }
 
     /**
@@ -102,14 +110,20 @@ class DiscussionController extends Controller
      */
     public function destroy(Request $request, DiscussionThread $discussion)
     {
-        // Check if user is authorized to delete this discussion
-        if ($request->user()->id !== $discussion->user_id && !$request->user()->admin->exists()) {
-            abort(403);
+        try {
+            // Check if user is authorized to delete this discussion
+            if ($request->user()->id !== $discussion->user_id && !$request->user()->admin->exists()) {
+                abort(403);
+            }
+
+            $discussion->delete();
+
+            return redirect()->route('discussions.index')->with('success', 'Discussion deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return redirect()->back()->with('error', 'Failed to delete discussion.');
         }
-
-        $discussion->delete();
-
-        return redirect()->route('discussions.index');
     }
 
     /**
@@ -121,6 +135,6 @@ class DiscussionController extends Controller
         // For simplicity, we're just incrementing the likes count here
         $discussion->increment('likes');
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Discussion liked successfully.');
     }
 }

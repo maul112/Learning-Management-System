@@ -21,7 +21,7 @@ class StudentController extends Controller
 
     public function courses()
     {
-        $courses = Course::with(['instructor', 'modules'])->get();
+        $courses = Course::with(['modules'])->get();
 
         return Inertia::render('student/courses', [
             'courses' => CourseResource::collection($courses),
