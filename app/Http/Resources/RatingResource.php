@@ -20,17 +20,8 @@ class RatingResource extends JsonResource
             'comment' => $this->comment,
             'student_id' => $this->student_id,
             'course_id' => $this->course_id,
-            // 'course' => [
-            //     'id' => $this->course->id,
-            //     'title' => $this->course->title
-            // ],
-            // 'student' => [
-            //     'id' => $this->student->id,
-            //     'user' => [
-            //         'id' => $this->student->user->id,
-            //         'name' => $this->student->user->name
-            //     ]
-            // ]
+            'student' => new UserResource($this->whenLoaded('student')),
+            'course' => new CourseResource($this->whenLoaded('course')),
         ];
     }
 }

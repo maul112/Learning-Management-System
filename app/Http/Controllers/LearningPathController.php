@@ -13,11 +13,23 @@ class LearningPathController extends Controller
 {
     public function index(Request $request)
     {
-        $courses = Course::with(['academic', 'ratings', 'modules', 'students'])->get();
+        $courses = Course::with([
+            'academic',
+            'ratings',
+            'modules',
+            'students'
+        ])->get();
         $redirect = $request->get('redirect');
-        $academics = Academic::with(['courses' => function ($query) {
-            $query->where('status', 'published')->orderBy('order');
-        }, 'courses.ratings', 'courses.modules', 'courses.students'])->get();
+        $academics = Academic::with([
+            'courses' => fn($query) =>
+            $query
+                ->where('status', 'published')
+                ->orderBy('order'),
+            'courses.ratings',
+            'courses.modules',
+            'courses.students'
+        ])
+            ->get();
 
         if ($redirect) {
             return redirect()->route('learning-path.show', $academics[0]->id);
@@ -32,10 +44,18 @@ class LearningPathController extends Controller
     public function show(Academic $academic)
     {
         $courses = Course::all();
-        $academics = Academic::where('status', 'published')->get();
-        $academic->load(['courses' => function ($query) {
-            $query->where('status', 'published')->orderBy('order');
-        }, 'courses.ratings', 'courses.modules', 'courses.students']);
+        $academics = Academic::where(
+            'status',
+            'published'
+        )->get();
+        $academic->load([
+            'courses' => function ($query) {
+                $query->where('status', 'published')->orderBy('order');
+            },
+            'courses.ratings',
+            'courses.modules',
+            'courses.students'
+        ]);
 
         return Inertia::render('learning-paths/show', [
             'courses' => CourseResource::collection($courses),

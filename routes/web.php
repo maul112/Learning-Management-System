@@ -22,7 +22,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    $academics = Academic::with(['courses.modules.lessons', 'courses.students'])->get();
+    $academics = Academic::with([
+        'courses.modules.lessons',
+        'courses.students'
+    ])->get();
     $courses = Course::all();
     return Inertia::render('welcome', [
         'academics' => AcademicResource::collection($academics),

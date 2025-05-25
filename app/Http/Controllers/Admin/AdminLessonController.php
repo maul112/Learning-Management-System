@@ -35,7 +35,7 @@ class AdminLessonController extends Controller
     public function create(Request $request)
     {
         $query = $request->query('module');
-        $module = Module::find($query);
+        $module = Module::find($query)->load(['course.academic', 'lessons']);
 
         return Inertia::render('admin/lessons/create', [
             'module' => new ModuleResource($module),
@@ -73,11 +73,7 @@ class AdminLessonController extends Controller
      */
     public function edit(Lesson $lesson)
     {
-        $lesson->load(['module' => function ($query) {
-            $query->with(['course' => function ($query) {
-                $query->with('academic');
-            }]);
-        }]);
+        $lesson->load(['module.course.academic']);
 
         return Inertia::render('admin/lessons/edit', [
             'lesson' => new LessonResource($lesson),

@@ -19,7 +19,7 @@ class AdminAcademicController extends Controller
      */
     public function index()
     {
-        $academics = Academic::all();
+        $academics = Academic::with(['courses'])->get();
 
         return Inertia::render('admin/academics/index', [
             'academics' => AcademicResource::collection($academics),

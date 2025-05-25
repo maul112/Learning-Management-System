@@ -14,9 +14,11 @@ class RatingController extends Controller
     public function index()
     {
         $courses = Course::all();
-        $academics = Academic::with(['courses' => function ($query) {
-            $query->with(['modules']);
-        }])->get();
+        $academics = Academic::with([
+            'courses' => function ($query) {
+                $query->with(['modules']);
+            }
+        ])->get();
 
         return Inertia::render('ratings', [
             'courses' => CourseResource::collection($courses),

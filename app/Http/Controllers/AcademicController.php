@@ -14,7 +14,12 @@ class AcademicController extends Controller
     public function index(Course $course)
     {
         $courses = Course::all();
-        $course->load(['academic', 'ratings.student.user', 'modules.lessons', 'students.user']);
+        $course->load([
+            'academic',
+            'ratings.student.user',
+            'modules.lessons',
+            'students.user'
+        ]);
 
         return Inertia::render('academics/course', [
             'courses' => CourseResource::collection($courses),

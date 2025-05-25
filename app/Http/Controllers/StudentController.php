@@ -55,7 +55,11 @@ class StudentController extends Controller
     public function profile(User $user)
     {
         $courses = Course::all();
-        $user->load(['student.enrollments']);
+        $user->load([
+            'student.enrollments.ratings',
+            'student.enrollments.modules',
+            'student.enrollments.students'
+        ]);
 
         return Inertia::render('student/profile', [
             'courses' => CourseResource::collection($courses),
