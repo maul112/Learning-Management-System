@@ -19,15 +19,15 @@ class ModuleResource extends JsonResource
             'title' => $this->title,
             'order' => $this->order,
             'status' => $this->status,
-            'course' => [
-                'id' => $this->course->id,
-                'title' => $this->course->title,
-                'academic' => [
-                    'id' => $this->course->academic->id,
-                    'title' => $this->course->academic->title
-                ]
-            ],
-            'lessons' => LessonResource::collection($this->lessons),
+            // 'course' => [
+            //     'id' => $this->course->id,
+            //     'title' => $this->course->title,
+            //     'academic' => [
+            //         'id' => $this->course->academic->id,
+            //         'title' => $this->course->academic->title
+            //     ]
+            // ],
+            'lessons' => LessonResource::collection($this->whenLoaded('lessons')),
         ];
     }
 }

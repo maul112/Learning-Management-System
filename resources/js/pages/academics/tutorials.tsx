@@ -1,5 +1,3 @@
-'use client';
-
 import MarkdownViewer from '@/components/markdown-viewer';
 import { Button } from '@/components/ui/button';
 import VideoPlayer from '@/components/video-player';

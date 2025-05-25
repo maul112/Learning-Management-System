@@ -21,18 +21,18 @@ class LessonResource extends JsonResource
             'order' => $this->order,
             'video' => $this->video,
             'status' => $this->status,
-            'module' => [
-                'id' => $this->module->id,
-                'title' => $this->module->title,
-                'course' => [
-                    'id' => $this->module->course->id,
-                    'title' => $this->module->course->title,
-                    'academic' => [
-                        'id' => $this->module->course->academic->id,
-                        'title' => $this->module->course->academic->title
-                    ]
-                ]
-            ],
+            // 'module' => [
+            //     'id' => $this->module->id,
+            //     'title' => $this->module->title,
+            //     'course' => [
+            //         'id' => $this->module->course->id,
+            //         'title' => $this->module->course->title,
+            //         'academic' => [
+            //             'id' => $this->module->course->academic->id,
+            //             'title' => $this->module->course->academic->title
+            //         ]
+            //     ]
+            // ],
         ];
     }
 }

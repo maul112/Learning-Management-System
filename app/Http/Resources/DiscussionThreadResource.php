@@ -20,8 +20,8 @@ class DiscussionThreadResource extends JsonResource
             'content' => $this->content,
             'category' => $this->category,
             'resolved' => $this->resolved,
-            'user' => new UserResource($this->user),
-            'replies' => ReplyResource::collection($this->replies),
+            'user' => new UserResource($this->whenLoaded('user')),
+            'replies' => ReplyResource::collection($this->whenLoaded('replies')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];

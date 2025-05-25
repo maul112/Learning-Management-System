@@ -20,6 +20,10 @@ class UserSeeder extends Seeder
         Admin::factory()->create([
             'user_id' => $user->id
         ]);
+        $studentMufid =  User::factory()->studentMufid()->create();
+        Student::factory()->create([
+            'user_id' => $studentMufid->id
+        ]);
 
         Student::factory(50)->create();
     }

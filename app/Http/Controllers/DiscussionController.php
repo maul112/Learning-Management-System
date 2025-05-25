@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDiscussionThreadRequest;
 use App\Http\Requests\UpdateDiscussionThreadRequest;
+use App\Http\Resources\CourseResource;
 use App\Http\Resources\DiscussionThreadResource;
+use App\Models\Course;
 use App\Models\DiscussionThread;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +19,7 @@ class DiscussionController extends Controller
      */
     public function index()
     {
+        $courses = Course::all();
         $discussions = DiscussionThread::with(['user', 'replies.user'])
             ->latest()
             ->get();
@@ -39,6 +42,7 @@ class DiscussionController extends Controller
         ];
 
         return Inertia::render('discussions/index', [
+            'courses' => CourseResource::collection($courses),
             'discussions' => $paginatedData,
             'success' => session('success'),
             'error' => session('error'),
@@ -75,9 +79,11 @@ class DiscussionController extends Controller
      */
     public function show(DiscussionThread $discussion)
     {
+        $courses = Course::all();
         $discussion->load(['user', 'replies.user']);
 
         return Inertia::render('discussions/show', [
+            'courses' => CourseResource::collection($courses),
             'discussion' => new DiscussionThreadResource($discussion),
         ]);
     }
@@ -93,7 +99,7 @@ class DiscussionController extends Controller
                 abort(403);
             }
 
-            $validated = $request->validated();;
+            $validated = $request->validated();
 
             $discussion->update($validated);
 

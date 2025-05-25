@@ -25,13 +25,11 @@ class CourseResource extends JsonResource
             'difficulty' => $this->difficulty,
             'price' => $this->price,
             'status' => $this->status,
-            'academic' => [
-                'id' => $this->academic->id,
-                'title' => $this->academic->title,
-            ],
-            'students' => UserResource::collection($this->students),
-            'modules' => ModuleResource::collection($this->modules),
-            'ratings' => RatingResource::collection($this->ratings),
+            'academic' => new AcademicResource($this->whenLoaded('academic')),
+            'students' => UserResource::collection($this->whenLoaded('students')),
+            'modules' => ModuleResource::collection($this->whenLoaded('modules')),
+            'ratings' => RatingResource::collection($this->whenLoaded('ratings')),
+            'is_completed' => $this->whenPivotLoaded('course_enrollments', fn() => $this->pivot->is_completed),
         ];
     }
 }

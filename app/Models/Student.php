@@ -35,6 +35,7 @@ class Student extends Model
                 'student_id',
                 'course_id'
             )
+            ->withPivot('is_completed')
             ->withTimestamps();
     }
 

@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    $academics = Academic::with(['courses'])->get();
+    $academics = Academic::with(['courses.modules.lessons', 'courses.students'])->get();
     $courses = Course::all();
     return Inertia::render('welcome', [
         'academics' => AcademicResource::collection($academics),
@@ -75,12 +75,18 @@ Route::middleware(['auth', 'verified', IsAdmin::class])->group(function () {
 });
 
 Route::middleware(['auth', 'verified', IsStudent::class])->prefix('student')->group(function () {
-    Route::get('dashboard', [StudentController::class, 'index'])
+    Route::get('/dashboard', [StudentController::class, 'index'])
         ->name('student.dashboard');
-    Route::get('academic', [StudentController::class, 'academic'])
+    Route::get('/academic', [StudentController::class, 'academic'])
         ->name('student.academic');
-    Route::get('courses', [StudentController::class, 'courses'])
+    Route::get('/courses', [StudentController::class, 'courses'])
         ->name('student.courses');
+    Route::get('/settings/profile', [StudentController::class, 'edit'])
+        ->name('student.settings.profile');
+    Route::get('/settings/password', [StudentController::class, 'editPassword'])
+        ->name('student.settings.password');
+    Route::get('/{user:name}/profile', [StudentController::class, 'profile'])
+        ->name('student.profile');
 });
 
 Route::middleware(['auth'])->group(function () {

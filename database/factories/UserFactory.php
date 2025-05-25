@@ -68,4 +68,15 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
         ]);
     }
+
+    public function studentMufid()
+    {
+        return $this->state(fn() => [
+            'name' => 'Ahmad Mufid Risqi',
+            'email' => 'mufidmaxsus17@gmail.com',
+            'password' => Hash::make('mufid123'),
+            'email_verified_at' => now(),
+            'role' => 'student',
+        ]);
+    }
 }

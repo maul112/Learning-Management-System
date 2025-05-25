@@ -20,7 +20,7 @@ class AcademicResource extends JsonResource
             'image' => $this->image,
             'description' => $this->description,
             'status' => $this->status,
-            'courses' => CourseResource::collection($this->courses),
+            'courses' => CourseResource::collection($this->whenLoaded('courses')),
         ];
     }
 }
