@@ -36,7 +36,7 @@ export function LearningPathContent() {
           <CardHeader>
             <img
               className="mb-5 h-72 w-full object-cover"
-              src={`/storage/${course.image}`}
+              src={`/storage${course.image}`}
               alt=""
             />
             <CardTitle className="mb-3 cursor-pointer text-xl hover:underline md:text-3xl">
