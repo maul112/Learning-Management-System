@@ -15,7 +15,7 @@ export default function MarkdownEditor({
   return (
     <div data-color-mode="system">
       <MDEditor
-        value={value || 'No '}
+        value={value}
         onChange={onChange}
         height={300}
         preview="live"

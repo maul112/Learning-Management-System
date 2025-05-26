@@ -18,7 +18,7 @@ export function RootNavMain() {
     <div className="flex items-center gap-2">
       <NavMenu title="Learning Path" href="/learning-paths?redirect=true" />
       <NavMenu type="dropdown" title="Langganan" items={langgananItems} />
-      <NavMenu title="Capaian & Dampak" href="/impact" />
+      <NavMenu title="Forum Diskusi" href="/discussions" />
     </div>
   );
 }

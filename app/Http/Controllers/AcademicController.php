@@ -3,30 +3,41 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CourseResource;
+use App\Http\Resources\LessonResource;
 use App\Http\Resources\ModuleResource;
 use App\Models\Course;
-use App\Models\Module;
-use Illuminate\Http\Request;
+use App\Models\Lesson;
 use Inertia\Inertia;
 
 class AcademicController extends Controller
 {
     public function index(Course $course)
     {
-        $course->with('academic');
+        $courses = Course::all();
+        $course->load([
+            'academic',
+            'ratings.student.user',
+            'modules.lessons',
+            'students.user'
+        ]);
 
         return Inertia::render('academics/course', [
+            'courses' => CourseResource::collection($courses),
             'course' => new CourseResource($course),
         ]);
     }
 
-    public function show(Course $course, Module $module)
+    public function show(Course $course, Lesson $lesson)
     {
-        $module->load('lessons');
+        $courses = Course::all();
+        $course->load(['academic', 'ratings']);
+        $lesson->load('module');
 
         return Inertia::render('academics/tutorials', [
+            'courses' => CourseResource::collection($courses),
             'course' => new CourseResource($course),
-            'module' => new ModuleResource($module),
+            'module' => new ModuleResource($lesson->module),
+            'lesson' => new LessonResource($lesson),
         ]);
     }
 }

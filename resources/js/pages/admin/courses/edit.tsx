@@ -4,6 +4,7 @@ import { DragableList } from '@/components/dragable-list';
 import { ImagePreviewInput } from '@/components/form-field-file';
 import { FormFieldHeader } from '@/components/form-field-header';
 import FormFieldInput from '@/components/form-field-input';
+import FormFieldMarkdown from '@/components/form-field-markdown';
 import FormFieldTextarea from '@/components/form-field-textarea';
 import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
@@ -184,11 +185,12 @@ export default function CourseEdit() {
                       }
                       message={errors.information || ''}
                     />
-                    <FormFieldTextarea
+                    <FormFieldMarkdown
                       htmlFor="description"
                       label="Course description"
                       value={data.description}
                       setValue={(value) => setData('description', value)}
+                      onChange={(value) => setData('description', value!)}
                       onFilled={() =>
                         setRequiredFieldsNumber(requiredFieldsNumber + 1)
                       }

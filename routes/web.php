@@ -7,8 +7,10 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminLessonController;
 use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\LearningPathController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\StudentController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsStudent;
@@ -20,7 +22,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    $academics = Academic::with(['courses'])->get();
+    $academics = Academic::with([
+        'courses.modules.lessons',
+        'courses.students'
+    ])->get();
     $courses = Course::all();
     return Inertia::render('welcome', [
         'academics' => AcademicResource::collection($academics),
@@ -38,7 +43,7 @@ Route::controller(LearningPathController::class)->group(function () {
 Route::controller(AcademicController::class)->group(function () {
     Route::get('/academies/{course}', 'index')
         ->name('academics.index');
-    Route::get('/academies/{course}/tutorials/{module}', 'show')
+    Route::get('/academies/{course}/tutorials/{lesson}', 'show')
         ->name('academics.show')
         ->middleware(['auth', IsStudent::class]);
 });
@@ -73,17 +78,26 @@ Route::middleware(['auth', 'verified', IsAdmin::class])->group(function () {
 });
 
 Route::middleware(['auth', 'verified', IsStudent::class])->prefix('student')->group(function () {
-    Route::get('dashboard', [StudentController::class, 'index'])
+    Route::get('/dashboard', [StudentController::class, 'index'])
         ->name('student.dashboard');
-    Route::get('academic', [StudentController::class, 'academic'])
+    Route::get('/academic', [StudentController::class, 'academic'])
         ->name('student.academic');
-    Route::get('courses', [StudentController::class, 'courses'])
+    Route::get('/courses', [StudentController::class, 'courses'])
         ->name('student.courses');
+    Route::get('/settings/profile', [StudentController::class, 'edit'])
+        ->name('student.settings.profile');
+    Route::get('/settings/password', [StudentController::class, 'editPassword'])
+        ->name('student.settings.password');
+    Route::get('/{user:name}/profile', [StudentController::class, 'profile'])
+        ->name('student.profile');
 });
 
-Route::get('/disscussion', function () {
-    return Inertia::render('academics/discussion');
-})->name('disscussion');
+Route::middleware(['auth'])->group(function () {
+    Route::resource('discussions', DiscussionController::class);
+    Route::post('discussions/{discussionthread}/like', [DiscussionController::class, 'like'])->name('discussions.like');
+    Route::resource('replies', ReplyController::class);
+    Route::post('replies/{reply}/like', [ReplyController::class, 'like'])->name('replies.like');
+});
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

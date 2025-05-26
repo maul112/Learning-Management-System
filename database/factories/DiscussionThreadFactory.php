@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,12 @@ class DiscussionThreadFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => $this->faker->sentence(),
+            'content' => $this->faker->paragraph(),
+            'category' => $this->faker->randomElement(['general', 'question', 'announcement']),
+            'likes' => $this->faker->numberBetween(0, 100),
+            'resolved' => $this->faker->boolean(),
+            'user_id' => User::factory(),
         ];
     }
 }

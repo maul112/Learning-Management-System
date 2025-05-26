@@ -1,24 +1,20 @@
-'use client';
-
 import MarkdownViewer from '@/components/markdown-viewer';
 import { Button } from '@/components/ui/button';
 import VideoPlayer from '@/components/video-player';
 import RootSidebarLayout from '@/layouts/root-sidebar-layout';
-import type { Course, Lesson, Module, SharedData } from '@/types';
+import type { Lesson, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 export default function Tutorials() {
-  const { module } = usePage<
-    SharedData & { course: { data: Course }; module: { data: Module } }
-  >().props;
+  const { lesson } = usePage<SharedData & { lesson: { data: Lesson } }>().props;
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
 
   useEffect(() => {
-    if (module.data.lessons && module.data.lessons.length > 0) {
-      setActiveLesson(module.data.lessons[0]);
+    if (lesson) {
+      setActiveLesson(lesson.data);
     }
-  }, [module]);
+  }, [lesson]);
 
   return (
     <RootSidebarLayout

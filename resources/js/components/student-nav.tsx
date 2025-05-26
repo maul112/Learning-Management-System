@@ -24,25 +24,6 @@ const mainNavItems = [
   },
 ];
 
-const navListItems = [
-  {
-    name: 'Dashboard',
-    href: '/student/dashboard',
-  },
-  {
-    name: 'Profile Saya',
-    href: '/student/profile',
-  },
-  {
-    name: 'Settings',
-    href: '/student/settings',
-  },
-  {
-    name: 'Logout',
-    href: '/logout',
-  },
-];
-
 export function StudentNav({
   variant = 'header',
 }: {
@@ -51,6 +32,25 @@ export function StudentNav({
   const { auth } = usePage<SharedData>().props;
   const isMobile = useIsMobile();
   const page = usePage();
+
+  const navListItems = [
+    {
+      name: 'Dashboard',
+      href: '/student/dashboard',
+    },
+    {
+      name: 'Profile Saya',
+      href: `/student/${auth.user.name}/profile`,
+    },
+    {
+      name: 'Settings',
+      href: '/student/settings',
+    },
+    {
+      name: 'Logout',
+      href: '/logout',
+    },
+  ];
 
   if (!page.url.startsWith('/student')) {
     return null;

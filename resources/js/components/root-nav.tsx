@@ -15,31 +15,33 @@ import {
 } from './ui/command';
 import { Input } from './ui/input';
 
-const navListItems = [
-  {
-    name: 'Dashboard',
-    href: '/student/dashboard',
-  },
-  {
-    name: 'Profile',
-    href: '/student/profile',
-  },
-  {
-    name: 'Settings',
-    href: '/student/settings',
-  },
-  {
-    name: 'Logout',
-    href: '/logout',
-  },
-];
-
 export function RootNav() {
   const { auth, courses } = usePage<SharedData>().props;
   const isMobile = useIsMobile();
   const [open, setOpen] = useState<boolean>(false);
   const [search, setSearch] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const navListItems = [
+    {
+      name: 'Dashboard',
+      href: '/student/dashboard',
+    },
+    {
+      name: 'Profile Saya',
+      href: auth.user
+        ? `/student/${auth.user.name}/profile`
+        : '/student/profile',
+    },
+    {
+      name: 'Settings',
+      href: '/student/settings/profile',
+    },
+    {
+      name: 'Logout',
+      href: '/logout',
+    },
+  ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);

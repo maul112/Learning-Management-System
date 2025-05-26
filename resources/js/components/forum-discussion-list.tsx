@@ -7,17 +7,17 @@ import { formatDistanceToNow } from 'date-fns';
 import { CheckCircle2Icon, MessageCircleIcon } from 'lucide-react';
 import UserAvatar from './forum-user-avatar';
 
-interface ForumDiscussionListProps {
+interface DiscussionListProps {
   discussions: Discussion[];
-  selectedDiscussionId: string | null;
-  onSelectDiscussion: (id: string) => void;
+  selectedDiscussionId: number | null;
+  onSelectDiscussion: (id: number) => void;
 }
 
-export default function ForumDiscussionList({
+export default function DiscussionList({
   discussions,
   selectedDiscussionId,
   onSelectDiscussion,
-}: ForumDiscussionListProps) {
+}: DiscussionListProps) {
   if (discussions.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
@@ -27,7 +27,7 @@ export default function ForumDiscussionList({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {discussions.map((discussion) => (
         <div
           key={discussion.id}
@@ -53,11 +53,12 @@ export default function ForumDiscussionList({
             {discussion.title}
           </h3>
           <p className="text-muted-foreground line-clamp-2 text-sm">
-            {discussion.content}
+            {stripMarkdown(discussion.content).substring(0, 100)}
+            {stripMarkdown(discussion.content).length > 100 ? '...' : ''}
           </p>
           <div className="text-muted-foreground mt-2 flex items-center justify-between text-xs">
             <span>
-              {formatDistanceToNow(new Date(discussion.createdAt), {
+              {formatDistanceToNow(new Date(discussion.created_at), {
                 addSuffix: true,
               })}
             </span>
@@ -66,7 +67,7 @@ export default function ForumDiscussionList({
                 <MessageCircleIcon className="mr-1 h-3.5 w-3.5" />
                 {discussion.replies.length}
               </div>
-              {discussion.isSolved && (
+              {discussion.resolved && (
                 <CheckCircle2Icon className="h-3.5 w-3.5 text-green-500" />
               )}
             </div>
@@ -103,4 +104,20 @@ function getCategoryVariant(
     default:
       return 'default';
   }
+}
+
+// Helper function to strip markdown for preview
+function stripMarkdown(markdown: string): string {
+  return markdown
+    .replace(/#+\s+(.*)/g, '$1') // Remove headings
+    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+    .replace(/\*(.*?)\*/g, '$1') // Remove italic
+    .replace(/\[(.*?)\]$$.*?$$/g, '$1') // Remove links
+    .replace(/`{3}[\s\S]*?`{3}/g, '') // Remove code blocks
+    .replace(/`(.*?)`/g, '$1') // Remove inline code
+    .replace(/!\[(.*?)\]$$.*?$$/g, '') // Remove images
+    .replace(/>\s+(.*)/g, '$1') // Remove blockquotes
+    .replace(/\n+/g, ' ') // Replace newlines with spaces
+    .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+    .trim();
 }

@@ -47,13 +47,15 @@ export function CourseDetail({
     (rating) => rating.rating == 5,
   );
 
+  console.log(course);
+
   return (
     <nav className="mt-10">
       <RootContent ref={informationRef}>
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
-          defaultValue="testimoni"
+          defaultValue="description"
         >
           <TabsList className="bg-background">
             {tabTriggers.map((tab) => (
@@ -73,7 +75,7 @@ export function CourseDetail({
             ))}
           </TabsList>
           <Separator className="my-5" />
-          <TabsContent value="description" className="w-1/2">
+          <TabsContent value="description">
             <h2 className="text-2xl font-semibold">Deskripsi</h2>
             <MarkdownViewer content={course.data.description} />
           </TabsContent>

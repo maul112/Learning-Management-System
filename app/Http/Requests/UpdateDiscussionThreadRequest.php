@@ -11,7 +11,7 @@ class UpdateDiscussionThreadRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateDiscussionThreadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'sometimes|string|max:255',
+            'content' => 'sometimes|string',
+            'category' => 'sometimes|string|in:general,question,resource',
+            'resolved' => 'sometimes|boolean',
         ];
     }
 }

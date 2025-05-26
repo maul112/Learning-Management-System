@@ -21,10 +21,9 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role,
             'status' => $this->status,
-            'student' => [
-                'id' => $this->student?->id,
-                'user_id' => $this->student?->user_id,
-            ],
+            'student' => new StudentResource($this->whenLoaded('student')),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

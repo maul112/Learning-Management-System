@@ -39,7 +39,7 @@ class AdminCourseController extends Controller
     {
         $query = $request->query('academic');
 
-        $academic = Academic::find($query);
+        $academic = Academic::find($query)->load(['courses']);
 
         return Inertia::render('admin/courses/create', [
             'success' => session('success'),
@@ -84,7 +84,8 @@ class AdminCourseController extends Controller
      */
     public function edit(Course $course)
     {
-        $academics = Academic::all();
+        $academics = Academic::with(['courses'])->get();
+        $course->load(['academic', 'modules']);
 
         return Inertia::render('admin/courses/edit', [
             'academics' => AcademicResource::collection($academics),

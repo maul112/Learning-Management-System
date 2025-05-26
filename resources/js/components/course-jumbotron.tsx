@@ -169,7 +169,7 @@ export function CourseJumbotron({
               <CardHeader>
                 <Button>
                   <Link
-                    href={`/academies/${course.data.id}/tutorials/${course.data.modules[0].id}`}
+                    href={`/academies/${course.data.id}/tutorials/${course.data.modules[0].lessons[0].id}`}
                   >
                     Belajar Sekarang
                   </Link>

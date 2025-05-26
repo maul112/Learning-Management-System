@@ -19,7 +19,12 @@ class Student extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class);
+        return $this
+            ->belongsTo(
+                \App\Models\User::class,
+                'user_id',
+                'id'
+            );
     }
 
     /**
@@ -35,6 +40,7 @@ class Student extends Model
                 'student_id',
                 'course_id'
             )
+            ->withPivot('is_completed')
             ->withTimestamps();
     }
 
