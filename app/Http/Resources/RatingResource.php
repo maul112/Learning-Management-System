@@ -20,7 +20,7 @@ class RatingResource extends JsonResource
             'comment' => $this->comment,
             'student_id' => $this->student_id,
             'course_id' => $this->course_id,
-            'student' => new UserResource($this->whenLoaded('student')),
+            'student' => new StudentResource($this->whenLoaded('student')),
             'course' => new CourseResource($this->whenLoaded('course')),
         ];
     }

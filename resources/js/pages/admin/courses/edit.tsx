@@ -125,7 +125,7 @@ export default function CourseEdit() {
           <div>
             <h1 className="text-2xl font-bold">Course setup</h1>
             <p className="text-muted-foreground text-sm">
-              Complete all fields ({requiredFieldsNumber - 1}/7)
+              Complete all fields ({requiredFieldsNumber - 1}/6)
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -136,7 +136,7 @@ export default function CourseEdit() {
               className="cursor-pointer"
               onClick={handleChangeStatus}
               disabled={
-                requiredFieldsNumber < 7 ||
+                requiredFieldsNumber < 7 &&
                 course.data.modules.filter(
                   (module) => module.status === 'published',
                 ).length === 0
@@ -304,9 +304,6 @@ export default function CourseEdit() {
                       name="price"
                       value={String(data.price)}
                       setValue={(value) => setData('price', Number(value))}
-                      onFilled={() =>
-                        setRequiredFieldsNumber(requiredFieldsNumber + 1)
-                      }
                       message={errors.price || ''}
                     />
                   </CardContent>

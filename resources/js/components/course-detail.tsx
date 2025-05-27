@@ -42,12 +42,11 @@ export function CourseDetail({
 }) {
   const getInitials = useInitials();
   const { course } = usePage<SharedData & { course: { data: Course } }>().props;
-  const [activeTab, setActiveTab] = useState<string>('testimoni');
+  const [activeTab, setActiveTab] = useState<string>('description');
   const courseFilteredRatings = course.data.ratings.filter(
     (rating) => rating.rating == 5,
   );
 
-  console.log(course);
 
   return (
     <nav className="mt-10">

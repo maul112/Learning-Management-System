@@ -41,10 +41,7 @@ export default function FormFieldInput({
   const handleSave = () => {
     setEditMode(false);
     setValue(inputValue);
-    if (
-      (wasEmpty && inputValue.trim() !== '') ||
-      (wasEmpty && Number(inputValue) == 0)
-    ) {
+    if (wasEmpty && inputValue.trim() !== '') {
       onFilled?.();
     }
   };
@@ -55,9 +52,7 @@ export default function FormFieldInput({
   };
 
   return (
-    <Card
-      className={cn('grid gap-2', message && 'border-red-500', className)}
-    >
+    <Card className={cn('grid gap-2', message && 'border-red-500', className)}>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <Label htmlFor={htmlFor} className="text-xl">

@@ -13,7 +13,8 @@ export function CourseOptionCard({
     data: Course;
   };
 }) {
-  const data = usePage<SharedData>().props.courses.data;
+  const { courses } = usePage<SharedData & { courses: { data: Course[] } }>()
+    .props;
 
   return (
     <React.Fragment>
@@ -22,8 +23,8 @@ export function CourseOptionCard({
         {course.data.academic.title}
       </p>
       <div className="grid grid-cols-2">
-        <CourseStepCard data={data} course={course} />
-        <CourseStepCard data={data} course={course} isNext />
+        <CourseStepCard data={courses.data} course={course} />
+        <CourseStepCard data={courses.data} course={course} isNext />
       </div>
       <Separator className="my-4" />
       <div className="flex items-center justify-end">

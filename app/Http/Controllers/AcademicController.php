@@ -13,7 +13,7 @@ class AcademicController extends Controller
 {
     public function index(Course $course)
     {
-        $courses = Course::all();
+        $courses = Course::with(['ratings'])->get();
         $course->load([
             'academic',
             'ratings.student.user',

@@ -18,7 +18,6 @@ import {
   BookOpenTextIcon,
   Folder,
   LayoutGrid,
-  MessageSquareCode,
   Star,
   UsersRound,
 } from 'lucide-react';
@@ -41,15 +40,10 @@ const mainNavItems: NavItem[] = [
     icon: BookOpenTextIcon,
   },
   {
-    title: 'Discussions',
-    href: '/discussions',
-    icon: MessageSquareCode,
-  },
-  {
     title: 'Ratings',
     href: '/ratings',
     icon: Star,
-  }
+  },
 ];
 
 const mainNavGroupItems: NavGroup[] = [
