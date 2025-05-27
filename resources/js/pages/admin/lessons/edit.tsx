@@ -48,7 +48,6 @@ export default function LessonsEdit() {
 
   const { data, setData, post, processing, errors } = useForm({
     title: lesson.data.title,
-    order: lesson.data.order,
     content: lesson.data.content,
     video: lesson.data.video as File | string,
     _method: 'put',
@@ -102,7 +101,7 @@ export default function LessonsEdit() {
           <div>
             <h1 className="text-2xl font-bold">Lesson setup</h1>
             <p className="text-muted-foreground text-sm">
-              Complete all fields ({requiredFieldsNumber - 2}/3)
+              Complete all fields ({requiredFieldsNumber - 1}/2)
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -153,18 +152,6 @@ export default function LessonsEdit() {
               onChange={(value) => setData('content', value || '')}
               onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
               message={errors.content || ''}
-            />
-            <FormFieldInput
-              htmlFor="order"
-              label="Order"
-              type="number"
-              id="order"
-              name="order"
-              placeholder="Enter lesson order"
-              value={String(data.order)}
-              setValue={(value) => setData('order', Number(value))}
-              onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
-              message={errors.order || ''}
             />
             <Button
               type="submit"

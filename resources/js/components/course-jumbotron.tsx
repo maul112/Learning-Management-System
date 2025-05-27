@@ -51,6 +51,7 @@ export function CourseJumbotron({
   syllabusRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const { course } = usePage<SharedData & { course: { data: Course } }>().props;
+  console.log(course.data);
   const getAverage = useAverage();
 
   return (

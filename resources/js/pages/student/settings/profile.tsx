@@ -7,7 +7,6 @@ import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
 import { RootContent } from '@/components/root-content';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -128,36 +127,45 @@ export default function Profile({
 
                   <form onSubmit={submit} className="space-y-6">
                     <div className="grid gap-2">
-                      <Label htmlFor="avatar">Avatar</Label>
-                      <Avatar className="h-16 w-16 overflow-hidden rounded-full">
-                        <AvatarImage
-                          src={
-                            profilePhoto
-                              ? URL.createObjectURL(profilePhoto)
-                              : auth.user.avatar
-                                ? `/storage/${auth.user.avatar}`
-                                : undefined
-                          }
-                          className="object-cover"
-                        />
-
-                        <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                          {initials(data.name)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <Input
-                        id="avatar"
-                        type="file"
-                        className="mt-1 block w-full"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setProfilePhoto(file);
-                            setData('avatar', file);
-                          }
-                        }}
-                      />
+                      <div className="flex gap-3">
+                        <div className="grid gap-2">
+                          <Label htmlFor="avatar">Avatar</Label>
+                          <div className="bg-muted h-28 w-28">
+                            {data.avatar ? (
+                              <img
+                                src={URL.createObjectURL(data.avatar)}
+                                alt={data.name}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <img
+                                src={`/storage/${auth.user.avatar}`}
+                                alt={auth.user.name}
+                                className="h-full w-full object-cover"
+                              />
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex w-full flex-col gap-2">
+                          <Input
+                            id="avatar"
+                            type="file"
+                            className="mt-5 w-1/3"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setProfilePhoto(file);
+                                setData('avatar', file);
+                              }
+                            }}
+                          />
+                          <p className="text-muted-foreground w-1/3 text-xs">
+                            Gambar Profile Anda sebaiknya memiliki rasio 1.1 dan
+                            berukuran tidak lebih dari 2MB
+                          </p>
+                        </div>
+                      </div>
 
                       <InputError className="mt-2" message={errors.avatar} />
                     </div>
