@@ -99,7 +99,7 @@ export interface Course {
   modules: Module[];
   students: User[];
   ratings: Rating[];
-  is_completed?: boolean;
+  is_completed?: number;
 }
 
 export interface Module {
@@ -119,6 +119,15 @@ export interface Lesson {
   video: string;
   status: string;
   module: Module;
+  quizes: Quiz[];
+}
+
+export interface Quiz {
+  id: number;
+  questions: string;
+  options: string;
+  answer: string;
+  lesson: Lesson;
 }
 
 export interface Rating {

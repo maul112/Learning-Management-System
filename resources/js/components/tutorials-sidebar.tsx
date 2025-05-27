@@ -21,7 +21,7 @@ export function TutorialsSidebar({
 }: TutorialsSidebarProps) {
   return (
     <Sidebar
-      variant="sidebar"
+      variant="inset"
       collapsible="icon"
       className="border-border border-r"
     >

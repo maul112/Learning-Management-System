@@ -13,8 +13,8 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
-import { Course, Lesson, Module, SharedData } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { Course, Lesson, SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, ChevronDown } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -27,15 +27,16 @@ export function TutorialsSidebarMain({
   activeLesson,
   setActiveLesson,
 }: TutorialsSidebarMainProps) {
-  const { course, module } = usePage<
-    SharedData & { course: { data: Course }; module: { data: Module } }
-  >().props;
+  const { course } = usePage<SharedData & { course: { data: Course } }>().props;
 
   useEffect(() => {
-    if (module.data.lessons && module.data.lessons.length > 0) {
-      setActiveLesson(module.data.lessons[0]);
+    if (
+      course.data.modules[0].lessons[0] &&
+      course.data.modules[0].lessons.length > 0
+    ) {
+      setActiveLesson(course.data.modules[0].lessons[0]);
     }
-  }, [module, setActiveLesson]);
+  }, [course, setActiveLesson]);
 
   return (
     <SidebarGroup>
@@ -46,27 +47,39 @@ export function TutorialsSidebarMain({
         {course.data.modules.map((moduleItem) => (
           <Collapsible
             key={moduleItem.id}
-            defaultOpen={moduleItem.id === module.data.id}
+            defaultOpen
             className="group/collapsible"
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton className="w-full px-4 py-2">
+                <SidebarMenuButton className="w-full cursor-pointer px-4 py-2">
                   <BookOpen className="h-4 w-4 shrink-0" />
                   <span className="truncate">{moduleItem.title}</span>
                   <ChevronDown className="ml-auto h-4 w-4 shrink-0 transition-transform group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
+                <SidebarGroupLabel>
+                  <span className="text-muted-foreground px-4 text-xs font-medium">
+                    Lessons
+                  </span>
+                </SidebarGroupLabel>
                 <SidebarMenuSub>
                   {moduleItem.lessons?.map((lesson) => (
                     <SidebarMenuSubItem key={lesson.id}>
                       <SidebarMenuSubButton
+                        size="md"
                         onClick={() => setActiveLesson(lesson)}
                         isActive={activeLesson?.id === lesson.id}
-                        className="py-1.5 pr-2 pl-4 text-sm"
+                        className="cursor-pointer py-1.5 pr-2 pl-4 text-sm"
+                        asChild
                       >
-                        <span className="truncate">{lesson.title}</span>
+                        <Link
+                          href={`/academies/${lesson.module.course.id}/tutorials/${lesson.id}`}
+                          className="truncate"
+                        >
+                          {lesson.title}
+                        </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}

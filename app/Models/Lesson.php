@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Lesson extends Model
@@ -26,8 +27,8 @@ class Lesson extends Model
         return $this->belongsTo(\App\Models\Module::class);
     }
 
-    public function quiz(): HasOne
+    public function quizes(): HasMany
     {
-        return $this->hasOne(\App\Models\Quiz::class);
+        return $this->hasMany(\App\Models\Quiz::class);
     }
 }

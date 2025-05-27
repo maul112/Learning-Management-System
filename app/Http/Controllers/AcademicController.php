@@ -30,13 +30,18 @@ class AcademicController extends Controller
     public function show(Course $course, Lesson $lesson)
     {
         $courses = Course::all();
-        $course->load(['academic', 'ratings']);
-        $lesson->load('module');
+        $course->load([
+            'academic',
+            'ratings',
+            'modules',
+            'students.user',
+            'modules.lessons.module.course',
+        ]);
+        $lesson->load(['module.lessons', 'module.course', 'quizes']);
 
         return Inertia::render('academics/tutorials', [
             'courses' => CourseResource::collection($courses),
             'course' => new CourseResource($course),
-            'module' => new ModuleResource($lesson->module),
             'lesson' => new LessonResource($lesson),
         ]);
     }
