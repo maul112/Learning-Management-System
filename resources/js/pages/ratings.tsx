@@ -1,5 +1,6 @@
 import { RatingsSection } from '@/components/ratings-section';
 import { RootContent } from '@/components/root-content';
+import { RootFooter } from '@/components/root-footer';
 import RootLayout from '@/layouts/root-layout';
 import { Academic, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
@@ -18,6 +19,7 @@ export default function Ratings() {
         ))}
         <div className="bg-accent fixed  bottom-10 z-50 w-80"></div>
       </RootContent>
+      <RootFooter />
     </RootLayout>
   );
 }

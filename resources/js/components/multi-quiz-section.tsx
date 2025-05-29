@@ -1,12 +1,10 @@
-'use client';
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import type { Quiz, QuizProgress } from '@/types';
+import type { Quiz } from '@/types';
 import { useForm } from '@inertiajs/react';
 import {
   BookOpenIcon,
@@ -14,387 +12,410 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   RefreshCwIcon,
+  SendIcon,
   XCircleIcon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-interface MultipleQuizSectionProps {
-  quizzes: Quiz[];
-  lessonId: number;
-  onAllQuizzesComplete?: (allPassed: boolean) => void;
+interface QuizProgress {
+  quiz_id: number;
+  is_completed: boolean;
+  is_correct: boolean;
+  selected_answer?: string | null;
+  correct_answer?: string | null;
 }
 
-interface QuizSubmission {
-  quiz_id: number;
-  selected_answer: string;
+interface MultipleQuizSectionProps {
+  quizzes: Quiz[];
 }
 
 export default function MultipleQuizSection({
   quizzes,
-  lessonId,
-  onAllQuizzesComplete,
 }: MultipleQuizSectionProps) {
-  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
-  const [quizProgress, setQuizProgress] = useState<
-    Record<number, QuizProgress>
-  >({});
-  const [selectedAnswer, setSelectedAnswer] = useState<string>('');
+  const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
+  const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
+  const [quizResults, setQuizResults] = useState<Record<number, QuizProgress>>(
+    {},
+  );
+  const [allSubmitted, setAllSubmitted] = useState(false);
 
-  const { data, setData, post, processing, reset } = useForm<QuizSubmission>({
-    quiz_id: 0,
-    selected_answer: '',
+  const { setData, post, processing, reset } = useForm({
+    submissions: [] as Array<{
+      quiz_id: number;
+      selected_answer: string | null;
+    }>,
   });
 
   const currentQuiz = quizzes[currentQuizIndex];
-  const currentProgress = quizProgress[currentQuiz?.id];
-
-  // Initialize quiz progress
+  const currentQuizResult = currentQuiz
+    ? quizResults[currentQuiz.id]
+    : undefined;
   useEffect(() => {
-    const initialProgress: Record<number, QuizProgress> = {};
+    const initialResults: Record<number, QuizProgress> = {};
+    const initialUserAnswers: Record<number, string> = {};
     quizzes.forEach((quiz) => {
-      initialProgress[quiz.id] = {
+      initialResults[quiz.id] = {
         quiz_id: quiz.id,
         is_completed: false,
         is_correct: false,
+        selected_answer: null,
       };
+      initialUserAnswers[quiz.id] = '';
     });
-    setQuizProgress(initialProgress);
+    setQuizResults(initialResults);
+    setUserAnswers(initialUserAnswers);
+    setAllSubmitted(false);
+    setCurrentQuizIndex(0);
+    reset();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizzes]);
 
-  // Update form data when current quiz changes
-  useEffect(() => {
-    if (currentQuiz) {
-      setData('quiz_id', currentQuiz.id);
-      setSelectedAnswer(currentProgress?.selected_answer || '');
-    }
-  }, [currentQuiz, currentProgress]);
-
-  // Check if all quizzes are completed and passed
-  useEffect(() => {
-    const allCompleted = quizzes.every(
-      (quiz) => quizProgress[quiz.id]?.is_completed,
-    );
-    const allPassed = quizzes.every(
-      (quiz) => quizProgress[quiz.id]?.is_correct,
-    );
-
-    if (allCompleted) {
-      onAllQuizzesComplete?.(allPassed);
-    }
-  }, [quizProgress, quizzes, onAllQuizzesComplete]);
-
-  const getCompletedQuizzesCount = () => {
-    return Object.values(quizProgress).filter(
-      (progress) => progress.is_completed,
-    ).length;
-  };
-
-  const getPassedQuizzesCount = () => {
-    return Object.values(quizProgress).filter((progress) => progress.is_correct)
-      .length;
-  };
-
-  const getProgressPercentage = () => {
-    return (getCompletedQuizzesCount() / quizzes.length) * 100;
-  };
-
-  // Parse options from JSON string
-  const options =
-    typeof currentQuiz?.options === 'string'
-      ? JSON.parse(currentQuiz.options)
-      : currentQuiz?.options || [];
-
   const handleAnswerSelect = (value: string) => {
-    if (currentProgress?.is_completed) return;
-    setSelectedAnswer(value);
-    setData('selected_answer', value);
+    if (allSubmitted || !currentQuiz) return;
+
+    setUserAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [currentQuiz.id]: value,
+    }));
+
+    setData((prevData) => {
+      const existingSubmissionIndex = prevData.submissions.findIndex(
+        (sub) => sub.quiz_id === currentQuiz.id,
+      );
+
+      if (existingSubmissionIndex > -1) {
+        const updatedSubmissions = [...prevData.submissions];
+        updatedSubmissions[existingSubmissionIndex] = {
+          quiz_id: currentQuiz.id,
+          selected_answer: value,
+        };
+        return {
+          ...prevData,
+          submissions: updatedSubmissions,
+        };
+      } else {
+        return {
+          ...prevData,
+          submissions: [
+            ...prevData.submissions,
+            { quiz_id: currentQuiz.id, selected_answer: value },
+          ],
+        };
+      }
+    });
   };
 
-  const handleSubmit = () => {
-    if (!selectedAnswer || !currentQuiz) return;
+  const handleSubmitAll = () => {
+    const finalSubmissions = quizzes.map((quiz) => ({
+      quiz_id: quiz.id,
+      selected_answer: userAnswers[quiz.id] || null,
+    }));
 
-    post(route('quiz.submit'), {
-      onSuccess: (response: any) => {
-        const isCorrect = selectedAnswer === currentQuiz.answer;
+    setData('submissions', finalSubmissions);
 
-        setQuizProgress((prev) => ({
-          ...prev,
-          [currentQuiz.id]: {
-            quiz_id: currentQuiz.id,
-            is_completed: true,
-            is_correct: isCorrect,
-            selected_answer: selectedAnswer,
-          },
-        }));
-      },
+    post(route('academics.quizzes.submit'), {
       onError: (errors) => {
         console.error('Quiz submission error:', errors);
       },
     });
   };
 
-  const handleRetry = () => {
-    if (!currentQuiz) return;
-
-    setSelectedAnswer('');
-    setQuizProgress((prev) => ({
-      ...prev,
-      [currentQuiz.id]: {
-        quiz_id: currentQuiz.id,
+  const handleRetryAll = () => {
+    setUserAnswers({});
+    const initialResults: Record<number, QuizProgress> = {};
+    quizzes.forEach((quiz) => {
+      initialResults[quiz.id] = {
+        quiz_id: quiz.id,
         is_completed: false,
         is_correct: false,
-      },
-    }));
+        selected_answer: null,
+      };
+    });
+    setQuizResults(initialResults);
+    setCurrentQuizIndex(0);
+    setAllSubmitted(false);
     reset();
   };
 
   const handleNextQuiz = () => {
     if (currentQuizIndex < quizzes.length - 1) {
       setCurrentQuizIndex(currentQuizIndex + 1);
-      setSelectedAnswer('');
     }
   };
 
   const handlePreviousQuiz = () => {
     if (currentQuizIndex > 0) {
       setCurrentQuizIndex(currentQuizIndex - 1);
-      setSelectedAnswer('');
     }
   };
 
-  const getOptionLabel = (index: number) => {
-    return String.fromCharCode(65 + index); // A, B, C, D...
+  const getOptionLabel = (index: number) => String.fromCharCode(65 + index);
+
+  const options =
+    currentQuiz && typeof currentQuiz.options === 'string'
+      ? JSON.parse(currentQuiz.options)
+      : currentQuiz?.options || [];
+
+  const getAnsweredQuizzesCount = () => {
+    return Object.keys(userAnswers).filter(
+      (key) =>
+        userAnswers[Number(key)] !== null &&
+        userAnswers[Number(key)] !== undefined &&
+        userAnswers[Number(key)] !== '',
+    ).length;
   };
 
+  const getProgressPercentage = () => {
+    return (getAnsweredQuizzesCount() / quizzes.length) * 100;
+  };
+
+  if (quizzes.length === 0) return <p>Tidak ada kuis untuk lesson ini.</p>;
   if (!currentQuiz) return null;
 
   return (
     <Card className="mt-8">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+        <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <BookOpenIcon className="h-5 w-5" />
-            Quiz Section
+            Kuis: {currentQuiz.questions} (Soal {currentQuizIndex + 1} dari{' '}
+            {quizzes.length})
           </CardTitle>
-          <Badge variant="outline">
-            {getCompletedQuizzesCount()} / {quizzes.length} Completed
-          </Badge>
+          {!allSubmitted && (
+            <Badge variant="outline">
+              {getAnsweredQuizzesCount()} / {quizzes.length} terjawab
+            </Badge>
+          )}
         </div>
-
-        {/* Overall Progress */}
-        <div className="space-y-2">
-          <div className="text-muted-foreground flex justify-between text-sm">
-            <span>Overall Progress</span>
-            <span>{Math.round(getProgressPercentage())}%</span>
+        {!allSubmitted && (
+          <div className="mt-2 space-y-1">
+            <div className="text-muted-foreground flex justify-between text-xs">
+              <span>Progress Menjawab</span>
+              <span>{Math.round(getProgressPercentage())}%</span>
+            </div>
+            <Progress value={getProgressPercentage()} className="h-2" />
           </div>
-          <Progress value={getProgressPercentage()} className="h-2" />
-          <div className="text-muted-foreground text-xs">
-            {getPassedQuizzesCount()} of {quizzes.length} quizzes passed
-          </div>
-        </div>
+        )}
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {/* Quiz Navigation */}
-        <div className="flex items-center justify-between">
+        {/* Navigasi Nomor Soal */}
+        <div className="my-4 flex flex-wrap items-center justify-center gap-2">
+          {quizzes.map((quiz, index) => (
+            <Button
+              key={quiz.id}
+              onClick={() => setCurrentQuizIndex(index)}
+              disabled={allSubmitted && quizResults[quiz.id]?.is_completed}
+              variant={
+                index === currentQuizIndex && !allSubmitted
+                  ? 'secondary'
+                  : allSubmitted && quizResults[quiz.id]?.is_completed
+                    ? quizResults[quiz.id]?.is_correct
+                      ? 'default'
+                      : 'destructive'
+                    : userAnswers[quiz.id]
+                      ? 'default'
+                      : 'outline'
+              }
+            >
+              {index + 1}
+            </Button>
+          ))}
+        </div>
+
+        {/* Pertanyaan dan Opsi Jawaban */}
+        <p className="text-base font-medium">{currentQuiz.questions}</p>
+        <RadioGroup
+          value={userAnswers[currentQuiz.id] || ''}
+          onValueChange={handleAnswerSelect}
+          disabled={allSubmitted || (currentQuizResult?.is_completed ?? false)}
+          className="space-y-3"
+        >
+          {options.map((option: string, index: number) => {
+            const optionKey = getOptionLabel(index);
+            const isSelected = userAnswers[currentQuiz.id] === optionKey;
+            const isCorrectAnswerAfterSubmit =
+              allSubmitted &&
+              currentQuizResult?.is_completed &&
+              currentQuiz.answer === optionKey;
+            const isSelectedAndIncorrectAfterSubmit =
+              allSubmitted &&
+              currentQuizResult?.is_completed &&
+              isSelected &&
+              !currentQuizResult.is_correct;
+
+            return (
+              <div
+                key={index}
+                className={`flex items-center space-x-3 rounded-lg border p-4 transition-all ${
+                  allSubmitted && currentQuizResult?.is_completed
+                    ? isCorrectAnswerAfterSubmit
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                      : isSelectedAndIncorrectAfterSubmit
+                        ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                        : 'border-muted dark:border-slate-700'
+                    : isSelected
+                      ? 'border-primary bg-primary/10 ring-primary/50 ring-2'
+                      : 'border-muted hover:border-primary/50 dark:hover:border-primary/60 dark:border-slate-700' // Default sebelum submit
+                } ${allSubmitted ? 'cursor-default' : 'cursor-pointer'} `}
+                onClick={() =>
+                  !allSubmitted &&
+                  !currentQuizResult?.is_completed &&
+                  handleAnswerSelect(option)
+                }
+              >
+                <RadioGroupItem
+                  value={option}
+                  id={`option-${currentQuiz.id}-${index}`}
+                  disabled={
+                    allSubmitted || (currentQuizResult?.is_completed ?? false)
+                  }
+                />
+                <Label
+                  htmlFor={`option-${currentQuiz.id}-${index}`}
+                  className={`flex-1 font-medium ${allSubmitted ? 'cursor-default' : 'cursor-pointer'}`}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      {optionKey}
+                    </Badge>
+                    {option}
+                  </span>
+                </Label>
+                {allSubmitted && currentQuizResult?.is_completed && (
+                  <>
+                    {isCorrectAnswerAfterSubmit && (
+                      <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                    )}
+                    {isSelectedAndIncorrectAfterSubmit && (
+                      <XCircleIcon className="h-5 w-5 text-red-500" />
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </RadioGroup>
+
+        {/* Tombol Navigasi Soal & Submit/Retry */}
+        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-between">
           <Button
             variant="outline"
-            size="sm"
             onClick={handlePreviousQuiz}
-            disabled={currentQuizIndex === 0}
+            disabled={currentQuizIndex === 0 || allSubmitted}
+            className="w-full sm:w-auto"
           >
             <ChevronLeftIcon className="mr-1 h-4 w-4" />
-            Previous
+            Soal Sebelumnya
           </Button>
 
-          <div className="flex items-center gap-2">
-            {quizzes.map((quiz, index) => (
-              <button
-                key={quiz.id}
-                onClick={() => setCurrentQuizIndex(index)}
-                className={`h-8 w-8 rounded-full border-2 text-xs font-medium transition-all ${
-                  index === currentQuizIndex
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : quizProgress[quiz.id]?.is_completed
-                      ? quizProgress[quiz.id]?.is_correct
-                        ? 'border-green-500 bg-green-500 text-white'
-                        : 'border-red-500 bg-red-500 text-white'
-                      : 'border-muted-foreground bg-background hover:border-primary'
-                } `}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
+          {!allSubmitted && currentQuizIndex === quizzes.length - 1 && (
+            <Button
+              onClick={handleSubmitAll}
+              disabled={
+                processing || getAnsweredQuizzesCount() !== quizzes.length
+              } // Disable jika belum semua dijawab
+              className="order-first w-full bg-green-600 hover:bg-green-700 sm:order-none sm:w-auto"
+              size="lg"
+            >
+              <SendIcon className="mr-2 h-4 w-4" />
+              {processing ? 'Mengirim...' : 'Kumpulkan Semua Jawaban'}
+            </Button>
+          )}
 
           <Button
             variant="outline"
-            size="sm"
             onClick={handleNextQuiz}
-            disabled={currentQuizIndex === quizzes.length - 1}
+            disabled={currentQuizIndex === quizzes.length - 1 || allSubmitted}
+            className="w-full sm:w-auto"
           >
-            Next
+            Soal Berikutnya
             <ChevronRightIcon className="ml-1 h-4 w-4" />
           </Button>
         </div>
 
-        {/* Current Quiz */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            {currentProgress?.is_completed && (
-              <Badge
-                variant={currentProgress.is_correct ? 'default' : 'destructive'}
-              >
-                {currentProgress.is_correct ? 'Passed' : 'Failed'}
-              </Badge>
+        {/* Tampilkan hasil individual setelah submit semua */}
+        {allSubmitted && currentQuizResult?.is_completed && (
+          <div
+            className={`mt-4 rounded-lg border-2 p-4 text-center ${
+              currentQuizResult.is_correct
+                ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                : 'border-red-500 bg-red-50 dark:bg-red-900/20'
+            }`}
+          >
+            {currentQuizResult.is_correct ? (
+              <div className="flex items-center justify-center gap-2 text-green-700 dark:text-green-400">
+                <CheckCircleIcon className="h-6 w-6" />
+                <span className="text-lg font-semibold">Jawaban Benar!</span>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <div className="flex items-center justify-center gap-2 text-red-700 dark:text-red-400">
+                  <XCircleIcon className="h-6 w-6" />
+                  <span className="text-lg font-semibold">Jawaban Salah</span>
+                </div>
+                {currentQuiz.answer && (
+                  <p className="text-sm text-red-600 dark:text-red-400">
+                    Jawaban yang benar: <strong>{currentQuiz.answer}</strong>
+                  </p>
+                )}
+              </div>
             )}
           </div>
+        )}
 
-          <p className="text-base">{currentQuiz.questions}</p>
-
-          {/* Options */}
-          <RadioGroup
-            value={selectedAnswer}
-            onValueChange={handleAnswerSelect}
-            disabled={currentProgress?.is_completed}
-            className="space-y-3"
-          >
-            {options.map((option: string, index: number) => {
-              const optionKey = getOptionLabel(index);
-              const isSelected = selectedAnswer === optionKey;
-              const isCorrectAnswer = currentQuiz.answer === optionKey;
-
-              return (
-                <div
-                  key={index}
-                  className={`flex items-center space-x-3 rounded-lg border p-4 transition-all ${
-                    currentProgress?.is_completed
-                      ? isCorrectAnswer
-                        ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
-                        : isSelected && !isCorrectAnswer
-                          ? 'border-red-500 bg-red-50 dark:bg-red-950/20'
-                          : 'border-muted'
-                      : isSelected
-                        ? 'border-primary bg-primary/5'
-                        : 'border-muted hover:border-primary/50'
-                  } `}
-                >
-                  <RadioGroupItem
-                    value={optionKey}
-                    id={`option-${index}`}
-                    disabled={currentProgress?.is_completed}
-                  />
-                  <Label
-                    htmlFor={`option-${index}`}
-                    className="flex-1 cursor-pointer font-medium"
-                  >
-                    <span className="inline-flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
-                        {optionKey}
-                      </Badge>
-                      {option}
-                    </span>
-                  </Label>
-
-                  {/* Show correct/incorrect icons after submission */}
-                  {currentProgress?.is_completed && (
-                    <>
-                      {isCorrectAnswer && (
-                        <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                      )}
-                      {isSelected && !isCorrectAnswer && (
-                        <XCircleIcon className="h-5 w-5 text-red-500" />
-                      )}
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </RadioGroup>
-        </div>
-
-        {/* Submit Button */}
-        {!currentProgress?.is_completed && (
+        {/* Tombol Retry Semua Kuis setelah semua disubmit */}
+        {allSubmitted && (
           <Button
-            onClick={handleSubmit}
-            disabled={!selectedAnswer || processing}
-            className="w-full"
+            onClick={handleRetryAll}
+            variant="outline"
+            className="mt-6 w-full"
             size="lg"
           >
-            {processing ? 'Submitting...' : 'Submit Answer'}
+            <RefreshCwIcon className="mr-2 h-4 w-4" />
+            Ulangi Semua Kuis
           </Button>
         )}
 
-        {/* Results */}
-        {currentProgress?.is_completed && (
-          <div className="space-y-4">
-            <div
-              className={`rounded-lg border-2 p-4 text-center ${
-                currentProgress.is_correct
-                  ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
-                  : 'border-red-500 bg-red-50 dark:bg-red-950/20'
-              } `}
-            >
-              {currentProgress.is_correct ? (
-                <div className="flex items-center justify-center gap-2 text-green-700 dark:text-green-400">
-                  <CheckCircleIcon className="h-6 w-6" />
-                  <span className="text-lg font-semibold">
-                    Correct! Well done!
-                  </span>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-center gap-2 text-red-700 dark:text-red-400">
-                    <XCircleIcon className="h-6 w-6" />
-                    <span className="text-lg font-semibold">Incorrect</span>
-                  </div>
-                  <p className="text-sm text-red-600 dark:text-red-400">
-                    The correct answer is: <strong>{currentQuiz.answer}</strong>
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Retry Button for incorrect answers */}
-            {!currentProgress.is_correct && (
-              <Button
-                onClick={handleRetry}
-                variant="outline"
-                className="w-full"
-                size="lg"
-              >
-                <RefreshCwIcon className="mr-2 h-4 w-4" />
-                Try Again
-              </Button>
-            )}
-          </div>
-        )}
-
-        {/* Quiz Summary */}
-        {getCompletedQuizzesCount() === quizzes.length && (
-          <div className="bg-muted/20 mt-6 rounded-lg border p-4">
-            <h4 className="mb-2 font-semibold">Quiz Summary</h4>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+        {/* Ringkasan Kuis setelah semua disubmit */}
+        {allSubmitted && (
+          <div className="bg-muted/30 dark:bg-muted/10 mt-8 rounded-lg border p-4 dark:border-slate-700">
+            <h4 className="mb-3 text-lg font-semibold">Ringkasan Hasil Kuis</h4>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
               <div>
-                <span className="text-muted-foreground">Total Quizzes:</span>
+                <span className="text-muted-foreground">Total Soal:</span>
                 <span className="ml-2 font-medium">{quizzes.length}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Passed:</span>
-                <span className="ml-2 font-medium text-green-600">
-                  {getPassedQuizzesCount()}
+                <span className="text-muted-foreground">Benar:</span>
+                <span className="ml-2 font-medium text-green-600 dark:text-green-400">
+                  {
+                    Object.values(quizResults).filter((r) => r.is_correct)
+                      .length
+                  }
                 </span>
               </div>
               <div>
-                <span className="text-muted-foreground">Failed:</span>
-                <span className="ml-2 font-medium text-red-600">
-                  {getCompletedQuizzesCount() - getPassedQuizzesCount()}
+                <span className="text-muted-foreground">Salah:</span>
+                <span className="ml-2 font-medium text-red-600 dark:text-red-400">
+                  {
+                    Object.values(quizResults).filter(
+                      (r) => r.is_completed && !r.is_correct,
+                    ).length
+                  }
                 </span>
               </div>
               <div>
-                <span className="text-muted-foreground">Success Rate:</span>
+                <span className="text-muted-foreground">Persentase Benar:</span>
                 <span className="ml-2 font-medium">
-                  {Math.round((getPassedQuizzesCount() / quizzes.length) * 100)}
+                  {quizzes.length > 0
+                    ? Math.round(
+                        (Object.values(quizResults).filter((r) => r.is_correct)
+                          .length /
+                          quizzes.length) *
+                          100,
+                      )
+                    : 0}
                   %
                 </span>
               </div>

@@ -7,32 +7,29 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Quiz extends Model
+class SubmissionHistory extends Model
 {
-    /** @use HasFactory<\Database\Factories\QuizFactory> */
+    /** @use HasFactory<\Database\Factories\SubmissionHistoryFactory> */
     use HasFactory;
 
     protected $fillable = [
-        'question',
-        'options',
-        'answer',
         'lesson_id',
+        'student_id',
+        'status',
+        'grade',
     ];
 
-    /**
-     * Get the lesson that owns the quiz.
-     * @return BelongsTo<Lesson, Quiz>
-     */
     public function lesson(): BelongsTo
     {
         return $this->belongsTo(\App\Models\Lesson::class);
     }
 
-    /**
-     * Get the student quiz's submissions.
-     * @return HasMany<Submission, Quiz>
-     */
-    public function studentSubmissions(): HasMany
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Student::class);
+    }
+
+    public function submissions(): HasMany
     {
         return $this->hasMany(\App\Models\Submission::class);
     }

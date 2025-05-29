@@ -46,6 +46,8 @@ Route::controller(AcademicController::class)->group(function () {
     Route::get('/academies/{course}/tutorials/{lesson}', 'show')
         ->name('academics.show')
         ->middleware(['auth', IsStudent::class]);
+    Route::post('/academies/quizzes/submit', 'quizzesSubmit')
+        ->name('academics.quizzes.submit');
 });
 
 Route::controller(RatingController::class)->group(function () {

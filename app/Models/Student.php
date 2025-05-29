@@ -59,6 +59,20 @@ class Student extends Model
     }
 
     /**
+     * Get the user's quiz submissions as a student.
+     * @return HasMany<SubmissionHistory, student>
+     */
+    public function studentQuizSubmissionsHistory(): HasMany
+    {
+        return $this
+            ->hasMany(
+                \App\Models\SubmissionHistory::class,
+                'student_id',
+                'id'
+            );
+    }
+
+    /**
      * Get the user's certificates as a student.
      * @return BelongsToMany<Course, student, \Illuminate\Database\Eloquent\Relations\Pivot>
      */

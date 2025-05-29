@@ -15,9 +15,8 @@ class RatingController extends Controller
     {
         $courses = Course::all();
         $academics = Academic::with([
-            'courses' => function ($query) {
-                $query->with(['modules']);
-            }
+            'courses.modules',
+            'courses.ratings.student.user'
         ])->get();
 
         return Inertia::render('ratings', [

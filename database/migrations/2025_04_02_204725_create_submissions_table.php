@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained('students', 'id')->onDelete('cascade');
             $table->foreignId('quiz_id')->constrained('quizzes', 'id')->onDelete('cascade');
+            $table->foreignId('submission_history_id')->constrained('submission_histories', 'id')->onDelete('cascade');
             $table->string('selected_answer');
             $table->boolean('is_correct');
             $table->timestamps();
