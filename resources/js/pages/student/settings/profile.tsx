@@ -1,7 +1,7 @@
 import { type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler } from 'react';
 
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
@@ -32,7 +32,6 @@ export default function Profile({
 }) {
   const { auth } = usePage<SharedData>().props;
   const initials = useInitials();
-  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
 
   const { data, setData, post, errors, processing, recentlySuccessful } =
     useForm<Required<ProfileForm>>({
@@ -155,7 +154,6 @@ export default function Profile({
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
-                                setProfilePhoto(file);
                                 setData('avatar', file);
                               }
                             }}
