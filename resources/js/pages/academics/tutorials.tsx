@@ -1,5 +1,3 @@
-'use client';
-
 import MarkdownViewer from '@/components/markdown-viewer';
 import MultipleQuizSection from '@/components/multi-quiz-section';
 import { Button } from '@/components/ui/button';
@@ -17,14 +15,12 @@ import { useCallback, useEffect, useState } from 'react';
 export default function Tutorials() {
   const { lesson } = usePage<SharedData & { lesson: { data: Lesson } }>().props;
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
-  const [allQuizzesCompleted, setAllQuizzesCompleted] = useState(false);
   const [allQuizzesPassed, setAllQuizzesPassed] = useState(false);
 
   useEffect(() => {
     if (lesson) {
       setActiveLesson(lesson.data);
       // Reset quiz state when lesson changes
-      setAllQuizzesCompleted(false);
       setAllQuizzesPassed(false);
     }
   }, [lesson]);
@@ -43,20 +39,9 @@ export default function Tutorials() {
     [],
   );
 
-  const handleAllQuizzesComplete = (allPassed: boolean) => {
-    setAllQuizzesCompleted(true);
-    setAllQuizzesPassed(allPassed);
-
-    // Mark lesson as completed if all quizzes are passed
-    if (allPassed) {
-      // You can add API call here to mark lesson as completed
-      // markLessonAsCompleted(activeLesson.id);
-    }
-  };
-
   const canProceedToNext = () => {
     // If lesson has quizzes, must pass all quizzes to proceed
-    if (activeLesson?.quizes && activeLesson.quizes.length > 0) {
+    if (activeLesson?.quizzes && activeLesson.quizzes.length > 0) {
       return allQuizzesPassed;
     }
     // If no quizzes, can proceed immediately
@@ -71,7 +56,7 @@ export default function Tutorials() {
     ? getPreviousLessonByOrder(lesson.data.module.lessons, lesson.data.order)
     : null;
 
-  const hasQuizzes = activeLesson?.quizes && activeLesson.quizes.length > 0;
+  const hasQuizzes = activeLesson?.quizzes && activeLesson.quizzes.length > 0;
 
   return (
     <RootSidebarLayout
@@ -98,13 +83,7 @@ export default function Tutorials() {
           </div>
 
           {/* Multiple Quiz Section */}
-          {hasQuizzes && (
-            <MultipleQuizSection
-              quizzes={activeLesson.quizes}
-              lessonId={activeLesson.id}
-              onAllQuizzesComplete={handleAllQuizzesComplete}
-            />
-          )}
+          {hasQuizzes && <MultipleQuizSection quizzes={activeLesson.quizzes} />}
 
           {/* Lesson Completion Status */}
           {hasQuizzes && allQuizzesPassed && (

@@ -27,7 +27,7 @@ class Lesson extends Model
         return $this->belongsTo(\App\Models\Module::class);
     }
 
-    public function quizes(): HasMany
+    public function quizzes(): HasMany
     {
         return $this->hasMany(\App\Models\Quiz::class);
     }

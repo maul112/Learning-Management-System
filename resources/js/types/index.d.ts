@@ -75,6 +75,15 @@ export interface User {
   [key: string]: unknown; // This allows for additional properties...
 }
 
+export interface Student {
+  id: number;
+  user_id: number;
+  courses_enrolled: Course[];
+  submission_histories: SubmissionHistory[];
+  user: User;
+  [key: string]: unknown;
+}
+
 export interface Academic {
   id: number;
   title: string;
@@ -119,12 +128,12 @@ export interface Lesson {
   video: string;
   status: string;
   module: Module;
-  quizes: Quiz[];
+  quizzes: Quiz[];
 }
 
 export interface Quiz {
   id: number;
-  questions: string;
+  question: string;
   options: string;
   answer: string;
   lesson: Lesson;
@@ -182,6 +191,24 @@ export interface Discussion {
   replies: Reply[];
   likes: number;
   resolved: boolean;
+}
+
+export interface SubmissionHistory {
+  id: number;
+  lesson: Lesson;
+  student: Student;
+  submissions: Submissions[];
+  status: string;
+  grade: number | null;
+}
+
+export interface Submissions {
+  id: number;
+  student: Student;
+  quiz: Quiz;
+  submission_history: SubmissionHistory;
+  selected_answer: string;
+  is_correct: boolean;
 }
 
 export interface PaginatedData<T> {

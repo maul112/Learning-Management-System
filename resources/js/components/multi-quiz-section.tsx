@@ -4,14 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import type { Quiz } from '@/types';
-import { useForm } from '@inertiajs/react';
+import { cn } from '@/lib/utils';
+import type { Quiz, SharedData, Student } from '@/types';
+import { useForm, usePage } from '@inertiajs/react';
 import {
   BookOpenIcon,
   CheckCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  RefreshCwIcon,
   SendIcon,
   XCircleIcon,
 } from 'lucide-react';
@@ -32,12 +32,13 @@ interface MultipleQuizSectionProps {
 export default function MultipleQuizSection({
   quizzes,
 }: MultipleQuizSectionProps) {
+  const { student } = usePage<SharedData & { student: { data: Student } }>()
+    .props;
   const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [quizResults, setQuizResults] = useState<Record<number, QuizProgress>>(
     {},
   );
-  const [allSubmitted, setAllSubmitted] = useState(false);
 
   const { setData, post, processing, reset } = useForm({
     submissions: [] as Array<{
@@ -46,10 +47,15 @@ export default function MultipleQuizSection({
     }>,
   });
 
+  console.log(student);
+
   const currentQuiz = quizzes[currentQuizIndex];
   const currentQuizResult = currentQuiz
     ? quizResults[currentQuiz.id]
     : undefined;
+
+  const studentSubmissionHistories = student.data.submission_histories;
+
   useEffect(() => {
     const initialResults: Record<number, QuizProgress> = {};
     const initialUserAnswers: Record<number, string> = {};
@@ -64,14 +70,13 @@ export default function MultipleQuizSection({
     });
     setQuizResults(initialResults);
     setUserAnswers(initialUserAnswers);
-    setAllSubmitted(false);
     setCurrentQuizIndex(0);
     reset();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizzes]);
 
   const handleAnswerSelect = (value: string) => {
-    if (allSubmitted || !currentQuiz) return;
+    if (!currentQuiz) return;
 
     setUserAnswers((prevAnswers) => ({
       ...prevAnswers,
@@ -120,23 +125,6 @@ export default function MultipleQuizSection({
     });
   };
 
-  const handleRetryAll = () => {
-    setUserAnswers({});
-    const initialResults: Record<number, QuizProgress> = {};
-    quizzes.forEach((quiz) => {
-      initialResults[quiz.id] = {
-        quiz_id: quiz.id,
-        is_completed: false,
-        is_correct: false,
-        selected_answer: null,
-      };
-    });
-    setQuizResults(initialResults);
-    setCurrentQuizIndex(0);
-    setAllSubmitted(false);
-    reset();
-  };
-
   const handleNextQuiz = () => {
     if (currentQuizIndex < quizzes.length - 1) {
       setCurrentQuizIndex(currentQuizIndex + 1);
@@ -178,24 +166,20 @@ export default function MultipleQuizSection({
         <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
           <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <BookOpenIcon className="h-5 w-5" />
-            Kuis: {currentQuiz.questions} (Soal {currentQuizIndex + 1} dari{' '}
+            Kuis: {currentQuiz.question} (Soal {currentQuizIndex + 1} dari{' '}
             {quizzes.length})
           </CardTitle>
-          {!allSubmitted && (
-            <Badge variant="outline">
-              {getAnsweredQuizzesCount()} / {quizzes.length} terjawab
-            </Badge>
-          )}
+          <Badge variant="outline">
+            {getAnsweredQuizzesCount()} / {quizzes.length} terjawab
+          </Badge>
         </div>
-        {!allSubmitted && (
-          <div className="mt-2 space-y-1">
-            <div className="text-muted-foreground flex justify-between text-xs">
-              <span>Progress Menjawab</span>
-              <span>{Math.round(getProgressPercentage())}%</span>
-            </div>
-            <Progress value={getProgressPercentage()} className="h-2" />
+        <div className="mt-2 space-y-1">
+          <div className="text-muted-foreground flex justify-between text-xs">
+            <span>Progress Menjawab</span>
+            <span>{Math.round(getProgressPercentage())}%</span>
           </div>
-        )}
+          <Progress value={getProgressPercentage()} className="h-2" />
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -205,11 +189,12 @@ export default function MultipleQuizSection({
             <Button
               key={quiz.id}
               onClick={() => setCurrentQuizIndex(index)}
-              disabled={allSubmitted && quizResults[quiz.id]?.is_completed}
+              disabled={quizResults[quiz.id]?.is_completed}
               variant={
-                index === currentQuizIndex && !allSubmitted
+                index === currentQuizIndex && !studentSubmissionHistories
                   ? 'secondary'
-                  : allSubmitted && quizResults[quiz.id]?.is_completed
+                  : studentSubmissionHistories &&
+                      quizResults[quiz.id]?.is_completed
                     ? quizResults[quiz.id]?.is_correct
                       ? 'default'
                       : 'destructive'
@@ -224,22 +209,22 @@ export default function MultipleQuizSection({
         </div>
 
         {/* Pertanyaan dan Opsi Jawaban */}
-        <p className="text-base font-medium">{currentQuiz.questions}</p>
+        <p className="text-base font-medium">{currentQuiz.question}</p>
         <RadioGroup
           value={userAnswers[currentQuiz.id] || ''}
           onValueChange={handleAnswerSelect}
-          disabled={allSubmitted || (currentQuizResult?.is_completed ?? false)}
+          disabled={currentQuizResult?.is_completed ?? false}
           className="space-y-3"
         >
           {options.map((option: string, index: number) => {
             const optionKey = getOptionLabel(index);
             const isSelected = userAnswers[currentQuiz.id] === optionKey;
             const isCorrectAnswerAfterSubmit =
-              allSubmitted &&
+              studentSubmissionHistories &&
               currentQuizResult?.is_completed &&
               currentQuiz.answer === optionKey;
             const isSelectedAndIncorrectAfterSubmit =
-              allSubmitted &&
+              studentSubmissionHistories &&
               currentQuizResult?.is_completed &&
               isSelected &&
               !currentQuizResult.is_correct;
@@ -248,7 +233,7 @@ export default function MultipleQuizSection({
               <div
                 key={index}
                 className={`flex items-center space-x-3 rounded-lg border p-4 transition-all ${
-                  allSubmitted && currentQuizResult?.is_completed
+                  studentSubmissionHistories && currentQuizResult?.is_completed
                     ? isCorrectAnswerAfterSubmit
                       ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                       : isSelectedAndIncorrectAfterSubmit
@@ -257,23 +242,22 @@ export default function MultipleQuizSection({
                     : isSelected
                       ? 'border-primary bg-primary/10 ring-primary/50 ring-2'
                       : 'border-muted hover:border-primary/50 dark:hover:border-primary/60 dark:border-slate-700' // Default sebelum submit
-                } ${allSubmitted ? 'cursor-default' : 'cursor-pointer'} `}
+                } ${studentSubmissionHistories ? 'cursor-default' : 'cursor-pointer'} `}
                 onClick={() =>
-                  !allSubmitted &&
-                  !currentQuizResult?.is_completed &&
-                  handleAnswerSelect(option)
+                  !currentQuizResult?.is_completed && handleAnswerSelect(option)
                 }
               >
                 <RadioGroupItem
                   value={option}
                   id={`option-${currentQuiz.id}-${index}`}
                   disabled={
-                    allSubmitted || (currentQuizResult?.is_completed ?? false)
+                    studentSubmissionHistories.length > 0 ||
+                    (currentQuizResult?.is_completed ?? false)
                   }
                 />
                 <Label
                   htmlFor={`option-${currentQuiz.id}-${index}`}
-                  className={`flex-1 font-medium ${allSubmitted ? 'cursor-default' : 'cursor-pointer'}`}
+                  className={`flex-1 font-medium ${studentSubmissionHistories ? 'cursor-default' : 'cursor-pointer'}`}
                 >
                   <span className="inline-flex items-center gap-2">
                     <Badge variant="outline" className="text-xs">
@@ -282,16 +266,17 @@ export default function MultipleQuizSection({
                     {option}
                   </span>
                 </Label>
-                {allSubmitted && currentQuizResult?.is_completed && (
-                  <>
-                    {isCorrectAnswerAfterSubmit && (
-                      <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                    )}
-                    {isSelectedAndIncorrectAfterSubmit && (
-                      <XCircleIcon className="h-5 w-5 text-red-500" />
-                    )}
-                  </>
-                )}
+                {studentSubmissionHistories &&
+                  currentQuizResult?.is_completed && (
+                    <>
+                      {isCorrectAnswerAfterSubmit && (
+                        <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                      )}
+                      {isSelectedAndIncorrectAfterSubmit && (
+                        <XCircleIcon className="h-5 w-5 text-red-500" />
+                      )}
+                    </>
+                  )}
               </div>
             );
           })}
@@ -302,14 +287,14 @@ export default function MultipleQuizSection({
           <Button
             variant="outline"
             onClick={handlePreviousQuiz}
-            disabled={currentQuizIndex === 0 || allSubmitted}
+            disabled={currentQuizIndex === 0}
             className="w-full sm:w-auto"
           >
             <ChevronLeftIcon className="mr-1 h-4 w-4" />
             Soal Sebelumnya
           </Button>
 
-          {!allSubmitted && currentQuizIndex === quizzes.length - 1 && (
+          {currentQuizIndex === quizzes.length - 1 && (
             <Button
               onClick={handleSubmitAll}
               disabled={
@@ -326,7 +311,7 @@ export default function MultipleQuizSection({
           <Button
             variant="outline"
             onClick={handleNextQuiz}
-            disabled={currentQuizIndex === quizzes.length - 1 || allSubmitted}
+            disabled={currentQuizIndex === quizzes.length - 1}
             className="w-full sm:w-auto"
           >
             Soal Berikutnya
@@ -335,7 +320,7 @@ export default function MultipleQuizSection({
         </div>
 
         {/* Tampilkan hasil individual setelah submit semua */}
-        {allSubmitted && currentQuizResult?.is_completed && (
+        {studentSubmissionHistories && currentQuizResult?.is_completed && (
           <div
             className={`mt-4 rounded-lg border-2 p-4 text-center ${
               currentQuizResult.is_correct
@@ -364,61 +349,54 @@ export default function MultipleQuizSection({
           </div>
         )}
 
-        {/* Tombol Retry Semua Kuis setelah semua disubmit */}
-        {allSubmitted && (
-          <Button
-            onClick={handleRetryAll}
-            variant="outline"
-            className="mt-6 w-full"
-            size="lg"
-          >
-            <RefreshCwIcon className="mr-2 h-4 w-4" />
-            Ulangi Semua Kuis
-          </Button>
-        )}
-
         {/* Ringkasan Kuis setelah semua disubmit */}
-        {allSubmitted && (
+        {studentSubmissionHistories && (
           <div className="bg-muted/30 dark:bg-muted/10 mt-8 rounded-lg border p-4 dark:border-slate-700">
             <h4 className="mb-3 text-lg font-semibold">Ringkasan Hasil Kuis</h4>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-              <div>
-                <span className="text-muted-foreground">Total Soal:</span>
-                <span className="ml-2 font-medium">{quizzes.length}</span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Benar:</span>
-                <span className="ml-2 font-medium text-green-600 dark:text-green-400">
-                  {
-                    Object.values(quizResults).filter((r) => r.is_correct)
-                      .length
-                  }
-                </span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Salah:</span>
-                <span className="ml-2 font-medium text-red-600 dark:text-red-400">
-                  {
-                    Object.values(quizResults).filter(
-                      (r) => r.is_completed && !r.is_correct,
-                    ).length
-                  }
-                </span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Persentase Benar:</span>
-                <span className="ml-2 font-medium">
-                  {quizzes.length > 0
-                    ? Math.round(
-                        (Object.values(quizResults).filter((r) => r.is_correct)
-                          .length /
-                          quizzes.length) *
-                          100,
-                      )
-                    : 0}
-                  %
-                </span>
-              </div>
+            <div className="flex flex-col gap-4">
+              {studentSubmissionHistories.map((submissionHistory) => (
+                <Card key={submissionHistory.id}>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">
+                          Total Soal:
+                        </span>
+                        <span className="ml-2 font-medium">
+                          {quizzes.length}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">
+                          Persentase Benar:
+                        </span>
+                        <span
+                          className={cn(
+                            'ml-2 font-medium',
+                            parseFloat(
+                              submissionHistory.grade?.toString() ?? '0',
+                            ) < 100 &&
+                              parseFloat(
+                                submissionHistory.grade?.toString() ?? '0',
+                              ) > 70
+                              ? 'text-green-600 dark:text-green-400'
+                              : parseFloat(
+                                    submissionHistory.grade?.toString() ?? '0',
+                                  ) < 70 &&
+                                  parseFloat(
+                                    submissionHistory.grade?.toString() ?? '0',
+                                  ) > 50
+                                ? 'text-yellow-600 dark:text-yellow-400'
+                                : 'text-red-600 dark:text-red-400',
+                          )}
+                        >
+                          {submissionHistory.grade}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         )}

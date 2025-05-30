@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\LessonResource;
+use App\Http\Resources\StudentResource;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Quiz;
+use App\Models\Student;
 use App\Models\Submission;
 use App\Models\SubmissionHistory;
 use Illuminate\Http\Request;
@@ -35,6 +37,11 @@ class AcademicController extends Controller
 
     public function show(Course $course, Lesson $lesson)
     {
+        $user = Auth::user();
+        $student = Student::
+            where('user_id', '=', $user->id)
+            ->with(['user', 'submissionHistories'])
+            ->first();
         $courses = Course::all();
         $course->load([
             'academic',
@@ -43,12 +50,13 @@ class AcademicController extends Controller
             'students.user',
             'modules.lessons.module.course',
         ]);
-        $lesson->load(['module.lessons', 'module.course', 'quizes']);
+        $lesson->load(['module.lessons', 'module.course', 'quizzes']);
 
         return Inertia::render('academics/tutorials', [
             'courses' => CourseResource::collection($courses),
             'course' => new CourseResource($course),
             'lesson' => new LessonResource($lesson),
+            'student' => new StudentResource($student),
         ]);
     }
 
@@ -60,7 +68,8 @@ class AcademicController extends Controller
             'submissions.*.selected_answer' => ['nullable', 'string'],
         ]);
 
-        $studentId = Auth::id();
+        $userId = Auth::id();
+        $studentId = Student::where('user_id', $userId)->value('id');
         if (!$studentId) {
             return redirect()->route('login')->with('error', 'Please log in to submit quizzes.');
         }

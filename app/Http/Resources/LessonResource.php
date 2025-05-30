@@ -22,7 +22,7 @@ class LessonResource extends JsonResource
             'video' => $this->video,
             'status' => $this->status,
             'module' => new ModuleResource($this->whenLoaded('module')),
-            'quizes' => QuizResource::collection($this->whenLoaded('quizes')),
+            'quizzes' => QuizResource::collection($this->whenLoaded('quizzes')),
         ];
     }
 }
