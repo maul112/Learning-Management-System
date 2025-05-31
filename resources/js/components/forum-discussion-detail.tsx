@@ -35,6 +35,8 @@ export default function DiscussionDetail({
 }: DiscussionDetailProps) {
   const [hasError] = useState(false);
 
+  console.log(discussion);
+
   // State for editing discussion
   const [isEditingDiscussion, setIsEditingDiscussion] = useState(false);
   const {

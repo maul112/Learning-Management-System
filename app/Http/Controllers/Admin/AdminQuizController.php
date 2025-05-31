@@ -84,6 +84,8 @@ class AdminQuizController extends Controller
         try {
             $validated = $request->validated();
 
+            $validated['options'] = json_encode($validated['options']);
+
             $quiz->update($validated);
 
             return redirect()->route('lessons.edit', $quiz->lesson_id)->with('success', 'Quiz updated successfully.');

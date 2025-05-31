@@ -46,10 +46,7 @@ class DiscussionSeeder extends Seeder
         $list = collect(range(1, 5))
             ->map(fn() => '- ' . fake()->sentence)
             ->implode("\n");
-        $code = '```
-        javascript
-            console.log("Hello, world!");
-        ```';
+        $code = "```text\nconsole.log('Hello, world!');\n```";
 
         return implode("\n\n", [$heading, $subheading, $paragraph, $list, $code]);
     }
@@ -60,10 +57,7 @@ class DiscussionSeeder extends Seeder
         $list = collect(range(1, 5))
             ->map(fn() => '- ' . fake()->sentence)
             ->implode("\n");
-        $code = '```
-        javascript
-            console.log("Hello, world!");
-        ```';
+        $code = "```text\nconsole.log('Hello, world!');\n```";
 
         return implode("\n\n", [$paragraph, $list, $code]);
     }
