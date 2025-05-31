@@ -2,6 +2,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
+import { LayoutDashboardIcon, LogOutIcon, Settings, User } from 'lucide-react';
 import { StudentNavMain } from './student-nav-main';
 import { StudentNavUser } from './student-nav-user';
 
@@ -13,14 +14,6 @@ const mainNavItems = [
   {
     name: 'Academy',
     href: '/student/academic',
-  },
-  {
-    name: 'Challenge',
-    href: '/challenge',
-  },
-  {
-    name: 'Event',
-    href: '/event',
   },
 ];
 
@@ -35,18 +28,22 @@ export function StudentNav({
 
   const navListItems = [
     {
+      icon: LayoutDashboardIcon,
       name: 'Dashboard',
       href: '/student/dashboard',
     },
     {
+      icon: User,
       name: 'Profile Saya',
       href: `/student/${auth.user.name}/profile`,
     },
     {
+      icon: Settings,
       name: 'Settings',
       href: '/student/settings',
     },
     {
+      icon: LogOutIcon,
       name: 'Logout',
       href: '/logout',
     },
