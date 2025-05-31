@@ -47,7 +47,8 @@ export default function MultipleQuizSection({
     }>,
   });
 
-  console.log(student);
+//   console.log(student);
+  console.log(quizzes);
 
   const currentQuiz = quizzes[currentQuizIndex];
   const currentQuizResult = currentQuiz
@@ -363,7 +364,7 @@ export default function MultipleQuizSection({
                           Total Soal:
                         </span>
                         <span className="ml-2 font-medium">
-                          {quizzes.length}
+                          {submissionHistory.submissions.length}
                         </span>
                       </div>
                       <div>

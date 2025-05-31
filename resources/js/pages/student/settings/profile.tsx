@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useInitials } from '@/hooks/use-initials';
 import RootLayout from '@/layouts/root-layout';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -31,7 +30,6 @@ export default function Profile({
   status?: string;
 }) {
   const { auth } = usePage<SharedData>().props;
-  const initials = useInitials();
 
   const { data, setData, post, errors, processing, recentlySuccessful } =
     useForm<Required<ProfileForm>>({

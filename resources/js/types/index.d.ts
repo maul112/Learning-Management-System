@@ -134,7 +134,7 @@ export interface Lesson {
 export interface Quiz {
   id: number;
   question: string;
-  options: string;
+  options: string[];
   answer: string;
   lesson: Lesson;
 }

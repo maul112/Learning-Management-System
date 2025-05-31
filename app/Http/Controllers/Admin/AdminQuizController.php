@@ -7,6 +7,7 @@ use App\Models\Quiz;
 use App\Http\Requests\StoreQuizRequest;
 use App\Http\Requests\UpdateQuizRequest;
 use App\Http\Resources\LessonResource;
+use App\Http\Resources\QuizResource;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -43,9 +44,11 @@ class AdminQuizController extends Controller
         try {
             $validated = $request->validated();
 
+            $validated['options'] = json_encode($validated['options']);
+
             $quiz = Quiz::create($validated);
 
-            return redirect()->route('quizzes.index')->with('success', 'Quiz created successfully.');
+            return redirect()->route('lessons.edit', $quiz->lesson_id)->with('success', '')->with('success', 'Quiz created successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
@@ -69,7 +72,7 @@ class AdminQuizController extends Controller
         $quiz = $quiz->load(['lesson.module.course.academic']);
 
         return Inertia::render('admin/quizzes/edit', [
-            'quiz' => new LessonResource($quiz),
+            'quiz' => new QuizResource($quiz),
         ]);
     }
 
@@ -83,7 +86,7 @@ class AdminQuizController extends Controller
 
             $quiz->update($validated);
 
-            return redirect()->route('quizzes.index')->with('success', 'Quiz updated successfully.');
+            return redirect()->route('lessons.edit', $quiz->lesson_id)->with('success', 'Quiz updated successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 

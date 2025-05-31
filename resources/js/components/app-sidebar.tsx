@@ -18,7 +18,6 @@ import {
   BookOpenTextIcon,
   Folder,
   LayoutGrid,
-  Star,
   UsersRound,
 } from 'lucide-react';
 import AppLogo from './app-logo';
@@ -38,11 +37,6 @@ const mainNavItems: NavItem[] = [
     title: 'Courses',
     href: '/academics',
     icon: BookOpenTextIcon,
-  },
-  {
-    title: 'Ratings',
-    href: '/ratings',
-    icon: Star,
   },
 ];
 
