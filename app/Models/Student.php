@@ -86,4 +86,13 @@ class Student extends Model
                 'id'
             );
     }
+
+    public function courseProgress(): HasMany
+    {
+        return $this->hasMany(
+            \App\Models\CourseProgress::class,
+            'student_id',
+            'id'
+        );
+    }
 }

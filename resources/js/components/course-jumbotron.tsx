@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAverage } from '@/hooks/use-average';
 import { cn } from '@/lib/utils';
 import { Course, SharedData } from '@/types';
-import { Link, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import {
   Book,
   ChartColumn,
@@ -12,6 +14,7 @@ import {
   TimerIcon,
   Users2,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { CourseOptionCard } from './course-option-card';
 import { RootContent } from './root-content';
 import { Badge } from './ui/badge';
@@ -43,6 +46,14 @@ const difficultyText: Record<string, string> = {
     'Diperuntukkan bagi peserta berpengalaman yang ingin memperdalam pemahaman. Fokus pada studi kasus, penerapan nyata, dan tantangan tingkat lanjut.',
 };
 
+declare global {
+  interface Window {
+    snap: {
+      pay: (token: string, callbacks?: object) => void;
+    };
+  }
+}
+
 export function CourseJumbotron({
   informationRef,
   syllabusRef,
@@ -51,8 +62,86 @@ export function CourseJumbotron({
   syllabusRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const { course } = usePage<SharedData & { course: { data: Course } }>().props;
-  console.log(course.data);
+  //   console.log(course.data);
   const getAverage = useAverage();
+
+  const handleCheckPayment = async () => {
+    if (course.data.price <= 0) {
+      // Handle free courses directly
+      router.get(
+        route('academics.show', {
+          course: course.data.id,
+          lesson: course.data.modules[0].lessons[0].id, // Assuming first lesson exists
+        }),
+      );
+      toast.success('You have successfully enrolled in this free course!');
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `/academies/course/${course.data.id}/payments`, // Corrected path to match route definition
+      );
+
+      console.log(response);
+
+      if (response.data.snapToken) {
+        // If snapToken is received, open Midtrans Snap popup
+        if (window.snap) {
+          window.snap.pay(response.data.snapToken, {
+            onSuccess: function (result: any) {
+              toast.success('Payment successful!');
+              console.log('Payment Success:', result);
+              // After success, you might want to redirect the user
+              // to the first lesson or a confirmation page.
+              router.visit(
+                route('academics.show', {
+                  course: course.data.id,
+                  lesson: course.data.modules[0].lessons[0].id,
+                }),
+              );
+            },
+            onPending: function (result: any) {
+              toast.success('Payment pending. Please complete your payment.');
+              console.log('Payment Pending:', result);
+            },
+            onError: function (result: any) {
+              toast.error('Payment failed. Please try again.');
+              console.log('Payment Error:', result);
+            },
+            onClose: function () {
+              toast.info('Payment popup closed. You can try again.');
+              console.log('Payment Popup Closed.');
+            },
+          });
+        } else {
+          toast.error('Midtrans Snap script is not loaded.');
+          console.error(
+            "Midtrans Snap script is not loaded. Ensure it's included in your main layout.",
+          );
+        }
+      } else if (response.data.redirectUrl) {
+        // If redirectUrl is received (e.g., already paid), navigate using Inertia
+        router.visit(response.data.redirectUrl);
+        if (response.data.message) {
+          toast.success(response.data.message);
+        }
+      } else {
+        toast.error('Unexpected response from payment server.');
+        console.error('Unexpected response:', response.data);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(
+          error.response.data.error || 'An error occurred during payment.',
+        );
+        console.error('Payment API Error:', error.response.data);
+      } else {
+        toast.error('An unknown error occurred.');
+        console.error('Unknown error:', error);
+      }
+    }
+  };
 
   return (
     <section className="overflow-hidden p-5 pt-32">
@@ -168,13 +257,7 @@ export function CourseJumbotron({
           <div className="w-full lg:w-1/4">
             <Card className="relative">
               <CardHeader>
-                <Button>
-                  <Link
-                    href={`/academies/${course.data.id}/tutorials/${course.data.modules[0].lessons[0].id}`}
-                  >
-                    Belajar Sekarang
-                  </Link>
-                </Button>
+                <Button onClick={handleCheckPayment}>Belajar Sekarang</Button>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col gap-3">

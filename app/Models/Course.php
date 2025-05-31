@@ -61,7 +61,6 @@ class Course extends Model
             );
     }
 
-
     /**
      * Get the course's certificates.
      * @return BelongsToMany<User, Course, \Illuminate\Database\Eloquent\Relations\Pivot>
@@ -95,5 +94,14 @@ class Course extends Model
                 'course_id',
                 'id'
             );
+    }
+
+    public function studentProgress(): HasMany
+    {
+        return $this->hasMany(
+            \App\Models\CourseProgress::class,
+            'course_id',
+            'id'
+        );
     }
 }

@@ -11,9 +11,7 @@ use App\Models\Student;
 use App\Models\Submission;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use GuzzleHttp\Promise\Create;
 use App\Models\SubmissionHistory;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\CourseResource;
@@ -32,64 +30,19 @@ class AcademicController extends Controller
             'students.user'
         ]);
 
+        // No longer relying on session('snapToken') from a redirect here
+        // The snapToken will now be handled directly by the client-side axios call.
         return Inertia::render('academics/course', [
             'courses' => CourseResource::collection($courses),
             'course' => new CourseResource($course),
+            'snapToken' => null, // We won't pass snapToken via Inertia props from index anymore for this flow
         ]);
     }
 
     public function show(Course $course, Lesson $lesson)
     {
         $courses = Course::all();
-        $snapToken = null;
-        if($course->price != 0) {
-            $cekPayment = Payment::where([
-                'course_id' => $course->id,
-                'user_id' => Auth::user()->id,
-            ])->first();
-            // mon ghilok majer
-            if(!$cekPayment) {
-                $createPayment = Payment::create([
-                    'payment_id' => Str::uuid(),
-                    'user_id' => Auth::user()->id,
-                    'course_id' => $course->id,
-                    'amount' => $course->price,
-                    'status' => 'pending',
-                    'payment_method' => null,
-                    'payment_detail' => null,
-                    'paid_at' => null,
-                    'expired_at' => now()->addHour(),
-                ]);
-                // Set your Merchant Server Key
-                \Midtrans\Config::$serverKey = config('midtrans.serverKey');
-                // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-                \Midtrans\Config::$isProduction = false;
-                // Set sanitization on (default)
-                \Midtrans\Config::$isSanitized = true;
-                // Set 3DS transaction for credit card to true
-                \Midtrans\Config::$is3ds = true;
 
-                $params = array(
-                    'transaction_details' => array(
-                        'order_id' => $createPayment->payment_id,
-                        'gross_amount' => $createPayment->amount,
-                    ),
-                    'customer_details' => array(
-                        'name' => Auth::user()->name,
-                        'email' => Auth::user()->email,
-                    ),
-                );
-
-                $snapToken = \Midtrans\Snap::getSnapToken($params);
-            // mon mareh majer
-            } else {
-                $cekUnpaidPayment = Payment::where([
-                    'course_id' => $course->id,
-                    'user_id' => Auth::user()->id,
-                ])->first();
-                $snapToken = $cekUnpaidPayment->payment_id;
-            }
-        }
         $course->load([
             'academic',
             'ratings',
@@ -119,8 +72,102 @@ class AcademicController extends Controller
             'course' => new CourseResource($course),
             'lesson' => new LessonResource($lesson),
             'student' => new StudentResource($student),
-            'snapToken' => $snapToken,
         ]);
+    }
+
+    public function payments(Course $course)
+    {
+        $user = Auth::user();
+
+        try {
+            // Configure Midtrans (do this once)
+            \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+            \Midtrans\Config::$isProduction = false; // Set to true for Production Environment (accept real transaction).
+            \Midtrans\Config::$isSanitized = true;
+            \Midtrans\Config::$is3ds = true;
+
+            // 1. Handle free courses immediately
+            if ($course->price == 0) {
+                $student = Student::where('user_id', $user->id)->first();
+                if ($student && !$student->courses()->where('course_id', $course->id)->exists()) {
+                    $student->courses()->attach($course->id);
+                }
+                return response()->json([
+                    'redirectUrl' => route('academics.show', [
+                        'course' => $course->id,
+                        'lesson' => $course->modules[0]->lessons[0]->id // Make sure this path is valid
+                    ]),
+                    'message' => 'You have successfully enrolled in this free course!',
+                ]);
+            }
+
+            // 2. Check for existing payment
+            $existingPayment = Payment::where([
+                'course_id' => $course->id,
+                'user_id' => $user->id,
+            ])->first();
+
+            $snapToken = null;
+
+            if ($existingPayment) {
+                if ($existingPayment->status == 'paid') {
+                    // If already paid, return redirect URL
+                    return response()->json([
+                        'redirectUrl' => route('academics.show', [
+                            'course' => $course->id,
+                            'lesson' => $course->modules[0]->lessons[0]->id
+                        ]),
+                        'message' => 'You have already paid for this course. Enjoy!',
+                    ]);
+                }
+
+                // If pending or expired, re-generate token for the existing payment_id
+                // Midtrans allows re-generation of snap token for same order_id
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $existingPayment->payment_id,
+                        'gross_amount' => $existingPayment->amount,
+                    ],
+                    'customer_details' => [
+                        'name' => $user->name,
+                        'email' => $user->email,
+                    ],
+                ];
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+            } else {
+                // No existing payment, create a new one
+                $createPayment = Payment::create([
+                    'payment_id' => Str::uuid(),
+                    'user_id' => $user->id,
+                    'course_id' => $course->id,
+                    'amount' => $course->price,
+                    'status' => 'pending',
+                    'payment_method' => null,
+                    'payment_detail' => null,
+                    'paid_at' => null,
+                    'expired_at' => now()->addHour(),
+                ]);
+
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $createPayment->payment_id,
+                        'gross_amount' => $createPayment->amount,
+                    ],
+                    'customer_details' => [
+                        'name' => $user->name,
+                        'email' => $user->email,
+                    ],
+                ];
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+            }
+
+            // Always return a JSON response with the snapToken
+            return response()->json(['snapToken' => $snapToken]);
+        } catch (\Exception $e) {
+            Log::error('Midtrans payment processing failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            // Return an error JSON response
+            return response()->json(['error' => 'Failed to process payment. Please try again or contact support.'], 500);
+        }
     }
 
     public function quizzesSubmit(Request $request)

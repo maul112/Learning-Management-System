@@ -13,7 +13,6 @@ use App\Http\Controllers\RatingController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AcademicController;
 use App\Http\Controllers\DiscussionController;
-use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\LearningPathController;
 use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\AdminUserController;
@@ -54,6 +53,8 @@ Route::controller(AcademicController::class)->group(function () {
         ->middleware(['auth', IsStudent::class]);
     Route::post('/academies/quizzes/submit', 'quizzesSubmit')
         ->name('academics.quizzes.submit');
+    Route::post('/academies/course/{course}/payments', 'payments')
+        ->name('academics.payments');
 });
 
 Route::controller(RatingController::class)->group(function () {
@@ -107,9 +108,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('replies', ReplyController::class);
     Route::post('replies/{reply}/like', [ReplyController::class, 'like'])->name('replies.like');
 });
-
-Route::get('test', [EnrollmentController::class, 'index'])->name('test.index');
-Route::get('test2', [EnrollmentController::class, 'show'])->name('test.show');
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
