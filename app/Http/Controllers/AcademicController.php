@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Quiz;
+use Inertia\Inertia;
+use App\Models\Course;
+use App\Models\Lesson;
+use App\Models\Payment;
+use App\Models\Student;
+use App\Models\Submission;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use GuzzleHttp\Promise\Create;
+use App\Models\SubmissionHistory;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\LessonResource;
 use App\Http\Resources\StudentResource;
-use App\Models\Course;
-use App\Models\Lesson;
-use App\Models\Quiz;
-use App\Models\Student;
-use App\Models\Submission;
-use App\Models\SubmissionHistory;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
 
 class AcademicController extends Controller
 {
@@ -38,6 +41,55 @@ class AcademicController extends Controller
     public function show(Course $course, Lesson $lesson)
     {
         $courses = Course::all();
+        $snapToken = null;
+        if($course->price != 0) {
+            $cekPayment = Payment::where([
+                'course_id' => $course->id,
+                'user_id' => Auth::user()->id,
+            ])->first();
+            // mon ghilok majer
+            if(!$cekPayment) {
+                $createPayment = Payment::create([
+                    'payment_id' => Str::uuid(),
+                    'user_id' => Auth::user()->id,
+                    'course_id' => $course->id,
+                    'amount' => $course->price,
+                    'status' => 'pending',
+                    'payment_method' => null,
+                    'payment_detail' => null,
+                    'paid_at' => null,
+                    'expired_at' => now()->addHour(),
+                ]);
+                // Set your Merchant Server Key
+                \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+                // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+                \Midtrans\Config::$isProduction = false;
+                // Set sanitization on (default)
+                \Midtrans\Config::$isSanitized = true;
+                // Set 3DS transaction for credit card to true
+                \Midtrans\Config::$is3ds = true;
+
+                $params = array(
+                    'transaction_details' => array(
+                        'order_id' => $createPayment->payment_id,
+                        'gross_amount' => $createPayment->amount,
+                    ),
+                    'customer_details' => array(
+                        'name' => Auth::user()->name,
+                        'email' => Auth::user()->email,
+                    ),
+                );
+
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+            // mon mareh majer
+            } else {
+                $cekUnpaidPayment = Payment::where([
+                    'course_id' => $course->id,
+                    'user_id' => Auth::user()->id,
+                ])->first();
+                $snapToken = $cekUnpaidPayment->payment_id;
+            }
+        }
         $course->load([
             'academic',
             'ratings',
@@ -67,6 +119,7 @@ class AcademicController extends Controller
             'course' => new CourseResource($course),
             'lesson' => new LessonResource($lesson),
             'student' => new StudentResource($student),
+            'snapToken' => $snapToken,
         ]);
     }
 

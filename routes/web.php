@@ -35,6 +35,10 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+// Route::get('/', function () {
+//     echo 'hello';
+// });
+
 Route::controller(LearningPathController::class)->group(function () {
     Route::get('/learning-paths', 'index')
         ->name('learning-path.index');
