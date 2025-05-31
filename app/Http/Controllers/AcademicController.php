@@ -37,11 +37,6 @@ class AcademicController extends Controller
 
     public function show(Course $course, Lesson $lesson)
     {
-        $user = Auth::user();
-        $student = Student::
-            where('user_id', '=', $user->id)
-            ->with(['user', 'submissionHistories'])
-            ->first();
         $courses = Course::all();
         $course->load([
             'academic',
@@ -50,7 +45,22 @@ class AcademicController extends Controller
             'students.user',
             'modules.lessons.module.course',
         ]);
-        $lesson->load(['module.lessons', 'module.course', 'quizzes']);
+        $lesson->load([
+            'module.lessons',
+            'module.course',
+            'quizzes' => function ($query) {
+                $query->inRandomOrder()->limit(4);
+            }
+        ]);
+        $user = Auth::user();
+        $student = Student::where('user_id', '=', $user->id)
+            ->with([
+                'user',
+                'submissionHistories' => function ($query) use ($lesson) {
+                    $query->where('lesson_id', '=', $lesson->id)->with('submissions');
+                }
+            ])
+            ->first();
 
         return Inertia::render('academics/tutorials', [
             'courses' => CourseResource::collection($courses),
@@ -75,9 +85,8 @@ class AcademicController extends Controller
         }
 
         $firstQuizId = $request->input('submissions.0.quiz_id');
-        $lesson = Quiz::with('lesson')->find($firstQuizId);
-        $lessonId = $lesson->id;
-
+        $quiz = Quiz::with('lesson')->find($firstQuizId);
+        $lessonId = $quiz->lesson->id;
 
         try {
             $submissionHistory = SubmissionHistory::create([
