@@ -1,26 +1,27 @@
 <?php
 
-use App\Http\Controllers\AcademicController;
-use App\Http\Controllers\Admin\AdminAcademicController;
-use App\Http\Controllers\Admin\AdminCourseController;
-use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminLessonController;
-use App\Http\Controllers\Admin\AdminModuleController;
-use App\Http\Controllers\Admin\AdminQuizController;
-use App\Http\Controllers\Admin\AdminUserController;
-use App\Http\Controllers\DiscussionController;
-use App\Http\Controllers\LearningPathController;
-use App\Http\Controllers\RatingController;
-use App\Http\Controllers\ReplyController;
-use App\Http\Controllers\StudentController;
+use Inertia\Inertia;
+use App\Models\Course;
+use App\Models\Academic;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsStudent;
-use App\Http\Resources\AcademicResource;
-use App\Http\Resources\CourseResource;
-use App\Models\Academic;
-use App\Models\Course;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Resources\CourseResource;
+use App\Http\Resources\AcademicResource;
+use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\AcademicController;
+use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\LearningPathController;
+use App\Http\Controllers\Admin\AdminQuizController;
+use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AdminCourseController;
+use App\Http\Controllers\Admin\AdminLessonController;
+use App\Http\Controllers\Admin\AdminModuleController;
+use App\Http\Controllers\Admin\AdminAcademicController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 
 Route::get('/', function () {
     $academics = Academic::with([
@@ -102,6 +103,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('replies', ReplyController::class);
     Route::post('replies/{reply}/like', [ReplyController::class, 'like'])->name('replies.like');
 });
+
+Route::get('test', [EnrollmentController::class, 'index'])->name('test.index');
+Route::get('test2', [EnrollmentController::class, 'show'])->name('test.show');
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
