@@ -73,7 +73,7 @@ class AdminLessonController extends Controller
      */
     public function edit(Lesson $lesson)
     {
-        $lesson->load(['module.course.academic']);
+        $lesson->load(['module.course.academic', 'quizzes']);
 
         return Inertia::render('admin/lessons/edit', [
             'lesson' => new LessonResource($lesson),

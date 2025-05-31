@@ -1,12 +1,11 @@
 import { DataTableColumnHeader } from '@/components/data-table-header';
 import { DeleteModal } from '@/components/delete-modal';
-import { Button } from '@/components/ui/button';
+import { EditButton } from '@/components/edit-button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Lesson, Module } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Quiz } from '@/types';
 import { ColumnDef } from '@tanstack/react-table';
 
-export const columns: ColumnDef<Lesson>[] = [
+export const columns: ColumnDef<Quiz>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -27,53 +26,22 @@ export const columns: ColumnDef<Lesson>[] = [
     ),
   },
   {
-    accessorKey: 'title',
+    accessorKey: 'question',
     header: ({ column }) => (
-      <DataTableColumnHeader<Lesson, unknown> column={column} title="Title" />
+      <DataTableColumnHeader<Quiz, unknown> column={column} title="Questions" />
     ),
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('title')}</div>
+      <div className="capitalize">{row.getValue('question')}</div>
     ),
   },
   {
-    accessorKey: 'module',
+    accessorKey: 'options',
     header: ({ column }) => (
-      <DataTableColumnHeader<Lesson, unknown> column={column} title="Course" />
-    ),
-    cell: ({ row }) => (
-      <div className="capitalize">
-        {(row.getValue('module') as Module)?.course.title}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'module',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Lesson, unknown> column={column} title="Module" />
+      <DataTableColumnHeader<Quiz, unknown> column={column} title="Options" />
     ),
     cell: ({ row }) => (
       <div className="capitalize">
-        {(row.getValue('module') as Module)?.title}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'order',
-    header: ({ column }) => (
-      <DataTableColumnHeader<Lesson, unknown> column={column} title="Order" />
-    ),
-  },
-  {
-    accessorKey: 'id',
-    header: 'Content',
-    cell: ({ row }) => (
-      <div className="capitalize">
-        <Link
-          className="underline"
-          href={route('lessons.show', row.getValue('id'))}
-        >
-          Lihat
-        </Link>
+        {(row.getValue('options') as Array<string>).length}
       </div>
     ),
   },
@@ -81,22 +49,14 @@ export const columns: ColumnDef<Lesson>[] = [
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
-      const lesson = row.original;
+      const quiz = row.original;
 
       return (
         <div className="flex space-x-2">
-          <EditLesson lesson={lesson} />
-          <DeleteModal resourceName="lesson" id={lesson.id} />
+          <EditButton endpoint="quizze" id={String(quiz.id)} />
+          <DeleteModal resourceName="quizze" id={quiz.id} />
         </div>
       );
     },
   },
 ];
-
-function EditLesson({ lesson }: { lesson: Lesson }) {
-  return (
-    <Button className="cursor-pointer" variant="secondary">
-      <Link href={route('lessons.edit', lesson.id)}>Edit</Link>
-    </Button>
-  );
-}

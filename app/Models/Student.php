@@ -46,13 +46,13 @@ class Student extends Model
 
     /**
      * Get the user's quiz submissions as a student.
-     * @return HasMany<Submission, student>
+     * @return HasMany<SubmissionHistory, student>
      */
-    public function studentQuizSubmissions(): HasMany
+    public function submissionHistories(): HasMany
     {
         return $this
             ->hasMany(
-                \App\Models\Submission::class,
+                \App\Models\SubmissionHistory::class,
                 'student_id',
                 'id'
             );

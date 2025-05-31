@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminCourseController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminLessonController;
 use App\Http\Controllers\Admin\AdminModuleController;
+use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\LearningPathController;
@@ -46,6 +47,8 @@ Route::controller(AcademicController::class)->group(function () {
     Route::get('/academies/{course}/tutorials/{lesson}', 'show')
         ->name('academics.show')
         ->middleware(['auth', IsStudent::class]);
+    Route::post('/academies/quizzes/submit', 'quizzesSubmit')
+        ->name('academics.quizzes.submit');
 });
 
 Route::controller(RatingController::class)->group(function () {
@@ -61,6 +64,7 @@ Route::middleware(['auth', 'verified', IsAdmin::class])->group(function () {
     Route::resource('courses', AdminCourseController::class);
     Route::resource('modules', AdminModuleController::class);
     Route::resource('lessons', AdminLessonController::class);
+    Route::resource('quizzes', AdminQuizController::class);
     Route::put('/academics/{academic}/status', [AdminAcademicController::class, 'updateStatus'])
         ->name('academics.updateStatus');
     Route::put('/courses/{course}/status', [AdminCourseController::class, 'updateStatus'])

@@ -33,7 +33,7 @@ import {
   Users2,
   XIcon,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Profile() {
   const { user } = usePage<SharedData & { user: { data: User } }>().props;
@@ -41,12 +41,12 @@ export default function Profile() {
   const getAverage = useAverage();
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
 
-  const handleFilterChange = (selectedDifficulty: string) => {
-    if (selectedDifficulty === 'all') {
+  const handleFilterChange = (selectValue: string | number) => {
+    if (selectValue === 'all') {
       setFilteredCourses(user.data.student?.courses_enrolled || []);
     } else {
       const filtered = user.data.student?.courses_enrolled.filter(
-        (course: Course) => course.difficulty === selectedDifficulty,
+        (course: Course) => course.is_completed == selectValue,
       );
       setFilteredCourses(filtered || []);
     }
@@ -61,6 +61,10 @@ export default function Profile() {
     };
     return new Date(dateString).toLocaleDateString('id-ID', options); // Menggunakan locale 'id-ID' untuk bahasa Indonesia
   };
+
+  useEffect(() => {
+    setFilteredCourses(user.data.student?.courses_enrolled || []);
+  }, [user.data.student?.courses_enrolled]);
 
   return (
     <RootLayout>
@@ -135,18 +139,17 @@ export default function Profile() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Semua</SelectItem>
-                  <SelectItem value="completed">Selesai</SelectItem>
-                  <SelectItem value="ongoing">Berlangsung</SelectItem>
+                  <SelectItem value="1">Selesai</SelectItem>
+                  <SelectItem value="0">Berlangsung</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
-          {user.data.student?.courses_enrolled &&
-          user.data.student.courses_enrolled.length > 0 ? (
+          {filteredCourses && filteredCourses.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {' '}
               {/* Menambah opsi grid untuk layar lebih besar */}
-              {user.data.student.courses_enrolled.map((course) => (
+              {filteredCourses.map((course) => (
                 <Card
                   key={course.id}
                   className="relative flex flex-col overflow-hidden transition-shadow hover:shadow-lg dark:border-slate-700"
@@ -268,7 +271,7 @@ export default function Profile() {
             <div className="flex flex-col items-center justify-center rounded-md border border-dashed p-10 text-center">
               <Briefcase size={48} className="text-muted-foreground mb-4" />
               <h3 className="text-xl font-semibold">
-                Anda Belum Mengikuti Kursus Apapun
+                Anda Belum Mengikuti/Menyelesaikan Kursus Apapun
               </h3>
               <p className="text-muted-foreground mt-2 text-sm">
                 Jelajahi katalog kursus kami dan mulai perjalanan belajar Anda!

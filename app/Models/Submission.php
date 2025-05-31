@@ -14,6 +14,7 @@ class Submission extends Model
     protected $fillable = [
         'student_id',
         'quiz_id',
+        'submission_history_id',
         'selected_answer',
         'is_correct',
     ];
@@ -41,6 +42,15 @@ class Submission extends Model
             ->belongsTo(
                 Quiz::class,
                 'quiz_id'
+            );
+    }
+
+    public function submissionHistory(): BelongsTo
+    {
+        return $this
+            ->belongsTo(
+                SubmissionHistory::class,
+                'submission_history_id'
             );
     }
 }

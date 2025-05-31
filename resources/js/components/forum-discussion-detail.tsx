@@ -175,7 +175,7 @@ export default function DiscussionDetail({
   const handleSubmitReplyUpdate = (e: React.FormEvent, replyId: number) => {
     e.preventDefault();
     // Assuming you have a route like 'replies.content.update' for updating content
-    putReplyContent(route('replies.content.update', replyId), {
+    putReplyContent(route('replies.update', replyId), {
       preserveScroll: true,
       onSuccess: () => {
         setEditingReplyId(null);

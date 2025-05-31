@@ -6,6 +6,7 @@ use App\Models\Academic;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Module;
+use App\Models\Quiz;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -284,7 +285,9 @@ class ContentSeeder extends Seeder
                         'course_id' => $course->id
                     ]);
 
-                    for ($j = 0; $j < fake()->numberBetween(1, 3); $j++) {
+                    $numberOfLesson = fake()->numberBetween(1, 4);
+
+                    for ($j = 0; $j < $numberOfLesson; $j++) {
                         Lesson::create([
                             'title' => fake()->sentence(2),
                             'content' => $this->generateMarkdownContent(),
@@ -293,6 +296,14 @@ class ContentSeeder extends Seeder
                             'status' => fake()->randomElement(['published', 'draft']),
                             'module_id' => $module->id
                         ]);
+
+                        if ($j == $numberOfLesson - 1) {
+                            for ($k = 0; $k < 5; $k++) {
+                                Quiz::factory()->create([
+                                    'lesson_id' => $module->lessons->last()->id
+                                ]);
+                            }
+                        }
                     }
                 }
             }

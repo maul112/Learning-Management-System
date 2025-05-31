@@ -3,14 +3,17 @@ import { DraftAlert } from '@/components/draft-alert';
 import FormFieldInput from '@/components/form-field-input';
 import FormFieldMarkdown from '@/components/form-field-markdown';
 import { VideoPreviewInput } from '@/components/form-field-video';
+import { Badge } from '@/components/ui/badge';
 import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { useRequiredFieldNumber } from '@/hooks/use-required-field-number';
 import AppLayout from '@/layouts/app-layout';
 import FormLayout from '@/layouts/form-layout';
 import { BreadcrumbItem, Course, Lesson, Module, SharedData } from '@/types';
-import { Head, useForm, usePage } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Edit2, LoaderCircle, Notebook, Plus } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -101,7 +104,7 @@ export default function LessonsEdit() {
           <div>
             <h1 className="text-2xl font-bold">Lesson setup</h1>
             <p className="text-muted-foreground text-sm">
-              Complete all fields ({requiredFieldsNumber - 1}/2)
+              Complete all fields ({requiredFieldsNumber - 2}/2)
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -139,7 +142,6 @@ export default function LessonsEdit() {
               onChange={(file) => {
                 if (file) {
                   setData('video', file);
-                  setRequiredFieldsNumber(requiredFieldsNumber + 1);
                 }
               }}
               error={errors.video}
@@ -153,6 +155,41 @@ export default function LessonsEdit() {
               onFilled={() => setRequiredFieldsNumber(requiredFieldsNumber + 1)}
               message={errors.content || ''}
             />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <Label htmlFor="quiz" className="text-xl">
+                    Lesson quizzes
+                  </Label>
+                  <Button variant="secondary" asChild>
+                    <Link
+                      href={route('quizzes.create', { lesson: lesson.data.id })}
+                    >
+                      Create quiz
+                      <Plus className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                {lesson.data.quizzes.map((quiz) => (
+                  <Card className="text-xs">
+                    <CardContent className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <Notebook className="h-5 w-5" />
+                        {quiz.question}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge>Options {quiz.options.length}</Badge>
+                        <Link href={route('quizzes.edit', quiz.id)}>
+                          <Edit2 className="h-4 w-4" />
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </CardContent>
+            </Card>
             <Button
               type="submit"
               className="mt-4 w-full"
