@@ -105,6 +105,9 @@ class AcademicController extends Controller
                 'course_id' => $course->id
             ]);
         }
+
+        (new ProgressService())->updateCourseProgress($student, $course);
+
         return response()->json([
             'message' => 'You have successfully enrolled in this course!'
         ]);
@@ -146,12 +149,14 @@ class AcademicController extends Controller
 
             if ($existingPayment) {
                 if ($existingPayment->status == 'paid') {
+                    $course->load([
+                        'modules.lessons'
+                    ]);
+
+                    $lessonId = $course->modules[0]->lessons[0]->id;
                     // If already paid, return redirect URL
                     return response()->json([
-                        'redirectUrl' => route('academics.show', [
-                            'course' => $course->id,
-                            'lesson' => $course->modules[0]->lessons[0]->id
-                        ]),
+                        'redirectUrl' => "/academies/$course->id/tutorials/$lessonId",
                         'message' => 'You have already paid for this course. Enjoy!',
                     ]);
                 }
@@ -198,6 +203,30 @@ class AcademicController extends Controller
 
             // Always return a JSON response with the snapToken
             return response()->json(['snapToken' => $snapToken]);
+        } catch (\Exception $e) {
+            Log::error('Midtrans payment processing failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            // Return an error JSON response
+            return response()->json(['error' => 'Failed to process payment. Please try again or contact support.'], 500);
+        }
+    }
+
+    public function confirmPayment(Course $course)
+    {
+        try {
+            $user = Auth::user();
+            $student = Student::where('user_id', $user->id)->first();
+
+            $payment = Payment::where([
+                'course_id' => $course->id,
+                'user_id' => $user->id,
+            ]);
+
+            if ($payment->exists()) {
+                $payment->update([
+                    'status' => 'paid',
+                    'paid_at' => now(),
+                ]);
+            }
         } catch (\Exception $e) {
             Log::error('Midtrans payment processing failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             // Return an error JSON response

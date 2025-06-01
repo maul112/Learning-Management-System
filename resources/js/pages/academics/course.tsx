@@ -6,16 +6,12 @@ import { RootFooter } from '@/components/root-footer';
 import RootLayout from '@/layouts/root-layout';
 import { Course as CourseType, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 export default function Course() {
-  const { course, snapToken } = usePage<
+  const { course } = usePage<
     SharedData & { course: { data: CourseType }; snapToken: string }
   >().props;
-
-  useEffect(() => {
-    console.log(snapToken);
-  }, [snapToken])
 
   const informationRef = useRef<HTMLDivElement | null>(null);
   const syllabusRef = useRef<HTMLDivElement | null>(null);

@@ -91,16 +91,17 @@ export function CourseJumbotron({
         // If snapToken is received, open Midtrans Snap popup
         if (window.snap) {
           window.snap.pay(response.data.snapToken, {
-            onSuccess: function (result: any) {
+            onSuccess: async function (result: any) {
               toast.success('Payment successful!');
               console.log('Payment Success:', result);
               // After success, you might want to redirect the user
               // to the first lesson or a confirmation page.
+              await axios.post(
+                `/academies/course/${course.data.id}/confirm-payment`,
+              );
+              await axios.post(`/academies/course/${course.data.id}/enroll`);
               router.visit(
-                route('academics.show', {
-                  course: course.data.id,
-                  lesson: course.data.modules[0].lessons[0].id,
-                }),
+                `/academies/${course.data.id}/tutorials/${course.data.modules[0].lessons[0].id}`,
               );
             },
             onPending: function (result: any) {

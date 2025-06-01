@@ -57,6 +57,8 @@ Route::controller(AcademicController::class)->group(function () {
         ->name('academics.enroll');
     Route::post('/academies/course/{course}/payments', 'payments')
         ->name('academics.payments');
+    Route::post('/academies/course/{course}/confirm-payment', 'confirmPayment')
+        ->name('academics.confirm-payment');
     Route::post('/lessons/{lesson}/complete', [AcademicController::class, 'markLessonCompleted'])
         ->name('lessons.complete');
 });

@@ -272,7 +272,7 @@ class ContentSeeder extends Seeder
                     'order' => $course['order'],
                     'duration' => $course['duration'],
                     'difficulty' => $course['difficulty'],
-                    'price' => $course['order'] > 1 ? fake()->randomFloat(2, 0, 100) : 0,
+                    'price' => $course['order'] > 1 ? fake()->randomFloat(10, 15000, 50000) : 0,
                     'status' => 'published',
                     'academic_id' => $course['academic_id'],
                 ]);

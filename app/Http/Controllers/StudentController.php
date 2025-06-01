@@ -21,7 +21,23 @@ class StudentController extends Controller
 
     public function index()
     {
-        return Inertia::render('student/dashboard');
+        $user = Auth::user();
+
+        $student = Student::where('user_id', '=', $user->id)
+            ->with([
+                'user',
+                'enrollments',
+                // 'enrollments.course.academic',
+                // 'enrollments.course.modules.lessons',
+                // 'enrollments.course.students.user',
+                // 'enrollments.ratings',
+                'courseProgresses.course',
+            ])
+            ->first();
+
+        return Inertia::render('student/dashboard', [
+            'student' => new StudentResource($student),
+        ]);
     }
 
     public function academic()
