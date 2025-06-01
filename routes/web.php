@@ -102,6 +102,11 @@ Route::middleware(['auth', 'verified', IsStudent::class])->prefix('student')->gr
         ->name('student.settings.password');
     Route::get('/{user:name}/profile', [StudentController::class, 'profile'])
         ->name('student.profile');
+    Route::get('/courses/{course}/certificate-data', [StudentController::class, 'getCertificateData'])
+        ->name('courses.certificate.data');
+    Route::get('/certificate/print', function () {
+        return Inertia::render('student/CertificatePrintPage'); // Ini akan menjadi halaman React baru Anda
+    })->name('certificate.print.page');
 });
 
 Route::middleware(['auth'])->group(function () {

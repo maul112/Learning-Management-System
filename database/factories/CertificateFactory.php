@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Course;
 use App\Models\Module;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,7 +21,7 @@ class CertificateFactory extends Factory
     {
         return [
             'student_id' => User::factory()->student(),
-            'module_id' => Module::factory(),
+            'course_id' => Course::factory(),
         ];
     }
 }

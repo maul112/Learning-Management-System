@@ -23,6 +23,12 @@ class CourseProgress extends Model
         'completed_at',
     ];
 
+    protected $casts = [
+        'progress_percentage' => 'decimal:2', // Contoh cast yang sudah ada
+        'is_completed' => 'boolean',           // Contoh cast yang sudah ada
+        'completed_at' => 'datetime',          // <--- TAMBAHKAN BARIS INI
+    ];
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(\App\Models\Student::class);

@@ -229,7 +229,7 @@ export interface CourseProgress {
   quizzes_passed: number;
   total_quizzes: number;
   progress_percentage: number;
-  is_completed: number;
+  is_completed: boolean;
   completed_at: Date | null;
 }
 
