@@ -53,8 +53,12 @@ Route::controller(AcademicController::class)->group(function () {
         ->middleware(['auth', IsStudent::class]);
     Route::post('/academies/quizzes/submit', 'quizzesSubmit')
         ->name('academics.quizzes.submit');
+    Route::post('/academies/course/{course}/enroll', 'enrollCourse')
+        ->name('academics.enroll');
     Route::post('/academies/course/{course}/payments', 'payments')
         ->name('academics.payments');
+    Route::post('/lessons/{lesson}/complete', [AcademicController::class, 'markLessonCompleted'])
+        ->name('lessons.complete');
 });
 
 Route::controller(RatingController::class)->group(function () {
@@ -92,8 +96,6 @@ Route::middleware(['auth', 'verified', IsStudent::class])->prefix('student')->gr
         ->name('student.dashboard');
     Route::get('/academic', [StudentController::class, 'academic'])
         ->name('student.academic');
-    Route::get('/courses', [StudentController::class, 'courses'])
-        ->name('student.courses');
     Route::get('/settings/profile', [StudentController::class, 'edit'])
         ->name('student.settings.profile');
     Route::get('/settings/password', [StudentController::class, 'editPassword'])

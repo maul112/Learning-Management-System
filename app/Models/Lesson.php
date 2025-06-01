@@ -31,4 +31,9 @@ class Lesson extends Model
     {
         return $this->hasMany(\App\Models\Quiz::class);
     }
+
+    public function completions(): HasMany
+    {
+        return $this->hasMany(\App\Models\LessonCompletion::class);
+    }
 }

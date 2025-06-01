@@ -5,8 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
-import type { Quiz, SharedData, Student } from '@/types';
-import { useForm, usePage } from '@inertiajs/react';
+import type { Course, Lesson, Quiz, SharedData, Student } from '@/types';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import {
   BookOpenIcon,
   CheckCircleIcon,
@@ -32,8 +32,13 @@ interface MultipleQuizSectionProps {
 export default function MultipleQuizSection({
   quizzes,
 }: MultipleQuizSectionProps) {
-  const { student } = usePage<SharedData & { student: { data: Student } }>()
-    .props;
+  const { student, course, lesson } = usePage<
+    SharedData & {
+      student: { data: Student };
+      course: { data: Course };
+      lesson: { data: Lesson };
+    }
+  >().props;
   const [currentQuizIndex, setCurrentQuizIndex] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [quizResults, setQuizResults] = useState<Record<number, QuizProgress>>(
@@ -47,7 +52,7 @@ export default function MultipleQuizSection({
     }>,
   });
 
-//   console.log(student);
+  //   console.log(student);
   console.log(quizzes);
 
   const currentQuiz = quizzes[currentQuizIndex];
@@ -376,7 +381,7 @@ export default function MultipleQuizSection({
                             'ml-2 font-medium',
                             parseFloat(
                               submissionHistory.grade?.toString() ?? '0',
-                            ) < 100 &&
+                            ) <= 100 &&
                               parseFloat(
                                 submissionHistory.grade?.toString() ?? '0',
                               ) > 70
@@ -398,6 +403,18 @@ export default function MultipleQuizSection({
                   </CardContent>
                 </Card>
               ))}
+              {studentSubmissionHistories.find(
+                (submissionHistory) =>
+                  parseFloat(submissionHistory.grade?.toString() ?? '0') >= 70,
+              ) && (
+                <Button>
+                  <Link
+                    href={`/academies/${course.data.id}/tutorials/${lesson.data.id + 1}`}
+                  >
+                    Next Module
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
         )}

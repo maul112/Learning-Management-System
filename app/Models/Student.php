@@ -87,10 +87,19 @@ class Student extends Model
             );
     }
 
-    public function courseProgress(): HasMany
+    public function courseProgresses(): HasMany
     {
         return $this->hasMany(
             \App\Models\CourseProgress::class,
+            'student_id',
+            'id'
+        );
+    }
+
+    public function lessonCompletions(): HasMany
+    {
+        return $this->hasMany(
+            \App\Models\LessonCompletion::class,
             'student_id',
             'id'
         );

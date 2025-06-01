@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quiz;
+use App\Services\ProgressService;
 use Inertia\Inertia;
 use App\Models\Course;
 use App\Models\Lesson;
@@ -17,9 +18,19 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\LessonResource;
 use App\Http\Resources\StudentResource;
+use App\Models\CourseEnrollment;
+use App\Models\LessonCompletion;
+use Illuminate\Support\Facades\DB;
 
 class AcademicController extends Controller
 {
+    protected $progressService;
+
+    public function __construct(ProgressService $progressService)
+    {
+        $this->progressService = $progressService;
+    }
+
     public function index(Course $course)
     {
         $courses = Course::with(['ratings'])->get();
@@ -35,7 +46,6 @@ class AcademicController extends Controller
         return Inertia::render('academics/course', [
             'courses' => CourseResource::collection($courses),
             'course' => new CourseResource($course),
-            'snapToken' => null, // We won't pass snapToken via Inertia props from index anymore for this flow
         ]);
     }
 
@@ -63,7 +73,11 @@ class AcademicController extends Controller
                 'user',
                 'submissionHistories' => function ($query) use ($lesson) {
                     $query->where('lesson_id', '=', $lesson->id)->with('submissions');
-                }
+                },
+                'courseProgresses' => function ($query) use ($course) {
+                    $query->where('course_id', '=', $course->id)->with('course');
+                },
+                'lessonCompletions.lesson'
             ])
             ->first();
 
@@ -72,6 +86,27 @@ class AcademicController extends Controller
             'course' => new CourseResource($course),
             'lesson' => new LessonResource($lesson),
             'student' => new StudentResource($student),
+        ]);
+    }
+
+    public function enrollCourse(Course $course)
+    {
+        $user = Auth::user();
+        $student = Student::where('user_id', $user->id)->first();
+
+        $existingEnrollment = CourseEnrollment::where([
+            'student_id' => $student->id,
+            'course_id' => $course->id
+        ]);
+
+        if (!$existingEnrollment->exists()) {
+            CourseEnrollment::create([
+                'student_id' => $student->id,
+                'course_id' => $course->id
+            ]);
+        }
+        return response()->json([
+            'message' => 'You have successfully enrolled in this course!'
         ]);
     }
 
@@ -170,6 +205,44 @@ class AcademicController extends Controller
         }
     }
 
+    public function markLessonCompleted(Request $request, Lesson $lesson)
+    {
+        $user = Auth::user();
+        $student = Student::where('user_id', $user->id)->first();
+
+        if (!$student) {
+            return redirect()->back()->with('error', 'Student profile not found.');
+        }
+
+        try {
+            // Cek apakah pelajaran sudah ditandai selesai sebelumnya
+            LessonCompletion::firstOrCreate(
+                [
+                    'student_id' => $student->id,
+                    'lesson_id' => $lesson->id,
+                ],
+                [
+                    'completed_at' => now(), // Tandai waktu penyelesaian
+                ]
+            );
+
+            $lesson->load(['module.course']);
+
+            // Setelah pelajaran ditandai selesai, Anda harus memicu update progress kursus
+            // (memanggil ProgressService yang sudah kita diskusikan sebelumnya)
+            // Anda perlu mendapatkan objek Course dari Lesson ini
+            $course = $lesson->module->course;
+            (new ProgressService())->updateCourseProgress($student, $course);
+
+
+            return redirect()->back()->with('success', 'Lesson marked as complete!');
+        } catch (\Exception $e) {
+            // Tangani jika ada error (misalnya, constraint unique sudah ada)
+            Log::error("Failed to mark lesson {$lesson->id} complete for student {$student->id}: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to mark lesson as complete.');
+        }
+    }
+
     public function quizzesSubmit(Request $request)
     {
         $request->validate([
@@ -179,31 +252,44 @@ class AcademicController extends Controller
         ]);
 
         $userId = Auth::id();
-        $studentId = Student::where('user_id', $userId)->value('id');
-        if (!$studentId) {
+        // Ambil objek Student lengkap, bukan hanya ID-nya
+        $student = Student::where('user_id', $userId)->first();
+        if (!$student) {
             return redirect()->route('login')->with('error', 'Please log in to submit quizzes.');
         }
 
+        // Ambil ID kuis pertama dari submissions
         $firstQuizId = $request->input('submissions.0.quiz_id');
-        $quiz = Quiz::with('lesson')->find($firstQuizId);
-        $lessonId = $quiz->lesson->id;
+
+        // Temukan kuis pertama dan muat relasi lesson dan module.course
+        $quiz = Quiz::with('lesson.module.course')->find($firstQuizId);
+
+        // Pastikan kuis, pelajaran, dan kursus ditemukan
+        if (!$quiz || !$quiz->lesson || !$quiz->lesson->module || !$quiz->lesson->module->course) {
+            return redirect()->back()->with('error', 'Invalid quiz submission: Associated lesson or course not found.');
+        }
+
+        $lesson = $quiz->lesson; // Objek Lesson
+        $course = $lesson->module->course; // Objek Course
 
         try {
+            DB::beginTransaction(); // Mulai transaksi database
+
             $submissionHistory = SubmissionHistory::create([
-                'lesson_id' => $lessonId,
-                'student_id' => $studentId,
+                'lesson_id' => $lesson->id, // Gunakan ID dari objek Lesson
+                'student_id' => $student->id, // Gunakan ID dari objek Student
                 'status' => 'pending',
                 'grade' => null,
             ]);
 
             $correctAnswersCount = 0;
-            $totalQuizzes = count($request->submissions);
+            $totalQuizzesInSubmission = count($request->submissions); // Total kuis dalam submission ini
 
             foreach ($request->submissions as $submissionData) {
                 $quizId = $submissionData['quiz_id'];
                 $selectedAnswer = $submissionData['selected_answer'];
 
-                $quiz = Quiz::find($quizId);
+                $quiz = Quiz::find($quizId); // Ambil setiap kuis untuk validasi dan jawaban
 
                 $isCorrect = false;
                 if ($quiz && $quiz->answer === $selectedAnswer) {
@@ -212,7 +298,7 @@ class AcademicController extends Controller
                 }
 
                 Submission::create([
-                    'student_id' => $studentId,
+                    'student_id' => $student->id,
                     'quiz_id' => $quizId,
                     'submission_history_id' => $submissionHistory->id,
                     'selected_answer' => $selectedAnswer,
@@ -221,7 +307,7 @@ class AcademicController extends Controller
             }
 
             $passingScorePercentage = 75;
-            $scorePercentage = ($totalQuizzes > 0) ? ($correctAnswersCount / $totalQuizzes) * 100 : 0;
+            $scorePercentage = ($totalQuizzesInSubmission > 0) ? ($correctAnswersCount / $totalQuizzesInSubmission) * 100 : 0;
 
             $status = ($scorePercentage >= $passingScorePercentage) ? 'passed' : 'failed';
             $grade = round($scorePercentage, 2) . '%';
@@ -231,8 +317,14 @@ class AcademicController extends Controller
                 'grade' => $grade,
             ]);
 
+            // Panggil ProgressService untuk memperbarui kemajuan kursus
+            $this->progressService->updateCourseProgress($student, $course);
+
+            DB::commit(); // Commit transaksi jika semua berhasil
+
             return redirect()->back()->with('success', 'Quiz submitted successfully.');
         } catch (\Exception $e) {
+            DB::rollBack(); // Rollback transaksi jika ada error
             Log::error('Quiz submission failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
             return redirect()->back()->with('error', 'Failed to submit quiz.');

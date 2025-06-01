@@ -3,19 +3,48 @@ import MultipleQuizSection from '@/components/multi-quiz-section';
 import { Button } from '@/components/ui/button';
 import VideoPlayer from '@/components/video-player';
 import RootSidebarLayout from '@/layouts/root-sidebar-layout';
-import type { Lesson, SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import type { Lesson, SharedData, Student } from '@/types';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
+  CheckCircle,
   CheckCircleIcon,
+  LoaderCircle,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function Tutorials() {
-  const { lesson } = usePage<SharedData & { lesson: { data: Lesson } }>().props;
+  const { student, lesson } = usePage<
+    SharedData & { student: { data: Student }; lesson: { data: Lesson } }
+  >().props;
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
   const [allQuizzesPassed, setAllQuizzesPassed] = useState(false);
+  const { post: markCompletePost, processing: markingComplete } = useForm({});
+
+//   console.log(student);
+
+  const handleMarkComplete = () => {
+    markCompletePost(route('lessons.complete', lesson.data.id), {
+      onSuccess: () => {
+        toast.success('Lesson completed successfully!');
+      },
+      onError: (errors) => {
+        console.log(errors);
+        toast.error('Failed to mark lesson as complete');
+      },
+    });
+  };
+
+  const isLessonCompleted =
+    student.data.lesson_completions.some(
+      (completion) => completion.lesson.id === lesson.data.id,
+    ) || false;
+
+  const courseProgress = student.data.course_progresses.find(
+    (progress) => progress.course.id === lesson.data.module.course.id,
+  );
 
   useEffect(() => {
     if (lesson) {
@@ -163,6 +192,25 @@ export default function Tutorials() {
                 ℹ️ This lesson has no quizzes. You can proceed to the next
                 lesson directly.
               </p>
+            </div>
+          )}
+
+          {!isLessonCompleted &&
+            !courseProgress?.is_completed && ( // Hanya tampilkan jika pelajaran belum selesai & kursus belum selesai
+              <div className="mt-8">
+                <Button onClick={handleMarkComplete} disabled={markingComplete}>
+                  {markingComplete ? (
+                    <LoaderCircle className="mr-2 animate-spin" />
+                  ) : null}
+                  Tandai Selesai
+                </Button>
+              </div>
+            )}
+
+          {isLessonCompleted && (
+            <div className="mt-8 font-semibold text-green-600">
+              <CheckCircle className="mr-2 inline-block" /> Pelajaran ini telah
+              Anda selesaikan!
             </div>
           )}
         </div>

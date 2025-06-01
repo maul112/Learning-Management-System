@@ -81,6 +81,8 @@ export interface Student {
   courses_enrolled: Course[];
   submission_histories: SubmissionHistory[];
   user: User;
+  lesson_completions: LessonCompletion[];
+  course_progresses: CourseProgress[];
   [key: string]: unknown;
 }
 
@@ -209,6 +211,26 @@ export interface Submissions {
   submission_history: SubmissionHistory;
   selected_answer: string;
   is_correct: boolean;
+}
+
+export interface LessonCompletion {
+  id: number;
+  lesson: Lesson;
+  student: Student;
+  completed_at: Date | null;
+}
+
+export interface CourseProgress {
+  id: number;
+  course: Course;
+  student: Student;
+  lessons_completed: number;
+  total_lessons: number;
+  quizzes_passed: number;
+  total_quizzes: number;
+  progress_percentage: number;
+  is_completed: number;
+  completed_at: Date | null;
 }
 
 export interface PaginatedData<T> {

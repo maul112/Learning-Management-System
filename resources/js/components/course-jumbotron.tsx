@@ -67,14 +67,16 @@ export function CourseJumbotron({
 
   const handleCheckPayment = async () => {
     if (course.data.price <= 0) {
-      // Handle free courses directly
-      router.get(
-        route('academics.show', {
-          course: course.data.id,
-          lesson: course.data.modules[0].lessons[0].id, // Assuming first lesson exists
-        }),
+      const response = await axios.post(
+        `/academies/course/${course.data.id}/enroll`,
       );
-      toast.success('You have successfully enrolled in this free course!');
+
+      if (response.status === 200) {
+        toast.success('Enrollment successful!');
+        router.visit(
+          `/academies/${course.data.id}/tutorials/${course.data.modules[0].lessons[0].id}`,
+        );
+      }
       return;
     }
 

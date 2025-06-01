@@ -184,7 +184,7 @@ export default function InteractiveCodeBlock({
           <div className="bg-muted px-4 py-2 text-xs font-semibold">Output</div>
           <div
             className={cn(
-              'max-h-[200px] overflow-auto p-4 font-mono text-sm',
+              'max-h-[200px] overflow-auto p-4 font-mono text-sm m-4',
               error ? 'bg-red-950/20 text-red-400' : 'bg-muted/30',
             )}
           >

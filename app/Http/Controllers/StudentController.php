@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CourseResource;
+use App\Http\Resources\StudentResource;
 use App\Http\Resources\UserResource;
 use App\Models\Course;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class StudentController extends Controller
@@ -19,15 +22,22 @@ class StudentController extends Controller
 
     public function academic()
     {
-        return Inertia::render('student/academic');
-    }
+        $user = Auth::user();
 
-    public function courses()
-    {
-        $courses = Course::with(['modules'])->get();
+        $student = Student::where('user_id', '=', $user->id)
+            ->with([
+                'user',
+                'enrollments',
+                // 'enrollments.course.academic',
+                // 'enrollments.course.modules.lessons',
+                // 'enrollments.course.students.user',
+                // 'enrollments.ratings',
+                'courseProgresses.course',
+            ])
+            ->first();
 
-        return Inertia::render('student/courses', [
-            'courses' => CourseResource::collection($courses),
+        return Inertia::render('student/academic', [
+            'student' => new StudentResource($student),
         ]);
     }
 

@@ -19,6 +19,8 @@ class StudentResource extends JsonResource
             'user' => new UserResource($this->whenLoaded('user')),
             'courses_enrolled' => CourseResource::collection($this->whenLoaded('enrollments')),
             'submission_histories' => SubmissionHistoryResource::collection($this->whenLoaded('submissionHistories')),
+            'course_progresses' => CourseProgressResource::collection($this->whenLoaded('courseProgresses')),
+            'lesson_completions' => LessonCompletionResource::collection($this->whenLoaded('lessonCompletions')),
         ];
     }
 }

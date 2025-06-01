@@ -1,4 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SharedData, Student } from '@/types';
+import { usePage } from '@inertiajs/react';
+import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { BookMarked, BookOpen, CheckCircle, GraduationCap } from 'lucide-react';
 import { useState } from 'react';
@@ -15,7 +18,18 @@ const tabTriggers = [
 ];
 
 export function StudentAcademyTabs() {
+  const { student } = usePage<SharedData & { student: { data: Student } }>()
+    .props;
   const [activeTab, setActiveTab] = useState('learning');
+
+
+  const courseProgressesOngoing = student.data.course_progresses.filter(
+    (progress) => progress.is_completed === 0,
+  );
+
+  const courseProgressesCompleted = student.data.course_progresses.filter(
+    (progress) => progress.is_completed === 1,
+  );
 
   return (
     <Tabs
@@ -61,17 +75,20 @@ export function StudentAcademyTabs() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            {[1, 2, 3, 4].map((item) => (
+            {courseProgressesOngoing.map((courseProgress) => (
               <div
-                key={item}
+                key={courseProgress.id}
                 className="bg-background rounded-lg border p-4 transition-shadow hover:shadow-md"
               >
                 <div className="bg-muted mb-3 h-32 w-full rounded-md"></div>
                 <div className="space-y-2">
-                  <h4 className="font-medium">Judul Kelas {item}</h4>
+                  <h4 className="font-medium">{courseProgress.course.title}</h4>
                   <div className="text-muted-foreground flex justify-between text-sm">
-                    <span>Progress: 65%</span>
-                    <span>12/20 Modul</span>
+                    <span>{Number(courseProgress.progress_percentage)}%</span>
+                    <span>
+                      {courseProgress.lessons_completed}/
+                      {courseProgress.total_lessons} Lesson
+                    </span>
                   </div>
                   <div className="bg-muted h-2 w-full rounded-full">
                     <div
@@ -102,16 +119,21 @@ export function StudentAcademyTabs() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            {[1, 2, 3, 4].map((item) => (
+            {courseProgressesCompleted.map((courseProgress) => (
               <div
-                key={item}
+                key={courseProgress.id}
                 className="bg-background rounded-lg border p-4 transition-shadow hover:shadow-md"
               >
                 <div className="bg-muted mb-3 h-32 w-full rounded-md"></div>
                 <div className="space-y-2">
-                  <h4 className="font-medium">Judul Kelas {item}</h4>
+                  <h4 className="font-medium">{courseProgress.course.title}</h4>
                   <div className="text-muted-foreground flex justify-between text-sm">
-                    <span>Selesai pada: 12 Apr 2023</span>
+                    <span>
+                      {format(
+                        new Date(courseProgress.completed_at as Date),
+                        'yyyy-MM-dd',
+                      )}
+                    </span>
                     <div className="flex items-center gap-1 text-green-600">
                       <CheckCircle className="h-3 w-3" />
                       <span>Completed</span>
