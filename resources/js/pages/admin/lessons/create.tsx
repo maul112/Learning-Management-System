@@ -70,7 +70,7 @@ export default function LessonsCreate() {
         <div className="pl-4">
           <h1 className="text-2xl font-bold">Lesson setup</h1>
           <p className="text-muted-foreground text-sm">
-            Complete all fields ({requiredFieldsNumber - 1}/4)
+            Complete all fields ({requiredFieldsNumber - 2}/3)
           </p>
         </div>
         <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
@@ -90,7 +90,6 @@ export default function LessonsCreate() {
             <VideoPreviewInput
               htmlFor="video"
               label="Video"
-              currentVideoUrl={`/storage/${data.video}`}
               onChange={(file) => {
                 if (file) {
                   setData('video', file);

@@ -242,7 +242,7 @@ export default function CourseEdit() {
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      <FormFieldHeader title="Module chapters" icon={Book} />
+                      <FormFieldHeader title="Course chapters" icon={Book} />
                     </CardTitle>
                   </CardHeader>
                   <CardContent>

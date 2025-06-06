@@ -36,7 +36,7 @@ export function LearningPathContent() {
           <CardHeader>
             <img
               className="mb-5 h-72 w-full object-cover"
-              src={`/storage${course.image}`}
+              src={`/storage/${course.image}`}
               alt=""
             />
             <CardTitle className="mb-3 cursor-pointer text-xl hover:underline md:text-3xl">
@@ -54,7 +54,9 @@ export function LearningPathContent() {
               </span>
               <span className="text-muted-foreground flex items-center gap-1 text-xs md:text-sm">
                 <StarIcon className="text-amber-400" fill="currentColor" />
-                {getAverage(course.ratings.map((rating) => rating.rating))}
+                {course.ratings.length > 0
+                  ? getAverage(course.ratings.map((rating) => rating.rating))
+                  : 0}
               </span>
               <span className="text-muted-foreground flex items-center gap-1 text-xs capitalize md:text-sm">
                 <ChartColumn className="text-violet-400" />

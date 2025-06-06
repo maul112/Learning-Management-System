@@ -50,7 +50,9 @@ export function CourseCard({ course }: { course: Course }) {
                     className="h-4 w-4 text-amber-400"
                     fill="currentColor"
                   />
-                  {getAverage(course.ratings.map((rating) => rating.rating))}
+                  {course.ratings.length > 0
+                    ? getAverage(course.ratings.map((rating) => rating.rating))
+                    : 0}
                 </span>
                 <span className="flex items-center gap-2 capitalize">
                   <ChartColumnDecreasingIcon className="h-4 w-4 text-violet-400" />

@@ -33,7 +33,14 @@ class AcademicController extends Controller
 
     public function index(Course $course)
     {
-        $courses = Course::with(['ratings'])->get();
+        $courses = Course::where('status', 'published')->with([
+            'academic',
+            'ratings',
+            'modules',
+            'students'
+        ])
+            ->whereHas('academic', fn($query) => $query->where('status', 'published'))
+            ->get();
         $course->load([
             'academic',
             'ratings.student.user',
@@ -51,7 +58,14 @@ class AcademicController extends Controller
 
     public function show(Course $course, Lesson $lesson)
     {
-        $courses = Course::all();
+        $courses = Course::where('status', 'published')->with([
+            'academic',
+            'ratings',
+            'modules',
+            'students'
+        ])
+            ->whereHas('academic', fn($query) => $query->where('status', 'published'))
+            ->get();
 
         $course->load([
             'academic',

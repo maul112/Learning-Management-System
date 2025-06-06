@@ -233,6 +233,12 @@ export interface CourseProgress {
   completed_at: Date | null;
 }
 
+export interface Certificate {
+    id: number;
+    student: Student;
+    course: Course;
+}
+
 export interface PaginatedData<T> {
   current_page: number;
   data: T[];

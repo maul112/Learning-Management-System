@@ -165,9 +165,11 @@ export function CourseJumbotron({
                     className="w-6 text-yellow-300"
                     fill="currentColor"
                   />
-                  {getAverage(
-                    course.data.ratings.map((rating) => rating.rating),
-                  )}
+                  {course.data.ratings.length > 0
+                    ? getAverage(
+                        course.data.ratings.map((rating) => rating.rating),
+                      )
+                    : 0}
                   <GitCommitHorizontal />
                   <Dialog>
                     <DialogTrigger>

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 import { CourseCard } from './course-card';
 import { SelectFilter } from './select-filter';
+import { BackgroundBeams } from './ui/background-beams';
 
 export function LearningPathsContent() {
   const { courses, academics } = usePage<
@@ -33,7 +34,8 @@ export function LearningPathsContent() {
 
   return (
     <div className="dark:bg-background w-full bg-white font-sans md:px-10">
-      <div className="mx-auto max-w-7xl px-4 py-20 md:px-8 lg:px-10">
+      <div className="relative mx-auto max-w-7xl px-4 py-20 md:px-8 lg:px-10">
+        <BackgroundBeams />
         <motion.h2
           initial={{ y: 20, opacity: 0 }}
           animate={{

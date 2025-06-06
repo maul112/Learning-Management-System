@@ -1,4 +1,5 @@
 import { itemZoomVariant } from '@/lib/animation';
+import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { RootContent } from './root-content';
 import { BlurFade } from './ui/blur-fade';
@@ -63,7 +64,7 @@ export function RootJumbotron() {
               animate="show"
               variants={itemZoomVariant}
             >
-              Belajar Sekarang
+              <Link href='/learning-paths'>Belajar Sekarang</Link>
             </motion.div>
           </Button>
         </div>

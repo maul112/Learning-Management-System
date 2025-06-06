@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { ArrowRight, ArrowUpRightFromSquare } from 'lucide-react';
 import { RootContent } from './root-content';
 import { Carousel } from './ui/apple-cards-carousel';
@@ -22,10 +23,12 @@ export function RootTestimoni() {
           scrollRightValue={1190}
         />
         <div className="flex w-full items-center justify-end">
-          <Button variant="link" className="group cursor-pointer">
-            Lihat semua
-            <ArrowUpRightFromSquare />
-          </Button>
+          <Link href="/ratings">
+            <Button variant="link" className="group cursor-pointer">
+              Lihat semua
+              <ArrowUpRightFromSquare />
+            </Button>
+          </Link>
         </div>
       </section>
     </RootContent>

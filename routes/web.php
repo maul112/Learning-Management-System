@@ -23,11 +23,16 @@ use App\Http\Controllers\Admin\AdminAcademicController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 
 Route::get('/', function () {
-    $academics = Academic::with([
-        'courses.modules.lessons',
+    $academics = Academic::where('status', 'published')->with([
+        'courses' => fn($query) =>
+        $query->where('status', 'published')->with([
+            'modules' => fn($query) => $query->where('status', 'published')->with([
+                'lessons' => fn($query) => $query->where('status', 'published')
+            ])
+        ]),
         'courses.students'
     ])->get();
-    $courses = Course::all();
+    $courses = Course::where('status', 'published')->get();
     return Inertia::render('welcome', [
         'academics' => AcademicResource::collection($academics),
         'courses' => CourseResource::collection($courses),
@@ -66,6 +71,10 @@ Route::controller(AcademicController::class)->group(function () {
 Route::controller(RatingController::class)->group(function () {
     Route::get('/ratings', 'index')
         ->name('ratings.index');
+    Route::post('/ratings', 'store')
+        ->name('ratings.store');
+    Route::delete('/ratings/{rating}', 'destroy')
+        ->name('ratings.destroy');
 });
 
 Route::middleware(['auth', 'verified', IsAdmin::class])->group(function () {
@@ -104,11 +113,19 @@ Route::middleware(['auth', 'verified', IsStudent::class])->prefix('student')->gr
         ->name('student.settings.password');
     Route::get('/{user:name}/profile', [StudentController::class, 'profile'])
         ->name('student.profile');
+    Route::get('/settings/appearance', [StudentController::class, 'appearance'])
+        ->name('student.settings.appearance');
     Route::get('/courses/{course}/certificate-data', [StudentController::class, 'getCertificateData'])
         ->name('courses.certificate.data');
     Route::get('/certificate/print', function () {
         return Inertia::render('student/CertificatePrintPage'); // Ini akan menjadi halaman React baru Anda
     })->name('certificate.print.page');
+    Route::get('/courses/{course}/rate', [StudentController::class, 'createCourseRating'])
+        ->name('courses.rate.create');
+    Route::post('/courses/{course}/rate', [StudentController::class, 'storeCourseRating'])
+        ->name('courses.rate.store');
+    Route::get('/certificate/{course}', [StudentController::class, 'certificate'])
+        ->name('student.certificate');
 });
 
 Route::middleware(['auth'])->group(function () {

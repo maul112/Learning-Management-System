@@ -1,5 +1,6 @@
 import { RootContent } from '@/components/root-content';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { BackgroundBeams } from '@/components/ui/background-beams';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -72,9 +73,8 @@ export default function Profile() {
 
       {/* Bagian Header Profil */}
       {/* Saran: Pertimbangkan untuk memberi background atau border pada section ini agar lebih menonjol */}
-      <div className="bg-muted/30 dark:bg-muted/10 w-full py-16 md:py-24">
-        {' '}
-        {/* Penyesuaian padding dan background lembut */}
+      <div className="relative w-full py-16 md:py-24">
+        <BackgroundBeams /> {/* Penyesuaian padding dan background lembut */}
         <RootContent>
           <div className="flex flex-col items-center gap-6 text-center md:flex-row md:items-end md:text-left">
             <div className="relative">

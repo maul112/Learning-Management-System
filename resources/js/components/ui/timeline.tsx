@@ -6,6 +6,7 @@ import {
 } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { Separator } from "./separator";
+import { BackgroundBeams } from "./background-beams";
 
 interface TimelineEntry {
     title: string;
@@ -46,7 +47,8 @@ export const Timeline = ({
             className="w-full bg-white dark:bg-background font-sans md:px-10"
             ref={containerRef}
         >
-            <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10">
+            <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10 relative">
+                <BackgroundBeams />
                 <motion.h2
                     initial={{
                         y: 20,

@@ -40,7 +40,7 @@ export function StudentNav({
     {
       icon: Settings,
       name: 'Settings',
-      href: '/student/settings',
+      href: '/student/settings/profile',
     },
     {
       icon: LogOutIcon,

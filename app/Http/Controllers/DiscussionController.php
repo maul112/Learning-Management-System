@@ -19,7 +19,14 @@ class DiscussionController extends Controller
      */
     public function index()
     {
-        $courses = Course::all();
+        $courses = Course::where('status', 'published')->with([
+            'academic',
+            'ratings',
+            'modules',
+            'students'
+        ])
+            ->whereHas('academic', fn($query) => $query->where('status', 'published'))
+            ->get();
         $discussions = DiscussionThread::with(['user', 'replies.user'])
             ->latest()
             ->get();
@@ -79,7 +86,14 @@ class DiscussionController extends Controller
      */
     public function show(DiscussionThread $discussion)
     {
-        $courses = Course::all();
+        $courses = Course::where('status', 'published')->with([
+            'academic',
+            'ratings',
+            'modules',
+            'students'
+        ])
+            ->whereHas('academic', fn($query) => $query->where('status', 'published'))
+            ->get();
         $discussion->load(['user', 'replies.user']);
 
         return Inertia::render('discussions/show', [

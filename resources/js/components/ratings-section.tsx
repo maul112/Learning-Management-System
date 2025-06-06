@@ -1,6 +1,9 @@
 import { useInitials } from '@/hooks/use-initials';
-import { Academic } from '@/types';
+import { Academic, SharedData } from '@/types';
+import { usePage } from '@inertiajs/react';
+import axios from 'axios';
 import { ArrowRight, StarIcon } from 'lucide-react';
+import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import {
@@ -15,6 +18,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -22,10 +26,23 @@ import {
 import { ShineBorder } from './ui/shine-border';
 
 export function RatingsSection({ academic }: { academic: Academic }) {
+  const { auth } = usePage<SharedData>().props;
   const getInitials = useInitials();
   const ratingsSliced = academic.courses.map((course) =>
     course.ratings.find((rating) => rating.rating >= 4),
   );
+
+  const handleDeleteRating = async (id: number) => {
+    try {
+      const response = await axios.delete(`/ratings/${id}`);
+      if (response.status === 200) {
+        toast.success('Rating deleted successfully!');
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error('Failed to delete rating');
+    }
+  };
 
   return (
     <div id={academic.title} className="grid gap-10 pt-32">
@@ -39,6 +56,7 @@ export function RatingsSection({ academic }: { academic: Academic }) {
                   <AvatarImage
                     src={'/storage/' + rating?.student.user.avatar}
                     alt={rating?.student.user.name}
+                    className="object-cover"
                   />
                   <AvatarFallback>
                     {getInitials(rating!.student.user.name)}
@@ -91,6 +109,16 @@ export function RatingsSection({ academic }: { academic: Academic }) {
                     </DialogTitle>
                     <DialogDescription>{rating?.comment}</DialogDescription>
                   </DialogHeader>
+                  {auth.user.role === 'admin' && (
+                    <DialogFooter>
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleDeleteRating(rating!.id)}
+                      >
+                        Hapus
+                      </Button>
+                    </DialogFooter>
+                  )}
                 </DialogContent>
               </Dialog>
             </CardFooter>

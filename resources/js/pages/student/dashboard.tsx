@@ -1,9 +1,15 @@
-import { BorderBeam } from '@/components/ui/border-beam';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ShineBorder } from '@/components/ui/shine-border';
 import StudentLayout from '@/layouts/student-layout';
+import { cn } from '@/lib/utils';
 import { SharedData, Student } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { format } from 'date-fns'; // Untuk format tanggal
@@ -14,7 +20,7 @@ export default function StudentDashboard() {
     SharedData & { student: { data: Student } }
   >().props;
 
-  console.log(student);
+//   console.log(student);
 
   const allCourseProgresses = student?.data?.course_progresses || [];
 
@@ -46,7 +52,7 @@ export default function StudentDashboard() {
           </h2>
           <p className="text-base">Semoga aktivitas belajarmu menyenangkan.</p>
           <Card className="relative flex w-full flex-col gap-3 rounded-xl p-6">
-            <BorderBeam size={100} duration={10} />
+            <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} />
             <p className="mb-2 text-lg font-semibold">Ringkasan Kursus Anda</p>
 
             <div className="grid grid-cols-1 gap-4 text-center md:grid-cols-3">
@@ -104,7 +110,7 @@ export default function StudentDashboard() {
                 )}
                 {coursesOngoingCount === 0 && coursesCompletedCount > 0 && (
                   <Button className="cursor-pointer" variant="outline">
-                    <Link href="/student/courses">Jelajahi Kursus Baru</Link>
+                    <Link href="/learning-paths">Jelajahi Kursus Baru</Link>
                   </Button>
                 )}
               </div>
@@ -122,7 +128,7 @@ export default function StudentDashboard() {
               </CardTitle>
             </CardHeader>
             <Separator />
-            <CardContent className="p-5">
+            <CardContent className="flex flex-col gap-3 p-5">
               {/* Placeholder atau tampilkan 2-3 kursus terbaru yang sedang berjalan/diselesaikan */}
               {allCourseProgresses.length > 0 ? (
                 allCourseProgresses
@@ -138,49 +144,65 @@ export default function StudentDashboard() {
                   })
                   .slice(0, 3) // Tampilkan 3 aktivitas terbaru
                   .map((progress) => (
-                    <div
+                    <Card
                       key={progress.id}
-                      className="flex items-center justify-between border-b py-2 last:border-b-0"
+                      className="relative flex justify-between py-8"
                     >
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={`/storage/${progress.course?.image}`}
-                          alt={progress.course?.title}
-                          className="h-10 w-10 object-cover"
-                        />
-                        <div>
-                          <h4 className="font-medium">
-                            {progress.course?.title || 'Kursus Tidak Dikenal'}
-                          </h4>
-                          <p className="text-muted-foreground text-sm">
-                            {progress.is_completed === true ? (
-                              <span>
-                                Selesai pada{' '}
-                                {progress.completed_at
-                                  ? format(
-                                      new Date(progress.completed_at),
-                                      'MMM dd, yyyy',
-                                    )
-                                  : 'N/A'}
-                              </span>
-                            ) : (
-                              <span>
-                                Progress:{' '}
-                                {Math.round(progress.progress_percentage)}%
-                              </span>
-                            )}
-                          </p>
+                      <CardContent className="flex justify-between">
+                        <div className="flex items-center gap-3">
+                          <div>
+                            <h4 className="font-medium">
+                              {progress.course?.title || 'Kursus Tidak Dikenal'}
+                            </h4>
+                            <p className="text-muted-foreground text-sm">
+                              {progress.is_completed === true ? (
+                                <span>
+                                  Selesai pada{' '}
+                                  {progress.completed_at
+                                    ? format(
+                                        new Date(progress.completed_at),
+                                        'MMM dd, yyyy',
+                                      )
+                                    : 'N/A'}
+                                </span>
+                              ) : (
+                                <span>
+                                  Progress:{' '}
+                                  {Math.round(progress.progress_percentage)}%
+                                </span>
+                              )}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <Link
-                        href={`/academies/${progress.course?.id}`}
-                        className="text-primary text-sm hover:underline"
-                      >
-                        {progress.is_completed === true
-                          ? 'Lihat Sertifikat'
-                          : 'Lanjutkan'}
-                      </Link>
-                    </div>
+                        <Button>
+                          <Link
+                            href={
+                              progress.is_completed
+                                ? `/student/certificate/${progress.course.id}`
+                                : `/academies/${progress.course?.id}`
+                            }
+                            className="text-sm hover:underline"
+                          >
+                            {progress.is_completed === true
+                              ? 'Lihat Sertifikat'
+                              : 'Lanjutkan'}
+                          </Link>
+                        </Button>
+                      </CardContent>
+                      <CardFooter>
+                        <div
+                          className={cn(
+                            'h-2 rounded-full',
+                            progress.is_completed
+                              ? 'bg-green-500'
+                              : 'bg-primary',
+                          )}
+                          style={{
+                            width: `${progress.progress_percentage}%`,
+                          }}
+                        />
+                      </CardFooter>
+                    </Card>
                   ))
               ) : (
                 <p className="text-muted-foreground text-center">

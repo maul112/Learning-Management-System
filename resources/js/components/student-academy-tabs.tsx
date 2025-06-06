@@ -1,7 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SharedData, Student } from '@/types';
-import { usePage } from '@inertiajs/react';
-import axios from 'axios'; // Pastikan axios diimport
+import { Link, useForm, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import {
@@ -9,104 +8,83 @@ import {
   CheckCircle,
   GraduationCap,
   LoaderCircle,
-} from 'lucide-react'; // Tambah LoaderCircle
-import { useEffect, useState } from 'react'; // Tambah useEffect
+  Star,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import InputError from './input-error';
 import { Button } from './ui/button';
-
-// Perbarui interface CertificateData sesuai dengan data yang dikirim backend
-interface CertificateData {
-  certificateId: number; // Dari backend `certificate->id`
-  studentName: string;
-  courseTitle: string;
-  completionDate: string;
-  issueDate?: string; // Dari backend `certificate->created_at`
-  courseInstructor: string;
-  courseDuration: string;
-}
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog';
+import { Label } from './ui/label';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { Separator } from './ui/separator';
+import { ShineBorder } from './ui/shine-border';
+import { Textarea } from './ui/textarea';
 
 export function StudentAcademyTabs() {
-  const { student } = usePage<SharedData & { student: { data: Student } }>()
-    .props;
+  const { student, success, error } = usePage<
+    SharedData & { student: { data: Student } }
+  >().props;
 
-  // State untuk mengelola data sertifikat yang akan dicetak
-  const [currentPrintData, setCurrentPrintData] =
-    useState<CertificateData | null>(null);
-  // State untuk mengelola status loading saat mengambil data sertifikat
-  const [loadingCertificate, setLoadingCertificate] = useState(false);
+  const { data, setData, post, processing, errors } = useForm({
+    rating: 0, // Default 0 atau rating yang sudah ada
+    comment: '',
+  });
+  const [courseActive, setCourseActive] = useState<number>(0);
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
-  // Periksa kembali filter ini, pastikan progress.is_completed memang 0 atau 1
-  // Jika di database boolean, PHP biasanya mengembalikannya sebagai true/false
-  const courseProgressesOngoing = student.data.course_progresses.filter(
-    (progress) => progress.is_completed === false, // Gunakan boolean
+  const allCourseProgresses = student.data.course_progresses || [];
+
+  const courseProgressesOngoing = allCourseProgresses.filter(
+    (progress) => progress.is_completed === false,
   );
 
-  const courseProgressesCompleted = student.data.course_progresses.filter(
-    (progress) => progress.is_completed === true, // Gunakan boolean
+  const courseProgressesCompleted = allCourseProgresses.filter(
+    (progress) => progress.is_completed === true,
   );
 
-  console.log('courseProgressesOngoing', courseProgressesOngoing);
-  console.log('courseProgressesCompleted', courseProgressesCompleted);
-  console.log('student', student);
+  //   console.log('courseProgressesOngoing', courseProgressesOngoing);
+  //   console.log('courseProgressesCompleted', courseProgressesCompleted);
+  //   console.log('student', student);
 
-  // Fungsi untuk memuat data sertifikat dan memicu pencetakan
-  const handlePrintCertificate = async (courseId: number) => {
-    setLoadingCertificate(true); // Mulai loading
+  const handleAddReview: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
     try {
-      // Panggil endpoint backend yang baru untuk mendapatkan data JSON sertifikat
-      const response = await axios.get<CertificateData>(
-        route('courses.certificate.data', courseId),
-      );
-
-      // Asumsi backend mengembalikan status HTTP 200 untuk sukses
-      if (response.status === 200) {
-        setCurrentPrintData(response.data); // Simpan data ke state
-        toast.success(
-          'Data sertifikat berhasil dimuat, sedang mempersiapkan cetak.',
-        );
-      } else {
-        // Tangani kasus non-200 OK, seperti 403 atau 404 dari backend
-        const errorData = response.data as { message?: string }; // Casting untuk mengakses message
-        toast.error(errorData.message || 'Gagal memuat data sertifikat.');
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      console.error('Error fetching certificate data:', error);
-      if (error.response) {
-        // Error dari server (misal: 403 Course not completed)
-        toast.error(
-          error.response.data.message ||
-            'Terjadi kesalahan saat memuat data sertifikat dari server.',
-        );
-      } else if (error.request) {
-        // Permintaan dikirim tapi tidak ada respons (misal: network error)
-        toast.error(
-          'Tidak ada respons dari server. Periksa koneksi internet Anda.',
-        );
-      } else {
-        // Kesalahan lain
-        toast.error(
-          'Terjadi kesalahan yang tidak terduga saat memuat data sertifikat.',
-        );
-      }
-      setCurrentPrintData(null); // Bersihkan data pada error
-    } finally {
-      setLoadingCertificate(false); // Selesai loading
+      post(route('courses.rate.store', courseActive), {
+        onError: (e) => console.log(e),
+        onSuccess: () => setOpenModal(false),
+      });
+    } catch (error) {
+      toast.error('Error to add Review');
+      console.log(error);
     }
   };
 
-  // Gunakan useEffect untuk memicu window.print() setelah data siap
   useEffect(() => {
-    if (currentPrintData) {
-      // Beri sedikit jeda agar React memiliki waktu untuk merender komponen tersembunyi
-      const printDelay = setTimeout(() => {
-        window.print(); // Pemicu dialog cetak browser
-        setCurrentPrintData(null); // Bersihkan data setelah cetak untuk menyembunyikan komponen
-      }, 500); // Jeda 500ms
+    const currentCourseProgress = allCourseProgresses.find(
+      (progress) => progress.course.id === courseActive,
+    );
 
-      return () => clearTimeout(printDelay); // Bersihkan timer jika komponen di-unmount
-    }
-  }, [currentPrintData]); // Effect ini berjalan setiap kali currentPrintData berubah
+    const currentRating = currentCourseProgress?.course.ratings.find(
+      (r) => r.student.id === student.data.id,
+    );
+
+    setData('rating', currentRating?.rating || 0);
+    setData('comment', currentRating?.comment || '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseActive]);
+
+  useEffect(() => {
+    if (success) toast.success(success as string);
+    if (error) toast.error(error as string);
+  }, [success, error]);
 
   return (
     <Tabs defaultValue="learning" className="w-full">
@@ -131,7 +109,7 @@ export function StudentAcademyTabs() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3 }}
-          className="bg-card rounded-xl border p-6 shadow-sm"
+          className="bg-card relative rounded-xl border p-6 shadow-sm"
         >
           <div className="mb-4 flex items-center gap-3">
             <div className="bg-primary/10 rounded-full p-2">
@@ -141,6 +119,8 @@ export function StudentAcademyTabs() {
               Kelas yang Sedang Dipelajari
             </h3>
           </div>
+
+          <Separator className="mb-4" />
 
           <div className="grid gap-4 md:grid-cols-2">
             {courseProgressesOngoing.length > 0 ? (
@@ -187,6 +167,7 @@ export function StudentAcademyTabs() {
               </p>
             )}
           </div>
+          <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} />
         </motion.div>
       </TabsContent>
 
@@ -196,7 +177,7 @@ export function StudentAcademyTabs() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3 }}
-          className="bg-card rounded-xl border p-6 shadow-sm"
+          className="bg-card relative rounded-xl border p-6 shadow-sm"
         >
           <div className="mb-4 flex items-center gap-3">
             <div className="rounded-full bg-green-100 p-2">
@@ -204,6 +185,8 @@ export function StudentAcademyTabs() {
             </div>
             <h3 className="text-lg font-medium">Kelas yang Sudah Selesai</h3>
           </div>
+
+          <Separator className="mb-4" />
 
           <div className="grid gap-4 md:grid-cols-2">
             {courseProgressesCompleted.length > 0 ? (
@@ -223,6 +206,16 @@ export function StudentAcademyTabs() {
                     <h4 className="font-medium">
                       {courseProgress.course?.title || 'Unknown Course'}
                     </h4>
+                    <span className="flex items-center gap-2">
+                      Rating Anda
+                      <Star
+                        className="h-4 w-4 text-yellow-500"
+                        fill="currentColor"
+                      />
+                      {courseProgress.course.ratings.find(
+                        (rating) => rating.student.id === student.data.id,
+                      )?.rating || 'Belum ada rating'}
+                    </span>
                     <div className="text-muted-foreground flex justify-between text-sm">
                       <span>
                         {courseProgress.completed_at
@@ -240,18 +233,135 @@ export function StudentAcademyTabs() {
                     <div className="bg-muted h-2 w-full rounded-full">
                       <div className="h-2 w-full rounded-full bg-green-500"></div>
                     </div>
-                    <Button
-                      className="mt-4"
-                      onClick={() =>
-                        handlePrintCertificate(courseProgress.course.id)
-                      }
-                      disabled={loadingCertificate} // Nonaktifkan tombol saat loading
-                    >
-                      {loadingCertificate ? (
-                        <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                      ) : null}
-                      Cetak Sertifikat
-                    </Button>
+                    <div className="text-end">
+                      <Dialog
+                        open={openModal}
+                        onOpenChange={() => {
+                          setCourseActive(courseProgress.course.id);
+                          setOpenModal(true);
+                        }}
+                      >
+                        <DialogTrigger asChild>
+                          <Button
+                            className="ml-4 cursor-pointer"
+                            variant="ghost"
+                          >
+                            {courseProgress.course.ratings.find(
+                              (rating) => rating.student.id === student.data.id,
+                            )
+                              ? 'Edit Ulasan'
+                              : 'Beri Ulasan'}
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>
+                              Beri Ulasan untuk {courseProgress.course.title}
+                            </DialogTitle>
+                            <DialogDescription>
+                              <form onSubmit={handleAddReview}>
+                                <div className="mb-3 space-y-2">
+                                  <Label htmlFor="rating">
+                                    Rating Anda (1-5 Bintang)
+                                  </Label>
+                                  <RadioGroup
+                                    value={String(data.rating)} // RadioGroup value harus string
+                                    onValueChange={(value) =>
+                                      setData('rating', Number(value))
+                                    }
+                                    className="flex items-center gap-2"
+                                  >
+                                    {[1, 2, 3, 4, 5].map((starValue) => (
+                                      <Label
+                                        key={starValue}
+                                        htmlFor={`star-${starValue}`}
+                                        className={`cursor-pointer text-gray-400 transition-colors hover:text-yellow-500 ${
+                                          data.rating >= starValue
+                                            ? 'text-yellow-500'
+                                            : ''
+                                        }`}
+                                      >
+                                        <RadioGroupItem
+                                          value={String(starValue)}
+                                          id={`star-${starValue}`}
+                                          className="sr-only" // Sembunyikan input radio asli
+                                        />
+                                        <Star
+                                          fill="currentColor"
+                                          className="h-8 w-8"
+                                        />
+                                      </Label>
+                                    ))}
+                                  </RadioGroup>
+                                  {errors.rating && (
+                                    <InputError
+                                      message={errors.rating}
+                                      className="mt-1"
+                                    />
+                                  )}
+                                </div>
+
+                                <div className="space-y-2">
+                                  <Label htmlFor="comment">
+                                    Komentar (Opsional)
+                                  </Label>
+                                  <Textarea
+                                    id="comment"
+                                    placeholder="Bagikan pengalaman Anda tentang kursus ini..."
+                                    value={data.comment}
+                                    onChange={(e) =>
+                                      setData('comment', e.target.value)
+                                    }
+                                    rows={4}
+                                    maxLength={1000} // Batasi panjang komentar
+                                  />
+                                  {errors.comment && (
+                                    <InputError
+                                      message={errors.comment}
+                                      className="mt-1"
+                                    />
+                                  )}
+                                  <p className="text-muted-foreground text-right text-sm">
+                                    {data.comment.length} / 1000 karakter
+                                  </p>
+                                </div>
+
+                                {/* Tombol Submit */}
+                                <div className="mt-3 flex items-center justify-end gap-4">
+                                  <Button
+                                    type="button"
+                                    className="cursor-pointer"
+                                    variant="secondary"
+                                    onClick={() => setOpenModal(false)}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    type="submit"
+                                    disabled={processing || data.rating === 0}
+                                    className="cursor-pointer"
+                                  >
+                                    {processing && (
+                                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                                    )}
+                                    Beri ulasan
+                                  </Button>
+                                </div>
+                              </form>
+                            </DialogDescription>
+                          </DialogHeader>
+                        </DialogContent>
+                      </Dialog>
+                      <Button asChild>
+                        <Link
+                          className="mt-4"
+                          href={`/student/certificate/${courseProgress.course.id}`}
+                          target="_blank"
+                        >
+                          Cetak Sertifikat
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))
@@ -261,47 +371,9 @@ export function StudentAcademyTabs() {
               </p>
             )}
           </div>
+          <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} />
         </motion.div>
       </TabsContent>
-
-      {/* Bagian Sertifikat Tersembunyi untuk Pencetakan */}
-      {currentPrintData && (
-        <div className="certificate-print-area">
-          <div className="certificate-container mx-auto max-w-4xl rounded-lg border border-gray-300 bg-white p-10">
-            <h1 className="mb-6 text-4xl font-bold text-blue-600">
-              Certificate of Completion
-            </h1>
-            <p className="mb-4 text-lg">This certifies that</p>
-            <h2 className="mb-6 text-3xl font-semibold">
-              {currentPrintData.studentName}
-            </h2>
-            <p className="mb-4 text-lg">
-              has successfully completed the course
-            </p>
-            <h3 className="mb-8 text-2xl font-bold">
-              "{currentPrintData.courseTitle}"
-            </h3>
-            <p className="text-lg">
-              Completed on: {currentPrintData.completionDate}
-            </p>
-            <p className="text-lg">
-              Issued on:{' '}
-              {currentPrintData.issueDate || currentPrintData.completionDate}
-            </p>{' '}
-            {/* Gunakan issueDate */}
-            <p className="text-lg">
-              Instructor: {currentPrintData.courseInstructor}
-            </p>
-            <p className="text-lg">
-              Duration: {currentPrintData.courseDuration}
-            </p>
-            <div className="mt-12 text-center">
-              <p className="text-lg">_________________________</p>
-              <p className="text-md">Signature of Instructor/Admin</p>
-            </div>
-          </div>
-        </div>
-      )}
     </Tabs>
   );
 }

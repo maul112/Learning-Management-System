@@ -138,7 +138,7 @@ export default function LessonsEdit() {
             <VideoPreviewInput
               htmlFor="video"
               label="Video"
-              currentVideoUrl={`/storage/${data.video}`}
+              currentVideoUrl={data.video ? `/storage/${data.video}` : null}
               onChange={(file) => {
                 if (file) {
                   setData('video', file);

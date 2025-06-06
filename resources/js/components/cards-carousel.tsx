@@ -20,7 +20,7 @@ export function CardsCarousel() {
     SharedData & { academics: { data: Academic[] } }
   >().props;
   const isMobile = useIsMobile();
-  const [isActive, setIsActive] = useState<string>('Android Developer');
+  const [isActive, setIsActive] = useState<string>(academics.data[0].title);
 
   const academicCards = academics.data.map((academic, index) => (
     <TabsTrigger
@@ -38,6 +38,7 @@ export function CardsCarousel() {
       />
     </TabsTrigger>
   ));
+
 
   const courseCards = academics.data
     .find((academic) => isActive === academic.title)
@@ -74,7 +75,7 @@ export function CardsCarousel() {
                 ))}
               </div>
             ) : (
-              <Carousel items={academicCards!} />
+              <Carousel items={academicCards} />
             )}
           </TabsList>
         </section>

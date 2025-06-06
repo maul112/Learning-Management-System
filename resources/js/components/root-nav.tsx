@@ -3,6 +3,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Course, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
+import { LayoutDashboardIcon, LogOutIcon, Settings, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { RootNavMain } from './root-nav-main';
 import { StudentNavUser } from './student-nav-user';
@@ -24,20 +25,24 @@ export function RootNav() {
 
   const navListItems = [
     {
+      icon: LayoutDashboardIcon,
       name: 'Dashboard',
       href: '/student/dashboard',
     },
     {
+      icon: User,
       name: 'Profile Saya',
       href: auth.user
         ? `/student/${auth.user.name}/profile`
         : '/student/profile',
     },
     {
+      icon: Settings,
       name: 'Settings',
       href: '/student/settings/profile',
     },
     {
+      icon: LogOutIcon,
       name: 'Logout',
       href: '/logout',
     },

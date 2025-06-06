@@ -65,14 +65,6 @@ export function RootFooter() {
                   variant="link"
                   className="text-muted-foreground cursor-pointer"
                 >
-                  Ibrah
-                </Button>
-              </li>
-              <li>
-                <Button
-                  variant="link"
-                  className="text-muted-foreground cursor-pointer"
-                >
                   Fuad
                 </Button>
               </li>

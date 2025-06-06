@@ -69,7 +69,7 @@ class Student extends Model
                 \App\Models\Module::class,
                 'certificates',
                 'student_id',
-                'module_id'
+                'course_id'
             );
     }
 

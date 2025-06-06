@@ -13,14 +13,16 @@ class LearningPathController extends Controller
 {
     public function index(Request $request)
     {
-        $courses = Course::with([
+        $courses = Course::where('status', 'published')->with([
             'academic',
             'ratings',
             'modules',
             'students'
-        ])->get();
+        ])
+            ->whereHas('academic', fn($query) => $query->where('status', 'published'))
+            ->get();
         $redirect = $request->get('redirect');
-        $academics = Academic::with([
+        $academics = Academic::where('status', 'published')->with([
             'courses' => fn($query) =>
             $query
                 ->where('status', 'published')
@@ -28,8 +30,7 @@ class LearningPathController extends Controller
             'courses.ratings',
             'courses.modules',
             'courses.students'
-        ])
-            ->get();
+        ])->get();
 
         if ($redirect) {
             return redirect()->route('learning-path.show', $academics[0]->id);
@@ -43,7 +44,14 @@ class LearningPathController extends Controller
 
     public function show(Academic $academic)
     {
-        $courses = Course::all();
+        $courses = Course::where('status', 'published')->with([
+            'academic',
+            'ratings',
+            'modules',
+            'students'
+        ])
+            ->whereHas('academic', fn($query) => $query->where('status', 'published'))
+            ->get();
         $academics = Academic::where(
             'status',
             'published'

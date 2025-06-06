@@ -37,7 +37,7 @@ export default function ModuleEdit() {
     },
     {
       title: 'Modules',
-      href: `/courses/${module.data.id}/edit`,
+      href: `/courses/${module.data.course.id}/edit`,
     },
     {
       title: 'Edit',
@@ -151,7 +151,7 @@ export default function ModuleEdit() {
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    <FormFieldHeader title="Lessons chapters" icon={Book} />
+                    <FormFieldHeader title="Module chapters" icon={Book} />
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -160,7 +160,7 @@ export default function ModuleEdit() {
                       <div className="flex items-center justify-between">
                         <CardTitle>
                           <h2 className="text-xl font-bold">
-                            Modules chapters
+                            Lessons chapters
                           </h2>
                         </CardTitle>
                         <Button className="cursor-pointer" asChild>

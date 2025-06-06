@@ -1,4 +1,5 @@
 import { useInitials } from '@/hooks/use-initials';
+import { cn } from '@/lib/utils';
 import { Course, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { TabsList } from '@radix-ui/react-tabs';
@@ -47,7 +48,6 @@ export function CourseDetail({
     (rating) => rating.rating == 5,
   );
 
-
   return (
     <nav className="mt-10">
       <RootContent ref={informationRef}>
@@ -86,51 +86,68 @@ export function CourseDetail({
                 adalah testimoni asli mereka.
               </p>
             </div>
-            <div className="mt-10 grid grid-cols-1 gap-2 px-3 lg:grid-cols-2">
-              {Array.from({ length: 2 }).map((_, i) => (
-                <Card key={courseFilteredRatings[i].id} className="relative">
-                  <CardHeader>
-                    <div className="flex gap-3">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage
-                          src={
-                            '/storage/' +
-                            courseFilteredRatings[i].student.user.avatar
-                          }
-                          alt={courseFilteredRatings[i].student.user.name}
-                        />
-                        <AvatarFallback>
-                          {getInitials(
-                            courseFilteredRatings[i].student.user.name,
-                          )}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="mt-2">
-                          {courseFilteredRatings[i].student.user.name}
-                        </CardTitle>
-                        <CardDescription className="mt-2">
-                          <span className="text-muted-foreground flex gap-2">
-                            {Array.from({ length: 5 }, (_, k) => (
-                              <StarIcon
-                                key={k}
-                                className="h-4 w-4 text-amber-400"
-                                fill={
-                                  k < courseFilteredRatings[i].rating
-                                    ? 'currentColor'
-                                    : 'none'
-                                }
-                              />
-                            ))}
-                          </span>
-                        </CardDescription>
+            <div
+              className={cn(
+                'mt-10 grid grid-cols-1 gap-2 px-3',
+                courseFilteredRatings.length > 0 ? 'lg:grid-cols-2' : '',
+              )}
+            >
+              {courseFilteredRatings.length > 0 ? (
+                Array.from({ length: 2 }).map((_, i) => (
+                  <Card key={courseFilteredRatings[i].id} className="relative">
+                    <CardHeader>
+                      <div className="flex gap-3">
+                        <Avatar className="h-16 w-16">
+                          <AvatarImage
+                            src={
+                              '/storage/' +
+                              courseFilteredRatings[i].student.user.avatar
+                            }
+                            alt={courseFilteredRatings[i].student.user.name}
+                          />
+                          <AvatarFallback>
+                            {getInitials(
+                              courseFilteredRatings[i].student.user.name,
+                            )}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <CardTitle className="mt-2">
+                            {courseFilteredRatings[i].student.user.name}
+                          </CardTitle>
+                          <CardDescription className="mt-2">
+                            <span className="text-muted-foreground flex gap-2">
+                              {Array.from({ length: 5 }, (_, k) => (
+                                <StarIcon
+                                  key={k}
+                                  className="h-4 w-4 text-amber-400"
+                                  fill={
+                                    k < courseFilteredRatings[i].rating
+                                      ? 'currentColor'
+                                      : 'none'
+                                  }
+                                />
+                              ))}
+                            </span>
+                          </CardDescription>
+                        </div>
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>{courseFilteredRatings[i].comment}</CardContent>
-                  <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} />
-                </Card>
-              ))}
+                    </CardHeader>
+                    <CardContent>
+                      {courseFilteredRatings[i].comment}
+                    </CardContent>
+                    <ShineBorder
+                      shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']}
+                    />
+                  </Card>
+                ))
+              ) : (
+                <div className="flex h-96 items-center justify-center">
+                  <p className="text-muted-foreground mt-2 text-center text-lg">
+                    Belum ada testimoni
+                  </p>
+                </div>
+              )}
             </div>
             <div className="mt-5 flex items-center justify-end">
               <Button variant="link" className="group cursor-pointer">

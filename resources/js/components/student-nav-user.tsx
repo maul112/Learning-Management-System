@@ -59,7 +59,11 @@ export function StudentNavUser({
           <NavigationMenuItem>
             <NavigationMenuTrigger>
               <Avatar className="felx gap-5">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage
+                  src={`/storage/${user.avatar}`}
+                  alt={user.name}
+                  className="object-cover"
+                />
                 <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
               </Avatar>
             </NavigationMenuTrigger>

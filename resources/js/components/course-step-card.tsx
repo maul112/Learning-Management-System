@@ -86,7 +86,7 @@ export function CourseStepCard({
                     fill="currentColor"
                   />
                   <p className="text-muted-foreground text-xs">
-                    {getAverage(ratings!)}
+                    {ratings!.length > 0 ? getAverage(ratings!) : '0'}
                   </p>
                 </span>
                 <span className="flex items-center gap-1">

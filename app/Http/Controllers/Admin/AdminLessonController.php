@@ -50,9 +50,9 @@ class AdminLessonController extends Controller
         try {
             $validated = $request->validated();
 
-            Lesson::create($validated);
+            $lesson = Lesson::create($validated);
 
-            return redirect()->route('lessons.index')->with('success', 'Lesson created successfully.');
+            return redirect()->route('modules.edit', $lesson->module_id)->with('success', 'Lesson created successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
