@@ -14,5 +14,16 @@ export function RootShell({ children, variant = 'header' }: RootShellProps) {
     return <div className="flex min-h-screen w-full flex-col">{children}</div>;
   }
 
-  return <SidebarProvider defaultOpen={isOpen}>{children}</SidebarProvider>;
+  return (
+    <SidebarProvider
+      defaultOpen={isOpen}
+      style={
+        {
+          '--sidebar-width': '25rem',
+        } as React.CSSProperties
+      }
+    >
+      {children}
+    </SidebarProvider>
+  );
 }

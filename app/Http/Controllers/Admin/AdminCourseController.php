@@ -152,13 +152,15 @@ class AdminCourseController extends Controller
     public function destroy(Course $course)
     {
         try {
+            $academicId = $course->academic_id;
+
             if ($course->image && Storage::disk('public')->exists($course->image)) {
                 Storage::disk('public')->delete($course->image);
             }
 
             $course->delete();
 
-            return redirect()->back()->with('success', 'Course deleted successfully.');
+            return redirect()->route('academics.edit', $academicId)->with('success', 'Course deleted successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 

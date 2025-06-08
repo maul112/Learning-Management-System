@@ -53,7 +53,7 @@ export default function MultipleQuizSection({
   });
 
   //   console.log(student);
-  console.log(quizzes);
+  //   console.log(quizzes);
 
   const currentQuiz = quizzes[currentQuizIndex];
   const currentQuizResult = currentQuiz
@@ -172,7 +172,7 @@ export default function MultipleQuizSection({
         <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
           <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <BookOpenIcon className="h-5 w-5" />
-            Kuis: {currentQuiz.question} (Soal {currentQuizIndex + 1} dari{' '}
+            Kuis: {lesson.data.title} (Soal {currentQuizIndex + 1} dari{' '}
             {quizzes.length})
           </CardTitle>
           <Badge variant="outline">

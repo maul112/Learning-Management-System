@@ -4,13 +4,12 @@ import { Button } from '@/components/ui/button';
 import VideoPlayer from '@/components/video-player';
 import RootSidebarLayout from '@/layouts/root-sidebar-layout';
 import type { Lesson, SharedData, Student } from '@/types';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
   CheckCircle,
   CheckCircleIcon,
-  LoaderCircle,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -21,14 +20,17 @@ export default function Tutorials() {
   >().props;
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
   const [allQuizzesPassed, setAllQuizzesPassed] = useState(false);
-  const { post: markCompletePost, processing: markingComplete } = useForm({});
+  const { post: markCompletePost } = useForm({});
 
-//   console.log(student);
+  //   console.log(student);
 
   const handleMarkComplete = () => {
     markCompletePost(route('lessons.complete', lesson.data.id), {
       onSuccess: () => {
         toast.success('Lesson completed successfully!');
+        router.visit(
+          `/academies/${lesson.data.module.course.id}/tutorials/${nextLesson!.id}`,
+        );
       },
       onError: (errors) => {
         console.log(errors);
@@ -41,10 +43,6 @@ export default function Tutorials() {
     student.data.lesson_completions.some(
       (completion) => completion.lesson.id === lesson.data.id,
     ) || false;
-
-  const courseProgress = student.data.course_progresses.find(
-    (progress) => progress.course.id === lesson.data.module.course.id,
-  );
 
   useEffect(() => {
     if (lesson) {
@@ -130,7 +128,7 @@ export default function Tutorials() {
 
           {/* Navigation Buttons */}
           <div className="mt-10 flex h-10 w-full items-center justify-between gap-5">
-            <Button disabled={!previousLesson} variant="outline">
+            <Button disabled={!previousLesson}>
               {previousLesson ? (
                 <Link
                   className="flex items-center gap-2"
@@ -153,13 +151,13 @@ export default function Tutorials() {
             >
               {nextLesson ? (
                 canProceedToNext() ? (
-                  <Link
+                  <Button
                     className="flex items-center gap-2"
-                    href={`/academies/${lesson.data.module.course.id}/tutorials/${nextLesson.id}`}
+                    onClick={handleMarkComplete}
                   >
                     Next
                     <ArrowRightCircleIcon className="h-4 w-4" />
-                  </Link>
+                  </Button>
                 ) : (
                   <span className="flex items-center gap-2 opacity-50">
                     Complete All Quizzes First
@@ -184,28 +182,6 @@ export default function Tutorials() {
               </p>
             </div>
           )}
-
-          {/* No Quiz Notice */}
-          {!hasQuizzes && (
-            <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-950/20">
-              <p className="text-center text-sm text-blue-700 dark:text-blue-400">
-                ℹ️ This lesson has no quizzes. You can proceed to the next
-                lesson directly.
-              </p>
-            </div>
-          )}
-
-          {!isLessonCompleted &&
-            !courseProgress?.is_completed && ( // Hanya tampilkan jika pelajaran belum selesai & kursus belum selesai
-              <div className="mt-8">
-                <Button onClick={handleMarkComplete} disabled={markingComplete}>
-                  {markingComplete ? (
-                    <LoaderCircle className="mr-2 animate-spin" />
-                  ) : null}
-                  Tandai Selesai
-                </Button>
-              </div>
-            )}
 
           {isLessonCompleted && (
             <div className="mt-8 font-semibold text-green-600">

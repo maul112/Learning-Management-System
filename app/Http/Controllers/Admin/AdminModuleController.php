@@ -133,9 +133,11 @@ class AdminModuleController extends Controller
     public function destroy(Module $module)
     {
         try {
+            $courseId = $module->course_id;
+
             $module->delete();
 
-            return redirect()->back()->with('success', 'Module deleted successfully.');
+            return redirect()->route('courses.edit', $courseId)->with('success', 'Module deleted successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 

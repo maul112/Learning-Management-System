@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAverage } from '@/hooks/use-average';
+import { currency } from '@/lib/currency';
 import { cn } from '@/lib/utils';
 import { Course, SharedData } from '@/types';
 import { router, usePage } from '@inertiajs/react';
@@ -234,7 +235,9 @@ export function CourseJumbotron({
                             : 'text-cyan-400',
                         )}
                       >
-                        {course.data.price > 0 ? 'Berbayar' : 'Gratis'}
+                        {course.data.price > 0
+                          ? currency(course.data.price)
+                          : 'Gratis'}
                       </Badge>
                     </span>
                   </div>

@@ -22,6 +22,7 @@ import {
   CardTitle,
 } from './ui/card';
 import { Timeline } from './ui/timeline';
+import { currency } from '@/lib/currency';
 
 export function LearningPathContent() {
   const { academic } = usePage<SharedData & { academics: { data: Academic } }>()
@@ -78,7 +79,7 @@ export function LearningPathContent() {
                     course.price == 0 ? 'text-cyan-400' : 'text-green-400',
                   )}
                 >
-                  {course.price == 0 ? 'Gratis' : '$ ' + course.price}
+                  {course.price == 0 ? 'Gratis' : currency(course.price)}
                 </Badge>
               </span>
               <span className="text-muted-foreground flex items-center gap-1 text-xs capitalize md:text-sm">

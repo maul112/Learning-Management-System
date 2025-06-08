@@ -13,9 +13,9 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
-import { Course, Lesson, SharedData } from '@/types';
+import { Course, Lesson, SharedData, Student } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, ChevronDown } from 'lucide-react';
+import { BookOpen, CheckCircle, ChevronDown } from 'lucide-react';
 import { useEffect } from 'react';
 
 interface TutorialsSidebarMainProps {
@@ -27,7 +27,12 @@ export function TutorialsSidebarMain({
   activeLesson,
   setActiveLesson,
 }: TutorialsSidebarMainProps) {
-  const { course } = usePage<SharedData & { course: { data: Course } }>().props;
+  const { course, student } = usePage<
+    SharedData & {
+      course: { data: Course };
+      student: { data: Student };
+    }
+  >().props;
 
   useEffect(() => {
     if (
@@ -47,8 +52,8 @@ export function TutorialsSidebarMain({
         {course.data.modules.map((moduleItem) => (
           <Collapsible
             key={moduleItem.id}
-            defaultOpen
             className="group/collapsible"
+            defaultOpen
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -76,9 +81,16 @@ export function TutorialsSidebarMain({
                       >
                         <Link
                           href={`/academies/${lesson.module.course.id}/tutorials/${lesson.id}`}
-                          className="truncate"
+                          className="flex items-center justify-between truncate"
                         >
                           {lesson.title}
+                          {student.data.lesson_completions.some(
+                            (completion) => completion.lesson.id === lesson.id,
+                          ) ? (
+                            <div className="text-green-600">
+                              <CheckCircle className="h-4 w-4" />
+                            </div>
+                          ) : null}
                         </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>

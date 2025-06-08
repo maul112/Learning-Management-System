@@ -128,9 +128,11 @@ class AdminLessonController extends Controller
     public function destroy(Lesson $lesson)
     {
         try {
+            $moduleId = $lesson->module_id;
+
             $lesson->delete();
 
-            return redirect()->back()->with('success', 'Lesson deleted successfully.');
+            return redirect()->route('modules.edit', $moduleId)->with('success', 'Lesson deleted successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 

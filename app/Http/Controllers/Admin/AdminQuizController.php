@@ -102,9 +102,11 @@ class AdminQuizController extends Controller
     public function destroy(Quiz $quiz)
     {
         try {
+            $lessonId = $quiz->lesson_id;
+
             $quiz->delete();
 
-            return redirect()->route('quizzes.index')->with('success', 'Quiz deleted successfully.');
+            return redirect()->route('lessons.edit', $lessonId)->with('success', 'Quiz deleted successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
