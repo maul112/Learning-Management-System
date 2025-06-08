@@ -7,6 +7,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { Lesson } from '@/types';
+import React from 'react';
 import AppLogo from './app-logo';
 import { TutorialsSidebarMain } from './tutorials-sidebar-main';
 
@@ -21,9 +22,14 @@ export function TutorialsSidebar({
 }: TutorialsSidebarProps) {
   return (
     <Sidebar
-      variant="inset"
+      variant="sidebar"
       collapsible="icon"
       className="border-border border-r"
+      style={
+        {
+          '--sidebar-width': '25rem',
+        } as React.CSSProperties
+      }
     >
       <SidebarHeader className="border-border border-b p-3">
         <SidebarMenu>

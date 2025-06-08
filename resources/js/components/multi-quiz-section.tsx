@@ -5,8 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
-import type { Course, Lesson, Quiz, SharedData, Student } from '@/types';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import type { Lesson, Quiz, SharedData, Student } from '@/types';
+import { useForm, usePage } from '@inertiajs/react';
 import {
   BookOpenIcon,
   CheckCircleIcon,
@@ -27,15 +27,16 @@ interface QuizProgress {
 
 interface MultipleQuizSectionProps {
   quizzes: Quiz[];
+  handleMarkComplete: () => void;
 }
 
 export default function MultipleQuizSection({
   quizzes,
+  handleMarkComplete,
 }: MultipleQuizSectionProps) {
-  const { student, course, lesson } = usePage<
+  const { student, lesson } = usePage<
     SharedData & {
       student: { data: Student };
-      course: { data: Course };
       lesson: { data: Lesson };
     }
   >().props;
@@ -172,7 +173,7 @@ export default function MultipleQuizSection({
         <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
           <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <BookOpenIcon className="h-5 w-5" />
-            Kuis: {lesson.data.title} (Soal {currentQuizIndex + 1} dari{' '}
+            Kuis: {lesson.data.module.title} (Soal {currentQuizIndex + 1} dari{' '}
             {quizzes.length})
           </CardTitle>
           <Badge variant="outline">
@@ -407,12 +408,8 @@ export default function MultipleQuizSection({
                 (submissionHistory) =>
                   parseFloat(submissionHistory.grade?.toString() ?? '0') >= 70,
               ) && (
-                <Button>
-                  <Link
-                    href={`/academies/${course.data.id}/tutorials/${lesson.data.id + 1}`}
-                  >
-                    Next Module
-                  </Link>
+                <Button onClick={handleMarkComplete} className="cursor-pointer">
+                  Next Module
                 </Button>
               )}
             </div>

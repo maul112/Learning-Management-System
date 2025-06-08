@@ -49,7 +49,7 @@ export function CourseDetail({
   );
 
   return (
-    <nav className="mt-10">
+    <nav className="mt-10 px-5">
       <RootContent ref={informationRef}>
         <Tabs
           value={activeTab}

@@ -99,7 +99,7 @@ export default function ForumPage() {
           <div>
             <h1 className="text-3xl font-bold">Discussion Forum</h1>
             <p className="text-muted-foreground">
-              Join the conversation with fellow students and instructors
+              Join the conversation with fellow students
             </p>
           </div>
           <Button

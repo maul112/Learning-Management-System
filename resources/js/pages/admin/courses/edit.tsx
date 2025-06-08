@@ -204,9 +204,6 @@ export default function CourseEdit() {
                       name="duration"
                       value={String(data.duration)}
                       setValue={(value) => setData('duration', Number(value))}
-                      onFilled={() =>
-                        setRequiredFieldsNumber(requiredFieldsNumber + 1)
-                      }
                       message={errors.duration || ''}
                     />
                     <Card className="grid gap-2">

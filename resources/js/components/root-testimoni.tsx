@@ -19,7 +19,7 @@ export function RootTestimoni() {
         </h3>
         <Carousel
           items={cards}
-          scrollLeftValue={1190}
+          scrollLeftValue={-1190}
           scrollRightValue={1190}
         />
         <div className="flex w-full items-center justify-end">

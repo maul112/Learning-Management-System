@@ -46,7 +46,7 @@ export function StudentNavUser({
     <div
       className={cn(
         'flex items-center',
-        variant === 'sidebar' && !isMobile ? 'mr-20' : '',
+        variant === 'sidebar' && !isMobile ? 'mr-10' : 'mr-5',
       )}
     >
       {auth.user && url !== '/student/dashboard' && (

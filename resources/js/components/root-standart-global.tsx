@@ -144,7 +144,7 @@ const ReviewCard = ({ course }: { course: Course }) => {
     >
       <div className="objcet-cover h-full w-full bg-cover bg-center">
         <img src={`/storage/${course.image}`} alt="" />
-        <h3 className="absolute top-2 left-2 text-sm font-semibold">
+        <h3 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-md font-semibold w-full text-center">
           {course.title}
         </h3>
       </div>

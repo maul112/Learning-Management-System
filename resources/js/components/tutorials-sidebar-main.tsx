@@ -57,7 +57,10 @@ export function TutorialsSidebarMain({
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton className="w-full cursor-pointer px-4 py-2">
+                <SidebarMenuButton
+                  tooltip={{ children: moduleItem.title }}
+                  className="w-full cursor-pointer px-4 py-2"
+                >
                   <BookOpen className="h-4 w-4 shrink-0" />
                   <span className="truncate">{moduleItem.title}</span>
                   <ChevronDown className="ml-auto h-4 w-4 shrink-0 transition-transform group-data-[state=open]/collapsible:rotate-180" />

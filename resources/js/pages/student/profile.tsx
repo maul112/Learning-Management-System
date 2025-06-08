@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ShineBorder } from '@/components/ui/shine-border';
 import { useAverage } from '@/hooks/use-average';
 import { useInitials } from '@/hooks/use-initials';
 import RootLayout from '@/layouts/root-layout';
@@ -24,7 +25,7 @@ import { Course, SharedData, User } from '@/types'; // Asumsi tipe data Anda
 import { Head, Link, usePage } from '@inertiajs/react';
 import {
   Book,
-  Briefcase, // Mengganti ChartColumnDecreasing dengan ikon yang mungkin lebih relevan untuk 'difficulty' atau 'level'
+  Briefcase, ChartColumnDecreasingIcon, // Mengganti ChartColumnDecreasing dengan ikon yang mungkin lebih relevan untuk 'difficulty' atau 'level'
   CheckCircle2Icon,
   Edit2Icon,
   ExternalLink,
@@ -73,7 +74,7 @@ export default function Profile() {
 
       {/* Bagian Header Profil */}
       {/* Saran: Pertimbangkan untuk memberi background atau border pada section ini agar lebih menonjol */}
-      <div className="relative w-full py-16 md:py-24">
+      <div className="relative w-full py-32 px-10">
         <BackgroundBeams /> {/* Penyesuaian padding dan background lembut */}
         <RootContent>
           <div className="flex flex-col items-center gap-6 text-center md:flex-row md:items-end md:text-left">
@@ -125,7 +126,7 @@ export default function Profile() {
 
       {/* Bagian Konten Utama - Daftar Kursus */}
       <RootContent>
-        <div className="my-10 md:my-16">
+        <div className="my-10 md:my-16 px-10">
           {' '}
           {/* Konsistensi margin */}
           <div className="mb-4 flex items-center justify-between">
@@ -210,13 +211,15 @@ export default function Profile() {
                             className="text-amber-500"
                             fill="currentColor"
                           />
-                          {getAverage(
-                            course.ratings.map((rating) => rating.rating),
-                          ).toFixed(1)}{' '}
+                          {course.ratings.length > 0
+                            ? getAverage(
+                                course.ratings.map((rating) => rating.rating),
+                              ).toFixed(1)
+                            : 0}{' '}
                           {/* Format rating menjadi 1 angka desimal */}
                         </span>
                         <span className="flex items-center gap-1.5 capitalize">
-                          <Briefcase size={14} className="text-purple-500" />{' '}
+                          <ChartColumnDecreasingIcon size={14} className="text-purple-500" />{' '}
                           {/* Mengganti ikon */}
                           {course.difficulty}
                         </span>
@@ -262,7 +265,7 @@ export default function Profile() {
                       </Button>
                     </div>
                   </CardFooter>
-                  {/* <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} /> Komponen ini mungkin menarik, pastikan tidak bentrok dengan style lain */}
+                  <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} />
                 </Card>
               ))}
             </div>

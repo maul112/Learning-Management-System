@@ -39,7 +39,6 @@ export function CardsCarousel() {
     </TabsTrigger>
   ));
 
-
   const courseCards = academics.data
     .find((academic) => isActive === academic.title)
     ?.courses.map((course, index) => (
@@ -111,7 +110,11 @@ export function CardsCarousel() {
                   className="text-muted-foreground mb-3 flex gap-2 text-sm"
                 >
                   <Users className="h-4 w-4" />
-                  {academic.courses.length} Siswa
+                  {academic.courses.reduce(
+                    (acc, course) => acc + course.students.length,
+                    0,
+                  )}{' '}
+                  Siswa
                 </motion.p>
                 <Separator className="bg-muted-foreground mb-5" />
                 <motion.p

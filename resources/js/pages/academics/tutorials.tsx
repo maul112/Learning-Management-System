@@ -110,7 +110,12 @@ export default function Tutorials() {
           </div>
 
           {/* Multiple Quiz Section */}
-          {hasQuizzes && <MultipleQuizSection quizzes={activeLesson.quizzes} />}
+          {hasQuizzes && (
+            <MultipleQuizSection
+              quizzes={activeLesson.quizzes}
+              handleMarkComplete={handleMarkComplete}
+            />
+          )}
 
           {/* Lesson Completion Status */}
           {hasQuizzes && allQuizzesPassed && (

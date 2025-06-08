@@ -28,7 +28,7 @@ export function CourseSyllabus({
           Materi yang akan Anda pelajari pada kelas ini.
         </p>
       </div>
-      <div className="flex justify-center">
+      <div className="flex justify-center px-5">
         <Accordion type="multiple" className="w-full max-w-2xl space-y-4">
           {course.data.modules.map((module) => (
             <AccordionItem key={module.id} value={module.title}>
